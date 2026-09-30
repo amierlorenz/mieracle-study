@@ -2,23 +2,34 @@ import Foundation
 
 /// What a study session covers and how it runs.
 public struct SessionConfig: Codable, Hashable, Sendable {
-    /// Which content is eligible. A concept matches if its course, its unit,
+    /// Which content is eligible. A concept matches if it, its course, its unit,
     /// or any of its tags is selected; an empty scope matches everything.
     public struct Scope: Codable, Hashable, Sendable {
         public var courseIDs: Set<String>
         public var unitIDs: Set<String>
         public var tags: Set<String>
+        public var conceptIDs: Set<String>
 
-        public init(courseIDs: Set<String> = [], unitIDs: Set<String> = [], tags: Set<String> = []) {
+        public init(courseIDs: Set<String> = [], unitIDs: Set<String> = [], tags: Set<String> = [], conceptIDs: Set<String> = []) {
             self.courseIDs = courseIDs
             self.unitIDs = unitIDs
             self.tags = tags
+            self.conceptIDs = conceptIDs
         }
 
-        public var isEmpty: Bool { courseIDs.isEmpty && unitIDs.isEmpty && tags.isEmpty }
+        public init(from decoder: any Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            courseIDs = try c.decodeIfPresent(Set<String>.self, forKey: .courseIDs) ?? []
+            unitIDs = try c.decodeIfPresent(Set<String>.self, forKey: .unitIDs) ?? []
+            tags = try c.decodeIfPresent(Set<String>.self, forKey: .tags) ?? []
+            conceptIDs = try c.decodeIfPresent(Set<String>.self, forKey: .conceptIDs) ?? []
+        }
+
+        public var isEmpty: Bool { courseIDs.isEmpty && unitIDs.isEmpty && tags.isEmpty && conceptIDs.isEmpty }
 
         public func contains(_ concept: ConceptSnapshot) -> Bool {
             isEmpty
+                || conceptIDs.contains(concept.id)
                 || courseIDs.contains(concept.courseID)
                 || unitIDs.contains(concept.unitID)
                 || !tags.isDisjoint(with: concept.tags)
