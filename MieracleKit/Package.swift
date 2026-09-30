@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "MieracleKit", targets: ["MieracleKit"])
     ],
     targets: [
-        .target(name: "MieracleKit"),
+        .target(name: "MieracleKit", resources: [.copy("Rendering/Web")]),
         .testTarget(name: "MieracleKitTests", dependencies: ["MieracleKit"])
     ]
 )
