@@ -22,6 +22,18 @@ struct ImportDocumentTests {
         #expect(try ImportDocument.decode(from: document.encoded()) == document)
     }
 
+    @Test func decodesPastedTextInsideCodeFence() throws {
+        let pasted = "Here you go:\n```json\n" + String(decoding: try Self.fixture(), as: UTF8.self) + "\n```\nLet me know!"
+        let document = try ImportDocument.decode(fromPasted: pasted)
+        #expect(document.courses.first?.id == "cs201")
+    }
+
+    @Test func rejectsPastedTextWithoutJSON() {
+        #expect(throws: ImportDecodingError.self) {
+            try ImportDocument.decode(fromPasted: "no json here")
+        }
+    }
+
     @Test func reportsMissingFieldWithPath() {
         let json = #"{"schemaVersion": 1, "courses": [{"id": "c", "units": []}]}"#
         #expect {

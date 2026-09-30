@@ -33,6 +33,15 @@ public struct ImportDocument: Codable, Hashable, Sendable {
         }
     }
 
+    /// Decodes a document from pasted text, ignoring anything around the outermost
+    /// JSON object (such as a Markdown code fence).
+    public static func decode(fromPasted text: String) throws(ImportDecodingError) -> ImportDocument {
+        guard let start = text.firstIndex(of: "{"), let end = text.lastIndex(of: "}"), start < end else {
+            throw ImportDecodingError(message: "No JSON object found in the pasted text.")
+        }
+        return try decode(from: Data(text[start...end].utf8))
+    }
+
     /// Encodes with stable, human-readable formatting.
     public func encoded() throws -> Data {
         let encoder = JSONEncoder()
