@@ -6,3 +6,10 @@ build/
 .build/
 .swiftpm/
 *.xcresult
+.env
+.env.*
+Secrets.xcconfig
+*.p8
+*.p12
+*.mobileprovision
+*.provisionprofile
