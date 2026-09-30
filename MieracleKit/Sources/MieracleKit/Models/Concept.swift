@@ -25,8 +25,8 @@ public final class Concept {
 
     public var unit: CourseUnit?
 
-    @Relationship(deleteRule: .nullify, inverse: \Tag.concepts)
-    public var tags: [Tag]? = []
+    @Relationship(deleteRule: .nullify, inverse: \ConceptTag.concepts)
+    public var tags: [ConceptTag]? = []
 
     @Relationship(deleteRule: .cascade, inverse: \Prompt.concept)
     public var prompts: [Prompt]? = []

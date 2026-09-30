@@ -12,7 +12,7 @@ public enum MieracleSchemaV1: VersionedSchema {
             Concept.self,
             Prompt.self,
             ReviewLog.self,
-            Tag.self,
+            ConceptTag.self,
             Exam.self,
             CanvasItem.self,
             SessionPreset.self,

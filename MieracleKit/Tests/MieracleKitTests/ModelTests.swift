@@ -90,7 +90,7 @@ struct ModelTests {
         let otherUnit = CourseUnit(name: "Trees", sortIndex: 2)
         otherUnit.course = course
         other.unit = otherUnit
-        let tag = Tag(name: "exam2")
+        let tag = ConceptTag(name: "exam2")
         other.tags = [tag]
 
         let exam = Exam(name: "Midterm", date: .now)

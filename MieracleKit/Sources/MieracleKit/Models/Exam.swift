@@ -19,8 +19,8 @@ public final class Exam {
     @Relationship(deleteRule: .nullify, inverse: \CourseUnit.exams)
     public var units: [CourseUnit]? = []
 
-    @Relationship(deleteRule: .nullify, inverse: \Tag.exams)
-    public var tags: [Tag]? = []
+    @Relationship(deleteRule: .nullify, inverse: \ConceptTag.exams)
+    public var tags: [ConceptTag]? = []
 
     public init(externalID: String = UUID().uuidString, name: String, date: Date) {
         self.externalID = externalID

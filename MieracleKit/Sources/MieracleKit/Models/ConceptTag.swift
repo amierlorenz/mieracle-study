@@ -3,8 +3,8 @@ import SwiftData
 
 /// A label that cuts across units, such as "exam 2" or "recursion".
 @Model
-public final class Tag {
-    #Index<Tag>([\.name])
+public final class ConceptTag {
+    #Index<ConceptTag>([\.name])
 
     public var name: String = ""
 
