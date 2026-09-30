@@ -6,6 +6,10 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		64E7113C306DAD4C005DB983 /* MieracleKit in Frameworks */ = {isa = PBXBuildFile; productRef = 64E7113B306DAD4C005DB983 /* MieracleKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* MieracleStudy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MieracleStudy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -35,6 +39,7 @@
 		000000000000000130000000 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				64E7113C306DAD4C005DB983 /* MieracleKit in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -73,6 +78,9 @@
 				000000000000000000000010 /* MieracleStudy */,
 			);
 			name = MieracleStudy;
+			packageProductDependencies = (
+				64E7113B306DAD4C005DB983 /* MieracleKit */,
+			);
 			productName = MyApp;
 			productReference = 000000000000000000000120 /* MieracleStudy.app */;
 			productType = "com.apple.product-type.application";
@@ -101,6 +109,9 @@
 			);
 			mainGroup = 000000000000000000000001;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				64E7113A306DAD4C005DB983 /* XCLocalSwiftPackageReference "MieracleKit" */,
+			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 000000000000000000000020 /* Products */;
 			projectDirPath = "";
@@ -358,6 +369,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		64E7113A306DAD4C005DB983 /* XCLocalSwiftPackageReference "MieracleKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MieracleKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		64E7113B306DAD4C005DB983 /* MieracleKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MieracleKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 000000000000000000000000 /* Project object */;
 }
