@@ -11,6 +11,17 @@ public enum PromptKind: String, Codable, CaseIterable, Sendable {
 
     /// Whether the kind needs a code runner, which only exists on macOS.
     public var requiresCodeRunner: Bool { self == .codeImplement }
+
+    public var displayName: String {
+        switch self {
+        case .flashcard: "Flashcard"
+        case .shortAnswer: "Short answer"
+        case .multipleChoice: "Multiple choice"
+        case .codeImplement: "Code: implement"
+        case .codeComplexity: "Code: complexity"
+        case .patternPick: "Code: pattern pick"
+        }
+    }
 }
 
 /// The payload of a prompt.

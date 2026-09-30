@@ -58,4 +58,23 @@ public struct Resource: Codable, Hashable, Sendable {
         self.title = title
         self.url = url
     }
+
+    /// Parses one resource per line in the form `Title | https://…`.
+    ///
+    /// A line with only a URL uses the URL's host as its title. Lines without a
+    /// valid `http` or `https` URL are skipped.
+    public static func parse(lines text: String) -> [Resource] {
+        text.split(whereSeparator: \.isNewline).compactMap { line in
+            let parts = line.split(separator: "|", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
+            guard let urlText = parts.last, let url = URL(string: urlText),
+                  let scheme = url.scheme, ["http", "https"].contains(scheme) else { return nil }
+            let title = parts.count == 2 && !parts[0].isEmpty ? parts[0] : (url.host() ?? urlText)
+            return Resource(title: title, url: url)
+        }
+    }
+
+    /// The inverse of ``parse(lines:)``.
+    public static func format(lines resources: [Resource]) -> String {
+        resources.map { "\($0.title) | \($0.url.absoluteString)" }.joined(separator: "\n")
+    }
 }
