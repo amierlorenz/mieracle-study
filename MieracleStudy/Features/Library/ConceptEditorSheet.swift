@@ -1,3 +1,4 @@
+import MieracleKit
 import SwiftUI
 
 struct ConceptEditorSheet: View {
@@ -20,6 +21,11 @@ struct ConceptEditorSheet: View {
                 Section("Explanation (Markdown, $LaTeX$)") {
                     TextField("Explanation", text: $draft.explanation, axis: .vertical)
                         .lineLimit(6...)
+                }
+                if !draft.explanation.isEmpty {
+                    Section("Preview") {
+                        RichTextView(markdown: draft.explanation)
+                    }
                 }
                 Section("Tags (comma separated)") {
                     TextField("exam2, recursion", text: $draft.tagsText)

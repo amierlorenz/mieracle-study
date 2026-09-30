@@ -13,8 +13,12 @@ struct ConceptDetailView: View {
     var body: some View {
         Form {
             Section("Explanation") {
-                Text(LocalizedStringKey(concept.explanation.isEmpty ? "_No explanation_" : concept.explanation))
-                    .textSelection(.enabled)
+                if concept.explanation.isEmpty {
+                    Text("No explanation")
+                        .foregroundStyle(.secondary)
+                } else {
+                    RichTextView(markdown: concept.explanation)
+                }
             }
             if !concept.resources.isEmpty {
                 Section("Resources") {

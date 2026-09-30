@@ -52,7 +52,7 @@ A `CodeRunner` protocol with a macOS `PythonRunner` that writes the user's solut
 `CanvasClient` reads courses, assignments, and calendar events with a bearer token from the Keychain. `CanvasSync` runs at most daily, upserts items, and refreshes the dates of exams linked to them while keeping the user's exam-to-unit mappings.
 
 ### Rendering (`MieracleKit/Rendering`)
-`RichTextView` wraps a `WKWebView` that loads a bundled template with marked.js, KaTeX, and highlight.js, giving Markdown, LaTeX, and code highlighting offline with one renderer on both platforms. The view sizes itself to its content.
+`RichTextView` uses SwiftUI's `WebView` with a `WebPage` that loads a bundled template over a private `mieracle:` URL scheme. The template's script pulls math out before Markdown parsing (so code spans and underscores survive), renders with marked.js, KaTeX, and highlight.js, and returns the content height, which the view uses as its frame height. A content security policy limits scripts to the bundled files, and clicked links open in the default browser.
 
 ### App (`MieracleStudy/`)
 Minimal stock SwiftUI: a sidebar with Dashboard, Study, Library, Exams, Import, and Settings.
