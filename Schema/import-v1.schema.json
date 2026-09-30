@@ -1,0 +1,445 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AmierD/MieracleStudy/Schema/import-v1.schema.json",
+  "title": "MieracleStudy import file (schema v1)",
+  "description": "Classes → units → concepts → prompts, plus optional exams. Every id is stable: re-importing an id updates that item in place and keeps its review history. Use kebab-case ids prefixed by their parent's id, e.g. cs201.heaps.top-k.pattern.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "courses"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "courses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/course"
+      }
+    },
+    "exams": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/exam"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "course": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unit"
+          }
+        }
+      }
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "order": {
+          "type": "integer",
+          "description": "Position in the course; defaults to position in the file."
+        },
+        "concepts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/concept"
+          }
+        }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "prompts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "explanation": {
+          "type": "string",
+          "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "url"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "pattern": "^https?://"
+              }
+            }
+          }
+        },
+        "prompts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/prompt"
+          }
+        }
+      }
+    },
+    "prompt": {
+      "oneOf": [
+        {
+          "description": "Recall a fact.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "front",
+            "back"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "flashcard"
+            },
+            "front": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "back": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            }
+          }
+        },
+        {
+          "description": "Explain in a sentence or two.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "question",
+            "modelAnswer"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "shortAnswer"
+            },
+            "question": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "modelAnswer": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "keyPoints": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "Points a correct answer must mention; used for AI grading."
+            }
+          }
+        },
+        {
+          "description": "Pick one option; distractors should be plausible.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "question",
+            "options",
+            "correctIndex"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "multipleChoice"
+            },
+            "question": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 2
+            },
+            "correctIndex": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "explanation": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            }
+          }
+        },
+        {
+          "description": "Write a Python function graded by test cases.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "statement",
+            "functionName",
+            "tests"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "codeImplement"
+            },
+            "statement": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "language": {
+              "enum": [
+                "python"
+              ]
+            },
+            "functionName": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            },
+            "starterCode": {
+              "type": "string"
+            },
+            "tests": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "args",
+                  "expected"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "args": {
+                    "type": "array",
+                    "description": "Positional arguments."
+                  },
+                  "expected": {},
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "comparison": {
+              "enum": [
+                "exact",
+                "unordered",
+                "float"
+              ]
+            },
+            "referenceSolution": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            }
+          }
+        },
+        {
+          "description": "State time and space Big-O of a snippet.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "code",
+            "time",
+            "space",
+            "explanation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "codeComplexity"
+            },
+            "code": {
+              "type": "string"
+            },
+            "language": {
+              "enum": [
+                "python",
+                "swift"
+              ]
+            },
+            "time": {
+              "type": "string",
+              "pattern": "^O\\("
+            },
+            "space": {
+              "type": "string",
+              "pattern": "^O\\("
+            },
+            "explanation": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            }
+          }
+        },
+        {
+          "description": "Choose the approach or data structure without coding it. Give options + correctIndex for multiple choice, or omit both for free text.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "statement",
+            "answer",
+            "explanation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "patternPick"
+            },
+            "statement": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 2
+            },
+            "correctIndex": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "answer": {
+              "type": "string",
+              "minLength": 1
+            },
+            "explanation": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            }
+          }
+        }
+      ]
+    },
+    "exam": {
+      "type": "object",
+      "required": [
+        "id",
+        "courseId",
+        "name",
+        "date"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "courseId": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "type": "string",
+          "description": "YYYY-MM-DD or ISO 8601 timestamp."
+        },
+        "unitIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

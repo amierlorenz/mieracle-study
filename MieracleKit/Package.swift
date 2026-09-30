@@ -10,6 +10,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "MieracleKit", resources: [.copy("Rendering/Web")]),
-        .testTarget(name: "MieracleKitTests", dependencies: ["MieracleKit"])
+        .testTarget(name: "MieracleKitTests", dependencies: ["MieracleKit"], resources: [.copy("Fixtures")])
     ]
 )

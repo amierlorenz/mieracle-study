@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "courses": [
+    {
+      "id": "cs201",
+      "name": "CS 201 Data Structures",
+      "units": [
+        {
+          "id": "cs201.heaps",
+          "name": "Heaps",
+          "order": 1,
+          "concepts": [
+            {
+              "id": "cs201.heaps.heap-property",
+              "title": "Heap property",
+              "explanation": "In a min-heap every parent is $\\le$ its children, so the minimum is at the root.",
+              "tags": ["exam2"],
+              "resources": [{"title": "Visualgo", "url": "https://visualgo.net/en/heap"}],
+              "prompts": [
+                {"id": "cs201.heaps.heap-property.fc", "type": "flashcard", "front": "Where is the minimum in a min-heap?", "back": "At the root."},
+                {"id": "cs201.heaps.heap-property.sa", "type": "shortAnswer", "question": "Why is peeking a min-heap O(1)?", "modelAnswer": "The heap property keeps the minimum at the root.", "keyPoints": ["minimum at root", "no search needed"]},
+                {"id": "cs201.heaps.heap-property.mc", "type": "multipleChoice", "question": "Push cost?", "options": ["O(1)", "O(log n)", "O(n)"], "correctIndex": 1, "explanation": "Sift-up walks one root-to-leaf path."}
+              ]
+            },
+            {
+              "id": "cs201.heaps.top-k",
+              "title": "Top-k with a heap",
+              "explanation": "Keep a size-$k$ min-heap of the largest items seen.",
+              "prompts": [
+                {"id": "cs201.heaps.top-k.pattern", "type": "patternPick", "statement": "Find the k largest numbers in a stream.", "options": ["Size-k min-heap", "Sort everything", "Stack"], "correctIndex": 0, "answer": "Size-k min-heap", "explanation": "O(n log k) time, O(k) space."},
+                {"id": "cs201.heaps.top-k.code", "type": "codeImplement", "statement": "Return the k largest values in descending order.", "functionName": "top_k", "starterCode": "def top_k(nums, k):\n    pass", "tests": [{"args": [[3, 1, 5, 2], 2], "expected": [5, 3]}, {"args": [[1], 1], "expected": [1], "hidden": true}]},
+                {"id": "cs201.heaps.top-k.complexity", "type": "codeComplexity", "code": "heapq.nlargest(k, nums)", "time": "O(n log k)", "space": "O(k)", "explanation": "Each of n pushes costs log k."}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cs201.graphs",
+          "name": "Graphs",
+          "concepts": []
+        }
+      ]
+    }
+  ],
+  "exams": [
+    {"id": "cs201.mid2", "courseId": "cs201", "name": "Midterm 2", "date": "2026-11-04", "unitIds": ["cs201.heaps"], "tags": ["exam2"]}
+  ]
+}
