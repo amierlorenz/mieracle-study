@@ -1,13 +1,15 @@
 import Foundation
 
 /// The kinds of prompt a concept can have.
-public enum PromptKind: String, Codable, CaseIterable, Sendable {
+public enum PromptKind: String, Codable, CaseIterable, Identifiable, Sendable {
     case flashcard
     case shortAnswer
     case multipleChoice
     case codeImplement
     case codeComplexity
     case patternPick
+
+    public var id: Self { self }
 
     /// Whether the kind needs a code runner, which only exists on macOS.
     public var requiresCodeRunner: Bool { self == .codeImplement }
