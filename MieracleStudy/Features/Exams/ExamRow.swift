@@ -14,7 +14,7 @@ struct ExamRow: View {
                         .accessibilityLabel("Synced with Canvas")
                 }
             }
-            Text("\(exam.course?.name ?? "No class") · \(exam.date.formatted(date: .abbreviated, time: .shortened)) · \((exam.units ?? []).count) units")
+            Text("\(exam.course?.displayName ?? "No class") · \(exam.date.formatted(date: .abbreviated, time: .shortened)) · \((exam.units ?? []).count) units")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

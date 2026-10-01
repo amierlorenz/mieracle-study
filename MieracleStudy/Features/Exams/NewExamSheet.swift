@@ -20,7 +20,7 @@ struct NewExamSheet: View {
                 Picker("Class", selection: $courseID) {
                     Text("Choose…").tag(String?.none)
                     ForEach(courses) { course in
-                        Text(course.name).tag(Optional(course.externalID))
+                        Text(course.displayName).tag(Optional(course.externalID))
                     }
                 }
             }

@@ -12,6 +12,7 @@ struct CourseDetailView: View {
 
     var body: some View {
         List {
+            ShortNameSection(course: course)
             Section {
                 Toggle("Programming class", isOn: codingBinding)
             } footer: {
@@ -33,7 +34,7 @@ struct CourseDetailView: View {
                 ContentUnavailableView("No Units", systemImage: "folder", description: Text("Add a unit to start adding concepts."))
             }
         }
-        .navigationTitle(course.name)
+        .navigationTitle(course.displayName)
         .toolbar {
             Button("Rename Class", systemImage: "pencil") { isRenaming = true }
             Button("Add Unit", systemImage: "plus") { isAddingUnit = true }

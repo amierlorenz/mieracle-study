@@ -17,7 +17,7 @@ struct GeneratorPromptSheet: View {
                     Picker("Class", selection: $selectedCourseID) {
                         Text("New class").tag(String?.none)
                         ForEach(courses) { course in
-                            Text(course.name).tag(Optional(course.externalID))
+                            Text(course.displayName).tag(Optional(course.externalID))
                         }
                     }
                     if selectedCourse == nil {

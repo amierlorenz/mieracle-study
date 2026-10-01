@@ -19,7 +19,7 @@ struct ExamDetailView: View {
                 TextField("Name", text: $exam.name)
                 DatePicker("Date", selection: $exam.date)
                     .disabled(exam.canvasItemID != nil)
-                LabeledContent("Class", value: exam.course?.name ?? "None")
+                LabeledContent("Class", value: exam.course?.displayName ?? "None")
             } footer: {
                 if exam.canvasItemID != nil {
                     Text("The date comes from Canvas and updates on every sync.")

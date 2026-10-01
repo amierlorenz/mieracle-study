@@ -32,7 +32,7 @@ struct AssignmentsSection: View {
     }
 
     private var courseNames: [Int: String] {
-        Dictionary(courses.compactMap { course in course.canvasCourseID.map { ($0, course.name) } }, uniquingKeysWith: { first, _ in first })
+        Dictionary(courses.compactMap { course in course.canvasCourseID.map { ($0, course.displayName) } }, uniquingKeysWith: { first, _ in first })
     }
 
     private func courseName(for item: CanvasItem) -> String? {
