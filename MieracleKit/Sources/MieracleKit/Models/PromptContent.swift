@@ -12,6 +12,14 @@ public enum PromptKind: String, Codable, CaseIterable, Identifiable, Sendable {
 
     public var id: Self { self }
 
+    /// Whether the kind is about programming.
+    public var isCoding: Bool {
+        switch self {
+        case .codeImplement, .codeComplexity, .patternPick, .fullProblem: true
+        case .flashcard, .shortAnswer, .multipleChoice: false
+        }
+    }
+
     /// Whether the kind needs a code runner, which only exists on macOS.
     public var requiresCodeRunner: Bool { self == .codeImplement || self == .fullProblem }
 

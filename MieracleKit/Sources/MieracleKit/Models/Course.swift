@@ -11,6 +11,8 @@ public final class Course {
     public var name: String = ""
     /// The linked Canvas course, when Canvas sync is configured.
     public var canvasCourseID: Int?
+    /// Whether coding prompt kinds make sense for this class.
+    public var allowsCodingPrompts: Bool = false
     public var createdAt: Date = Date.now
 
     @Relationship(deleteRule: .cascade, inverse: \CourseUnit.course)
@@ -22,6 +24,11 @@ public final class Course {
     public init(externalID: String = UUID().uuidString, name: String) {
         self.externalID = externalID
         self.name = name
+    }
+
+    /// The prompt kinds that make sense for this class.
+    public var allowedPromptKinds: [PromptKind] {
+        PromptKind.allCases.filter { allowsCodingPrompts || !$0.isCoding }
     }
 
     /// Units ordered by ``CourseUnit/sortIndex``.

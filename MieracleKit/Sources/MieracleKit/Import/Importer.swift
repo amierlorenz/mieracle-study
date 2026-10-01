@@ -64,13 +64,18 @@ public struct Importer {
             counts.new += 1
             guard !dryRun else { return nil }
             let course = Course(externalID: item.id, name: item.name)
+            course.allowsCodingPrompts = item.impliesCoding
             context.insert(course)
             store.courses[item.id] = course
             return course
         }
-        if existing.name != item.name {
+        let allowsCoding = existing.allowsCodingPrompts || item.impliesCoding
+        if existing.name != item.name || existing.allowsCodingPrompts != allowsCoding {
             counts.updated += 1
-            if !dryRun { existing.name = item.name }
+            if !dryRun {
+                existing.name = item.name
+                existing.allowsCodingPrompts = allowsCoding
+            }
         } else {
             counts.unchanged += 1
         }

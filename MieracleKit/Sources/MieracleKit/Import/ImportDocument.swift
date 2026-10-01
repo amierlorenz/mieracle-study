@@ -54,11 +54,14 @@ extension ImportDocument {
     public struct Course: Codable, Hashable, Sendable {
         public var id: String
         public var name: String
+        /// Whether coding prompt kinds belong in this class. Implied when any prompt is a coding kind.
+        public var coding: Bool?
         public var units: [Unit]
 
-        public init(id: String, name: String, units: [Unit]) {
+        public init(id: String, name: String, coding: Bool? = nil, units: [Unit]) {
             self.id = id
             self.name = name
+            self.coding = coding
             self.units = units
         }
 
@@ -66,7 +69,13 @@ extension ImportDocument {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             id = try c.decode(String.self, forKey: .id)
             name = try c.decode(String.self, forKey: .name)
+            coding = try c.decodeIfPresent(Bool.self, forKey: .coding)
             units = try c.decodeIfPresent([Unit].self, forKey: .units) ?? []
+        }
+
+        /// Whether the class should allow coding kinds after import.
+        public var impliesCoding: Bool {
+            coding ?? units.contains { $0.concepts.contains { $0.prompts.contains { $0.content.kind.isCoding } } }
         }
     }
 

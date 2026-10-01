@@ -18,12 +18,20 @@ public struct GeneratorPrompt: Sendable {
     public var units: [UnitReference]
     /// Concept ids that already exist, so the AI updates instead of duplicating them.
     public var existingConceptIDs: [String]
+    /// Whether coding prompt kinds belong in this class.
+    public var isCodingClass: Bool
 
-    public init(courseID: String, courseName: String, units: [UnitReference] = [], existingConceptIDs: [String] = []) {
+    public init(courseID: String, courseName: String, units: [UnitReference] = [], existingConceptIDs: [String] = [], isCodingClass: Bool = false) {
         self.courseID = courseID
         self.courseName = courseName
         self.units = units
         self.existingConceptIDs = existingConceptIDs
+        self.isCodingClass = isCodingClass
+    }
+
+    /// The prompt kinds this class's content should use.
+    public var allowedKinds: [PromptKind] {
+        PromptKind.allCases.filter { isCodingClass || !$0.isCoding }
     }
 
     /// Lowercase, hyphenated form of a name, suitable for ids.
@@ -46,13 +54,15 @@ public struct GeneratorPrompt: Sendable {
         - Skip logistics (due dates, grading policy, office hours).
         - One idea per concept. A concept's `title` is a short name; its `explanation` is 2–5 sentences of Markdown that teach the idea and say why it matters.
 
+        ## Allowed prompt types for this class
+        Use only: \(allowedKinds.map { "`\($0.rawValue)`" }.joined(separator: ", ")).\(isCodingClass ? " This is a programming class; set `\"coding\": true` on the course." : " This is not a programming class; never use code prompt types.")
+
         ## Prompts (2–4 per concept, mixed types)
         - Favor recall over recognition: at least one `flashcard` or `shortAnswer` per concept.
         - Include "why" or "how" questions, not only "what".
         - `shortAnswer`: a model answer plus 2–4 `keyPoints` a correct answer must mention.
         - `multipleChoice`: 3–5 options; wrong options are plausible misconceptions, not jokes.
-        - Programming material: `codeImplement` (Python function with test cases), `codeComplexity` (Big-O of a snippet), and `patternPick` (choose the approach or data structure, with the reason in `explanation`). For classic interview problems, add one `fullProblem` that combines all stages: pattern, plan, code with tests, and Big-O.
-        - Math uses LaTeX: `$inline$` and `$$display$$`. Code uses fenced blocks. Escape backslashes for JSON (`\\\\frac`).
+        \(codingRules)        - Math uses LaTeX: `$inline$` and `$$display$$`. Code uses fenced blocks. Escape backslashes for JSON (`\\\\frac`).
         - Every prompt must be answerable from the concept's explanation or the material.
 
         ## Ids
@@ -94,6 +104,11 @@ public struct GeneratorPrompt: Sendable {
         ```
         Field notes: Coding problems default to Python. For Swift, set `"language": "swift"`, add `"signature": {"parameters": ["[Int]", "Int"], "returns": "[Int]"}`, and write `starterCode` with unlabeled parameters (`func solve(_ nums: [Int], _ target: Int) -> [Int]`). `comparison` is `exact`, `unordered` (lists in any order), or `float`. `tests[].args` are positional arguments. `patternPick` without `options`/`correctIndex` is graded as free text against `answer`. Optional fields may be omitted.
         """
+    }
+
+    private var codingRules: String {
+        guard isCodingClass else { return "" }
+        return "- Programming material: `codeImplement` (Python or Swift function with test cases), `codeComplexity` (Big-O of a snippet), and `patternPick` (choose the approach or data structure, with the reason in `explanation`). For classic interview problems, add one `fullProblem` that combines all stages: pattern, plan, code with tests, and Big-O.\n"
     }
 
     private var unitSection: String {

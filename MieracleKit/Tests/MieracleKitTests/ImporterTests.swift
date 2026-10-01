@@ -129,3 +129,18 @@ struct ImporterTests {
         #expect(exam.units?.count == 2)
     }
 }
+
+extension ImporterTests {
+    @Test func codingPromptsMarkTheClassAsCoding() throws {
+        try importer.apply(sample)
+        let course = try #require(try context.fetch(FetchDescriptor<Course>()).first)
+        #expect(course.allowsCodingPrompts)
+        #expect(course.allowedPromptKinds == PromptKind.allCases)
+
+        let plain = ImportDocument(courses: [.init(id: "notes", name: "Notes", units: [])])
+        try importer.apply(plain)
+        let notes = try #require(try context.fetch(FetchDescriptor<Course>()).first { $0.externalID == "notes" })
+        #expect(!notes.allowsCodingPrompts)
+        #expect(!notes.allowedPromptKinds.contains(.codeImplement))
+    }
+}

@@ -37,3 +37,15 @@ struct GeneratorPromptTests {
         #expect(GeneratorPrompt.slug(input) == expected)
     }
 }
+
+extension GeneratorPromptTests {
+    @Test func nonCodingClassesListOnlyNonCodingKinds() {
+        let general = GeneratorPrompt(courseID: "mis", courseName: "Make It Stick")
+        #expect(general.allowedKinds == [.flashcard, .shortAnswer, .multipleChoice])
+        #expect(general.text.contains("never use code prompt types"))
+
+        let coding = GeneratorPrompt(courseID: "cs", courseName: "CS", isCodingClass: true)
+        #expect(coding.allowedKinds == PromptKind.allCases)
+        #expect(coding.text.contains("\"coding\": true"))
+    }
+}
