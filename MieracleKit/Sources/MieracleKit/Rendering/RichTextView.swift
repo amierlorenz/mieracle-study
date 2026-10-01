@@ -5,11 +5,12 @@ import WebKit
 /// Displays Markdown with LaTeX math and syntax-highlighted code blocks.
 ///
 /// Inline math uses `$…$` or `\(…\)`; display math uses `$$…$$` or `\[…\]`.
-/// Rendering is fully offline, and the view sizes itself to its content.
+/// Rendering is fully offline, the view sizes itself to its content, and
+/// scrolling over it scrolls the surrounding page.
 public struct RichTextView: View {
     private let markdown: String
 
-    @State private var page: WebPage?
+    @State private var renderer: RichTextRenderer?
     @State private var height: CGFloat = 20
     @State private var width: CGFloat = 0
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -20,10 +21,8 @@ public struct RichTextView: View {
 
     public var body: some View {
         Group {
-            if let page {
-                WebView(page)
-                    .webViewContentBackground(.hidden)
-                    .webViewLinkPreviews(.disabled)
+            if let renderer {
+                WebViewHost(webView: renderer.webView)
             } else {
                 Color.clear
             }
@@ -46,16 +45,12 @@ public struct RichTextView: View {
     }
 
     private func render() async {
+        let renderer = renderer ?? RichTextRenderer()
+        self.renderer = renderer
         do {
-            let page = try await loadedPage()
-            let result = try await page.callJavaScript(
-                "return render(markdown, fontSize)",
-                arguments: ["markdown": markdown, "fontSize": fontSize]
-            )
-            if let measured = result as? Double, measured > 0 {
-                height = measured
-            }
-            try await settleHeight(of: page)
+            let measured = try await renderer.render(markdown: markdown, fontSize: fontSize)
+            if measured > 0 { height = measured }
+            try await settleHeight(with: renderer)
         } catch is CancellationError {
         } catch {
             Logger.rendering.error("Rendering failed: \(error)")
@@ -64,11 +59,12 @@ public struct RichTextView: View {
 
     /// The web view can still be resizing to its final width when content is
     /// first measured, so re-measure briefly until the height stops changing.
-    private func settleHeight(of page: WebPage) async throws {
+    private func settleHeight(with renderer: RichTextRenderer) async throws {
         var stableCount = 0
         for _ in 0..<10 where stableCount < 2 {
             try await Task.sleep(for: .milliseconds(80))
-            guard let measured = try await page.callJavaScript("return measure()") as? Double, measured > 0 else { continue }
+            let measured = try await renderer.measure()
+            guard measured > 0 else { continue }
             if abs(measured - height) < 1 {
                 stableCount += 1
             } else {
@@ -77,21 +73,6 @@ public struct RichTextView: View {
             }
         }
     }
-
-    private func loadedPage() async throws -> WebPage {
-        if let page { return page }
-        let newPage = try await Self.makeLoadedPage()
-        page = newPage
-        return newPage
-    }
-
-    static func makeLoadedPage() async throws -> WebPage {
-        var configuration = WebPage.Configuration()
-        configuration.urlSchemeHandlers[URLScheme(BundleAssetSchemeHandler.scheme)!] = BundleAssetSchemeHandler()
-        let page = WebPage(configuration: configuration, navigationDecider: ExternalLinkDecider())
-        for try await _ in page.load(BundleAssetSchemeHandler.templateURL) {}
-        return page
-    }
 }
 
 private struct RenderKey: Equatable {
@@ -99,6 +80,20 @@ private struct RenderKey: Equatable {
     let width: CGFloat
     let typeSize: DynamicTypeSize
 }
+
+#if os(macOS)
+private struct WebViewHost: NSViewRepresentable {
+    let webView: WKWebView
+    func makeNSView(context: Context) -> WKWebView { webView }
+    func updateNSView(_ view: WKWebView, context: Context) {}
+}
+#else
+private struct WebViewHost: UIViewRepresentable {
+    let webView: WKWebView
+    func makeUIView(context: Context) -> WKWebView { webView }
+    func updateUIView(_ view: WKWebView, context: Context) {}
+}
+#endif
 
 extension Logger {
     static let rendering = Logger(subsystem: "com.mieracle.MieracleStudy", category: "rendering")
