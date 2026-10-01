@@ -9,26 +9,30 @@ struct AssignmentRow: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(item.name)
-                Text(details)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            Button("Done", systemImage: "checkmark.circle", action: markDone)
+        HStack(spacing: 12) {
+            Button("Mark Done", systemImage: "circle", action: markDone)
                 .labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.name)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+            if let due = item.dueAt {
+                DueDateBadge(date: due)
+            }
         }
     }
 
-    private var details: String {
+    private var subtitle: String? {
         var parts: [String] = []
         if let courseName { parts.append(courseName) }
-        if let due = item.dueAt { parts.append("due \(due.formatted(.relative(presentation: .named)))") }
         if let unlock = item.unlockAt, unlock > .now { parts.append("opens \(unlock.formatted(date: .abbreviated, time: .omitted))") }
-        return parts.joined(separator: " · ")
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
     private func markDone() {
