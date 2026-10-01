@@ -54,8 +54,11 @@ A `CodeRunner` protocol with a macOS `PythonRunner` that writes the user's solut
 ### Rendering (`MieracleKit/Rendering`)
 `RichTextView` uses SwiftUI's `WebView` with a `WebPage` that loads a bundled template over a private `mieracle:` URL scheme. The template's script pulls math out before Markdown parsing (so code spans and underscores survive), renders with marked.js, KaTeX, and highlight.js, and returns the content height, which the view uses as its frame height. A content security policy limits scripts to the bundled files, and clicked links open in the default browser.
 
+### Overview (`MieracleKit/Overview`)
+`StudyOverview` turns courses and exams into dashboard numbers: due and new counts per class, and for each upcoming exam the days left, concepts studied, weak concepts (low ease or repeated lapses), and a session scope for exam prep.
+
 ### App (`MieracleStudy/`)
-Minimal stock SwiftUI: a sidebar with Dashboard, Study, Library, Exams, Import, and Settings.
+Minimal stock SwiftUI: a sidebar with Dashboard, Study, Library, Exams, Import, and Settings. `AppNavigation` lets one screen open another (the dashboard starts sessions), and `CanvasService` and `VariantGenerationService` run background work. Debug builds accept launch arguments (`-localStore YES`, `-seedImport <path>`, `-section <name>`, `-startSession <mode>`) for simulator runs and screenshots.
 
 ## Key Design Decisions
 

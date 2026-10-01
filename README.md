@@ -12,7 +12,8 @@ The goal is to spend almost no time making study material and almost all of it r
 - **JSON import:** full concepts with prompts, updated in place by stable ids. A built-in generator prompt and a Claude Code skill produce valid files from slides and documents.
 - **On-device AI:** Foundation Models suggests short-answer grades and rewords questions into variants.
 - **Coding practice (Mac):** write Python solutions graded against test cases, analyze Big-O, and pick the right pattern — practiced separately and interleaved.
-- **Canvas sync:** exam dates refresh daily; you map exams to units.
+- **Exams and Canvas:** exams map to units and tags and shape scheduling; Canvas sync refreshes linked exam dates daily and suggests exams from assignment names.
+- **Dashboard:** what's due per class, exam countdowns with readiness, and one-tap review, learn-new, and exam-prep sessions.
 - **Rich content:** Markdown, LaTeX, and highlighted code everywhere.
 
 ## Requirements
