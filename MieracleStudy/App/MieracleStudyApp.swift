@@ -25,6 +25,11 @@ struct MieracleStudyApp: App {
     }
 
     private static func makeContainer() -> ModelContainer {
+        #if DEBUG
+        if DebugLaunchOptions.usesLocalStore, let container = try? ModelContainerFactory.make(storage: .local) {
+            return container
+        }
+        #endif
         do {
             return try ModelContainerFactory.make(storage: .cloudSynced)
         } catch {

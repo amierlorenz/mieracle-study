@@ -24,6 +24,9 @@ struct RootView: View {
     }
 
     private func prepareStore() async {
+        #if DEBUG
+        DebugLaunchOptions.apply(context: modelContext, navigation: navigation)
+        #endif
         do {
             try DuplicateMerger.mergeAll(in: modelContext)
         } catch {
