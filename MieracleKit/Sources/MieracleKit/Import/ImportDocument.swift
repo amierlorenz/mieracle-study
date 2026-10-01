@@ -54,13 +54,16 @@ extension ImportDocument {
     public struct Course: Codable, Hashable, Sendable {
         public var id: String
         public var name: String
+        /// A compact label such as "CSC 395 | Swift".
+        public var shortName: String?
         /// Whether coding prompt kinds belong in this class. Implied when any prompt is a coding kind.
         public var coding: Bool?
         public var units: [Unit]
 
-        public init(id: String, name: String, coding: Bool? = nil, units: [Unit]) {
+        public init(id: String, name: String, shortName: String? = nil, coding: Bool? = nil, units: [Unit]) {
             self.id = id
             self.name = name
+            self.shortName = shortName
             self.coding = coding
             self.units = units
         }
@@ -69,6 +72,7 @@ extension ImportDocument {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             id = try c.decode(String.self, forKey: .id)
             name = try c.decode(String.self, forKey: .name)
+            shortName = try c.decodeIfPresent(String.self, forKey: .shortName)
             coding = try c.decodeIfPresent(Bool.self, forKey: .coding)
             units = try c.decodeIfPresent([Unit].self, forKey: .units) ?? []
         }

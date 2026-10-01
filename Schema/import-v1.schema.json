@@ -55,6 +55,10 @@
         "coding": {
           "type": "boolean",
           "description": "True for programming classes, which may use code prompt types. Implied when any prompt uses one."
+        },
+        "shortName": {
+          "type": "string",
+          "description": "Optional compact label such as \"CSC 395 | Swift\"."
         }
       }
     },

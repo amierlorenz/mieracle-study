@@ -22,7 +22,7 @@ public struct Exporter {
     }
 
     private static func export(_ course: Course) -> ImportDocument.Course {
-        .init(id: course.externalID, name: course.name, coding: course.allowsCodingPrompts ? true : nil, units: course.sortedUnits.map(export))
+        .init(id: course.externalID, name: course.name, shortName: course.shortName, coding: course.allowsCodingPrompts ? true : nil, units: course.sortedUnits.map(export))
     }
 
     private static func export(_ unit: CourseUnit) -> ImportDocument.Unit {

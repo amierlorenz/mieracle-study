@@ -65,16 +65,19 @@ public struct Importer {
             guard !dryRun else { return nil }
             let course = Course(externalID: item.id, name: item.name)
             course.allowsCodingPrompts = item.impliesCoding
+            course.shortName = item.shortName
             context.insert(course)
             store.courses[item.id] = course
             return course
         }
         let allowsCoding = existing.allowsCodingPrompts || item.impliesCoding
-        if existing.name != item.name || existing.allowsCodingPrompts != allowsCoding {
+        let shortName = item.shortName ?? existing.shortName
+        if existing.name != item.name || existing.allowsCodingPrompts != allowsCoding || existing.shortName != shortName {
             counts.updated += 1
             if !dryRun {
                 existing.name = item.name
                 existing.allowsCodingPrompts = allowsCoding
+                existing.shortName = shortName
             }
         } else {
             counts.unchanged += 1
