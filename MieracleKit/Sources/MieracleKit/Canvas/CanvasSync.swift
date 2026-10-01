@@ -14,6 +14,10 @@ public struct CanvasSync {
         public var newItems = 0
         public var updatedItems = 0
         public var movedExams = 0
+        public var removedItems = 0
+        /// Additions, removals, and date moves, for showing the user. The first
+        /// sync of a course reports nothing, since everything would be "new".
+        public var changes: [CanvasChange] = []
     }
 
     private let context: ModelContext
@@ -41,9 +45,17 @@ public struct CanvasSync {
         }
 
         var items = Dictionary(try context.fetch(FetchDescriptor<CanvasItem>()).map { ($0.canvasID, $0) }, uniquingKeysWith: { first, _ in first })
+        let examItemIDs = Set(try context.fetch(FetchDescriptor<Exam>()).compactMap(\.canvasItemID))
+        let previouslySynced = Set(items.values.map(\.canvasCourseID))
         var result = Result()
+        func change(_ kind: CanvasChange.Kind, id: String, course: Int, name: String, old: Date?, new: Date?) {
+            result.changes.append(CanvasChange(kind: kind, canvasID: id, canvasCourseID: course, name: name, oldDate: old, newDate: new, isExam: examItemIDs.contains(id), detectedAt: now))
+        }
         for entry in fetched {
             if let item = items[entry.id] {
+                if item.dueAt != entry.due {
+                    change(.rescheduled, id: entry.id, course: entry.course, name: entry.name, old: item.dueAt, new: entry.due)
+                }
                 if item.name != entry.name || item.dueAt != entry.due || item.unlockAt != entry.unlock || item.isSubmitted != entry.submitted {
                     result.updatedItems += 1
                     item.name = entry.name
@@ -60,7 +72,18 @@ public struct CanvasSync {
                 context.insert(item)
                 items[entry.id] = item
                 result.newItems += 1
+                if previouslySynced.contains(entry.course) {
+                    change(.added, id: entry.id, course: entry.course, name: entry.name, old: nil, new: entry.due)
+                }
             }
+        }
+
+        let fetchedIDs = Set(fetched.map(\.id))
+        for item in items.values where courseIDs.contains(item.canvasCourseID) && !fetchedIDs.contains(item.canvasID) {
+            change(.removed, id: item.canvasID, course: item.canvasCourseID, name: item.name, old: item.dueAt, new: nil)
+            items[item.canvasID] = nil
+            context.delete(item)
+            result.removedItems += 1
         }
 
         for exam in try context.fetch(FetchDescriptor<Exam>()) {

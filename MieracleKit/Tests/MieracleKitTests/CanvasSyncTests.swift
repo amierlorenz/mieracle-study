@@ -68,6 +68,27 @@ struct CanvasSyncTests {
         #expect(algebra.name == "Lin Alg")
     }
 
+    @Test func reportsAddedRemovedAndRescheduledItems() async throws {
+        let first = try await CanvasSync(context: context, client: client(midtermDue: "2026-10-20T15:00:00Z")).run(now: now)
+        #expect(first.changes.isEmpty)
+        let item = try #require(try context.fetch(FetchDescriptor<CanvasItem>()).first { $0.canvasID == "assignment_1" })
+        try CanvasSync.makeExam(from: item, in: context)
+
+        let stub = StubURLProtocol.stub([
+            "/api/v1/courses/7/assignments": .init(body: #"[{"id": 1, "name": "Midterm 1", "due_at": "2026-10-27T15:00:00Z"}, {"id": 3, "name": "Quiz 5", "due_at": "2026-11-02T15:00:00Z"}]"#),
+            "/api/v1/calendar_events": .init(body: #"[{"id": 9, "title": "Final Exam", "start_at": "2026-12-12T14:00:00Z"}]"#),
+        ])
+        let second = try await CanvasSync(context: context, client: CanvasClient(baseURL: URL(string: "https://school.instructure.com")!, token: "fake", session: stub.session)).run(now: now)
+
+        let byKind = Dictionary(grouping: second.changes, by: \.kind)
+        #expect(byKind[.rescheduled]?.map(\.name) == ["Midterm 1"])
+        #expect(byKind[.rescheduled]?.first?.isExam == true)
+        #expect(byKind[.added]?.map(\.name) == ["Quiz 5"])
+        #expect(byKind[.removed]?.map(\.name) == ["Lab 3"])
+        #expect(second.removedItems == 1)
+        #expect(try context.fetchCount(FetchDescriptor<CanvasItem>()) == 3)
+    }
+
     @Test(arguments: [(nil, true), (-3600.0, false), (-90_000.0, true)] as [(Double?, Bool)])
     func syncsAtMostDaily(offset: Double?, expected: Bool) {
         #expect(CanvasSync.isDue(lastSync: offset.map { now.addingTimeInterval($0) }, now: now) == expected)
