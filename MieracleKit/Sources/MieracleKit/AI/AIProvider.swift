@@ -15,6 +15,9 @@ public protocol AIProvider: Sendable {
     /// Explains in two or three sentences why one answer choice is right or wrong.
     func explainChoice(question: String, choice: String, correctChoice: String, context: String) async throws -> String
 
+    /// A compact class label such as "CSC 395 | Swift".
+    func suggestShortName(for name: String) async throws -> String
+
     /// Writes starter prompts for a concept that only has an explanation.
     func generatePrompts(title: String, explanation: String) async throws -> [PromptContent]
 }

@@ -62,3 +62,13 @@ extension FoundationModelsProviderTests {
         #expect(!text.isEmpty)
     }
 }
+
+extension FoundationModelsProviderTests {
+    @Test(.enabled(if: SystemLanguageModel.default.isAvailable, "Apple Intelligence unavailable"), .timeLimit(.minutes(1)))
+    func suggestsCompactClassName() async throws {
+        let name = try await provider.suggestShortName(for: "Advanced Swift App Dev-ARKit - CSC-395-01-Fall 2026")
+        #expect(name.hasPrefix("CSC 395 | "))
+        #expect(name.count <= 30)
+        print("Suggested:", name)
+    }
+}

@@ -76,6 +76,16 @@ public struct FoundationModelsProvider: AIProvider {
         return try await session(instructions: Self.explanationInstructions).respond(to: prompt).content
     }
 
+    public func suggestShortName(for name: String) async throws -> String {
+        let output = try await session(instructions: Self.shortNameInstructions)
+            .respond(to: "Class title: \(name)", generating: ShortClassName.self)
+            .content
+        let code = ClassNameShortener.courseCode(in: name)
+        let topic = output.topic.trimmingCharacters(in: .whitespaces)
+        guard !topic.isEmpty else { return ClassNameShortener.suggest(for: name) }
+        return code.map { "\($0) | \(topic)" } ?? topic
+    }
+
     public func generatePrompts(title: String, explanation: String) async throws -> [PromptContent] {
         let prompt = "Concept: \(title)\n\nExplanation:\n\(explanation)"
         let output = try await session(instructions: Self.generationInstructions)
@@ -116,6 +126,12 @@ public struct FoundationModelsProvider: AIProvider {
     static let explanationInstructions = """
     You are a patient tutor. Explain why a multiple-choice answer is right or wrong, plainly and briefly.
     Stay consistent with the stated correct answer and the background material. Address the student directly.
+    """
+
+    static let shortNameInstructions = """
+    You shorten long college class titles for a compact label.
+    Give the core subject in one or two words, the way a student would say it ("Swift", "Info Assurance", "Operating Systems", "Physics", "Statistics").
+    Ignore section numbers, terms, course codes, and words like Intro, Advanced, or Principles.
     """
 
     static let generationInstructions = """
@@ -182,6 +198,12 @@ struct GeneratedPrompts {
     var modelAnswer: String
     @Guide(description: "Points a correct answer must mention", .count(2...4))
     var keyPoints: [String]
+}
+
+@Generable
+struct ShortClassName {
+    @Guide(description: "The class's core subject in one or two words")
+    var topic: String
 }
 
 @Generable
