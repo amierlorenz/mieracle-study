@@ -30,7 +30,14 @@ struct CanvasSettingsSection: View {
         } header: {
             Text("Canvas")
         } footer: {
-            Text("Create a token in Canvas → Account → Settings → New Access Token. It's stored only in your Keychain and synced with iCloud Keychain.")
+            VStack(alignment: .leading, spacing: 4) {
+                Text("To get a token:")
+                Text("1. In Canvas, open Account → Settings.")
+                Text("2. Under Approved Integrations, choose New Access Token.")
+                Text("3. Set the expiration date 90 days out (the maximum).")
+                Text("4. Copy the token and paste it above, then Save Token.")
+                Text("It's stored only in your Keychain and synced through iCloud Keychain.")
+            }
         }
         .onAppear(perform: loadTokenState)
     }
