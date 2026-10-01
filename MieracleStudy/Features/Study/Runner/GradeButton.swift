@@ -9,9 +9,13 @@ struct GradeButton: View {
 
     var body: some View {
         if isSuggested {
-            button.buttonStyle(.borderedProminent)
+            button
+                .buttonStyle(.glassProminent)
+                .tint(grade.color)
         } else {
-            button.buttonStyle(.bordered)
+            button
+                .buttonStyle(.glass)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -31,6 +35,16 @@ extension Grade {
         case .hard: "Hard"
         case .good: "Good"
         case .easy: "Easy"
+        }
+    }
+
+    /// Highlight for the suggested grade.
+    var color: Color {
+        switch self {
+        case .again: .red
+        case .hard: .yellow
+        case .good: .green
+        case .easy: .accentColor
         }
     }
 }
