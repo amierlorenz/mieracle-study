@@ -7,6 +7,8 @@ import SwiftUI
 struct MieracleStudyApp: App {
     private let container: ModelContainer
     @State private var variantGeneration = VariantGenerationService()
+    @State private var navigation = AppNavigation()
+    @State private var canvas = CanvasService()
 
     init() {
         container = Self.makeContainer()
@@ -16,6 +18,8 @@ struct MieracleStudyApp: App {
         WindowGroup {
             RootView()
                 .environment(variantGeneration)
+                .environment(navigation)
+                .environment(canvas)
         }
         .modelContainer(container)
     }

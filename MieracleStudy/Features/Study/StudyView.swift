@@ -5,6 +5,7 @@ import SwiftUI
 
 struct StudyView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppNavigation.self) private var navigation
     @AppStorage(SettingsKey.dailyNewLimit) private var dailyNewLimit = NewConceptBudget.defaultLimit
     @State private var engine: SessionEngine?
     @State private var message: String?
@@ -19,6 +20,13 @@ struct StudyView: View {
                 SessionSetupView(message: message, onStart: start)
             }
         }
+        .onChange(of: navigation.pendingSession, initial: true, startPending)
+    }
+
+    private func startPending() {
+        guard let config = navigation.pendingSession else { return }
+        navigation.pendingSession = nil
+        start(config)
     }
 
     private func start(_ config: SessionConfig) {
