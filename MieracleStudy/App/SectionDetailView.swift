@@ -9,7 +9,6 @@ struct SectionDetailView: View {
         case .study: StudyView()
         case .library: LibraryView()
         case .exams: ExamsView()
-        case .importExport: ImportView()
         case .settings: SettingsView()
         }
     }

@@ -12,7 +12,27 @@ struct RootView: View {
     @Environment(CanvasService.self) private var canvas
 
     var body: some View {
+        root
+            .task(prepareStore)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await canvas.syncIfDue(context: modelContext) }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var root: some View {
         @Bindable var navigation = navigation
+        #if os(iOS)
+        TabView(selection: tabSelection) {
+            ForEach(SidebarSection.tabs) { section in
+                Tab(section.title, systemImage: section.systemImage, value: section) {
+                    SectionDetailView(section: section)
+                }
+            }
+        }
+        #else
         NavigationSplitView {
             List(SidebarSection.allCases, selection: $navigation.selection) { section in
                 Label(section.title, systemImage: section.systemImage)
@@ -21,12 +41,11 @@ struct RootView: View {
         } detail: {
             SectionDetailView(section: navigation.selection ?? .dashboard)
         }
-        .task(prepareStore)
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
-                Task { await canvas.syncIfDue(context: modelContext) }
-            }
-        }
+        #endif
+    }
+
+    private var tabSelection: Binding<SidebarSection> {
+        Binding { navigation.selection ?? .dashboard } set: { navigation.selection = $0 }
     }
 
     private func prepareStore() async {
