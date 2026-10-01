@@ -1,4 +1,5 @@
 import MieracleKit
+import SwiftData
 import SwiftUI
 
 struct SessionSetupView: View {
@@ -6,6 +7,7 @@ struct SessionSetupView: View {
     let onStart: (SessionConfig) -> Void
 
     @State private var draft = SessionSetupDraft()
+    @Query private var concepts: [Concept]
 
     var body: some View {
         Form {
@@ -48,16 +50,20 @@ struct SessionSetupView: View {
                     }
                 }
             }
-            PromptKindsSection(kinds: $draft.promptKinds)
+            PromptKindsSection(kinds: $draft.promptKinds, kindsInScope: kindsInScope)
             Section {
                 Button("Start Session", systemImage: "play.fill") { onStart(draft.config) }
                     .buttonStyle(.borderedProminent)
-                    .disabled(draft.promptKinds.isEmpty)
+                    .disabled(draft.promptKinds.isDisjoint(with: kindsInScope))
                     .keyboardShortcut(.defaultAction)
             }
         }
         .formStyle(.grouped)
         .navigationTitle("Study")
         .inlineTitleOnPhone()
+    }
+
+    private var kindsInScope: Set<PromptKind> {
+        Set(concepts.map(ConceptSnapshot.init).filter(draft.scope.contains).flatMap { $0.prompts.filter { !$0.isFlagged }.map(\.kind) })
     }
 }
