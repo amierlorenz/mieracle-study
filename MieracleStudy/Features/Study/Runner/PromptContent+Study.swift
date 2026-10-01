@@ -31,6 +31,16 @@ extension PromptContent {
         }
     }
 
+    /// Whether the learner can skip ahead to the answer. Multiple choice
+    /// requires picking an option first.
+    var allowsGettingAnswer: Bool {
+        switch self {
+        case .flashcard, .multipleChoice, .fullProblem: false
+        case .patternPick(let c): c.options == nil
+        case .shortAnswer, .codeComplexity, .codeImplement: true
+        }
+    }
+
     /// What to send for AI grading, for free-text kinds.
     func gradingRequest(for input: AnswerInput) -> GradingRequest? {
         switch self {

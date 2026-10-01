@@ -3,7 +3,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage(SettingsKey.dailyNewLimit) private var dailyNewLimit = NewConceptBudget.defaultLimit
-    @AppStorage(SettingsKey.asksConfidence) private var asksConfidence = false
+    @AppStorage(SettingsKey.asksConfidence) private var asksConfidence = true
+    @AppStorage(SettingsKey.blursChoices) private var blursChoices = true
     @AppStorage(SettingsKey.aiModel) private var aiModel = FoundationModelsProvider.ModelChoice.onDevice.rawValue
 
     var body: some View {
@@ -17,9 +18,10 @@ struct SettingsView: View {
                     Text("Limits how many never-studied concepts Learn New introduces each day, so large imports don't flood future reviews.")
                 }
                 Section {
-                    Toggle("Rate confidence before answers", isOn: $asksConfidence)
+                    Toggle("Show confidence buttons", isOn: $asksConfidence)
+                    Toggle("Hide answer choices for 3 seconds", isOn: $blursChoices)
                 } footer: {
-                    Text("Before revealing an answer, tap how sure you are. Helps you notice when familiarity feels like knowing.")
+                    Text("Confidence buttons (Sure, Not sure, No idea) are optional and feed the calibration stats. Hiding choices makes you recall the answer before recognizing it.")
                 }
                 AISettingsSection(aiModel: $aiModel)
                 CanvasSettingsSection()
