@@ -40,6 +40,7 @@ struct ConceptDetailView: View {
                         .onTapGesture { editingPrompt = prompt }
                         .contextMenu {
                             Button("Edit", systemImage: "pencil") { editingPrompt = prompt }
+                            Button(prompt.isFlagged ? "Unflag" : "Flag", systemImage: "flag") { toggleFlag(prompt) }
                             Button("Delete", systemImage: "trash", role: .destructive) { delete(prompt) }
                         }
                 }
@@ -86,6 +87,11 @@ struct ConceptDetailView: View {
 
     private func update(_ prompt: Prompt, content: PromptContent) {
         prompt.content = content
+        modelContext.saveLogging()
+    }
+
+    private func toggleFlag(_ prompt: Prompt) {
+        prompt.isFlagged.toggle()
         modelContext.saveLogging()
     }
 

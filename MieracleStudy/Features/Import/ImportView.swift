@@ -6,6 +6,8 @@ import UniformTypeIdentifiers
 
 struct ImportView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(VariantGenerationService.self) private var variantGeneration
+    @AppStorage(SettingsKey.aiModel) private var aiModel = FoundationModelsProvider.ModelChoice.onDevice.rawValue
     @State private var pending: PendingImport?
     @State private var errorMessage: String?
     @State private var resultMessage: String?
@@ -122,6 +124,7 @@ struct ImportView: View {
             let plan = try Importer(context: modelContext).apply(pending.document)
             resultMessage = "Imported \(plan.concepts.new) new and \(plan.concepts.updated) updated concepts, \(plan.prompts.new + plan.prompts.updated) prompts."
             self.pending = nil
+            variantGeneration.start(context: modelContext, provider: FoundationModelsProvider(storedChoice: aiModel))
         } catch {
             show(error: error.localizedDescription)
         }

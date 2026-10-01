@@ -6,6 +6,7 @@ import SwiftUI
 @main
 struct MieracleStudyApp: App {
     private let container: ModelContainer
+    @State private var variantGeneration = VariantGenerationService()
 
     init() {
         container = Self.makeContainer()
@@ -14,6 +15,7 @@ struct MieracleStudyApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environment(variantGeneration)
         }
         .modelContainer(container)
     }

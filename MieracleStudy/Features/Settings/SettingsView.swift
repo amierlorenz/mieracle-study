@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage(SettingsKey.dailyNewLimit) private var dailyNewLimit = NewConceptBudget.defaultLimit
     @AppStorage(SettingsKey.asksConfidence) private var asksConfidence = false
+    @AppStorage(SettingsKey.aiModel) private var aiModel = FoundationModelsProvider.ModelChoice.onDevice.rawValue
 
     var body: some View {
         NavigationStack {
@@ -20,6 +21,7 @@ struct SettingsView: View {
                 } footer: {
                     Text("Before revealing an answer, tap how sure you are. Helps you notice when familiarity feels like knowing.")
                 }
+                AISettingsSection(aiModel: $aiModel)
             }
             .formStyle(.grouped)
             .navigationTitle("Settings")

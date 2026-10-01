@@ -45,7 +45,7 @@ public struct VariantGenerator {
     func nextSources(skipping exhausted: Set<PersistentIdentifier>) throws -> [Prompt] {
         try context.fetch(FetchDescriptor<Concept>()).compactMap { concept in
             let prompts = concept.prompts ?? []
-            guard prompts.count { $0.origin == .aiVariant } < Self.maxVariantsPerConcept else { return nil }
+            guard prompts.count(where: { $0.origin == .aiVariant }) < Self.maxVariantsPerConcept else { return nil }
             return prompts
                 .filter { $0.origin != .aiVariant && !$0.isFlagged && !exhausted.contains($0.persistentModelID) && ($0.content?.supportsVariants ?? false) }
                 .min { ($0.variants?.count ?? 0, $0.createdAt) < ($1.variants?.count ?? 0, $1.createdAt) }
