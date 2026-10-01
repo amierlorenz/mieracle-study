@@ -22,6 +22,9 @@ struct SettingsView: View {
                     Text("Before revealing an answer, tap how sure you are. Helps you notice when familiarity feels like knowing.")
                 }
                 AISettingsSection(aiModel: $aiModel)
+                #if os(macOS)
+                CodingSettingsSection()
+                #endif
             }
             .formStyle(.grouped)
             .navigationTitle("Settings")
