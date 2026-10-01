@@ -30,6 +30,18 @@ extension PromptContent {
         }
     }
 
+    /// What to send for AI grading, for free-text kinds.
+    func gradingRequest(for input: AnswerInput) -> GradingRequest? {
+        switch self {
+        case .shortAnswer(let c):
+            GradingRequest(question: c.question, modelAnswer: c.modelAnswer, keyPoints: c.keyPoints, answer: input.text)
+        case .patternPick(let c) where c.options == nil:
+            GradingRequest(question: c.statement, modelAnswer: "\(c.answer). \(c.explanation)", keyPoints: [c.answer], answer: input.text)
+        default:
+            nil
+        }
+    }
+
     /// A grade the app can infer on its own, before the learner confirms.
     func suggestedGrade(for input: AnswerInput) -> Grade? {
         guard let correct = correctOption, let selected = input.selectedOption else { return nil }

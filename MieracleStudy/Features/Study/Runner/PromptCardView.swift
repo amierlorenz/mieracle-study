@@ -7,11 +7,13 @@ struct PromptCardView: View {
     let concept: Concept
     let mode: StudyMode
     let asksConfidence: Bool
+    let provider: any AIProvider
     let onGrade: (Grade, Confidence?, TimeInterval) -> Void
 
     @State private var input = AnswerInput()
     @State private var isRevealed = false
     @State private var confidence: Confidence?
+    @State private var aiSuggestion: GradeSuggestion?
     @State private var shownAt = Date.now
 
     var body: some View {
@@ -22,14 +24,19 @@ struct PromptCardView: View {
                     AnswerInputView(content: content, isRevealed: isRevealed, input: $input)
                 } header: {
                     Text(prompt.kind.displayName)
+                } footer: {
+                    FlagPromptButton(prompt: prompt)
                 }
                 if isRevealed {
                     Section("Answer") {
                         RevealedAnswerView(content: content)
                     }
+                    if provider.isAvailable, let request = content.gradingRequest(for: input) {
+                        AIGradeSection(request: request, provider: provider, suggestion: $aiSuggestion)
+                    }
                     ExplanationSection(concept: concept, startsExpanded: mode == .learnNew)
                     Section {
-                        GradeButtonsView(suggested: content.suggestedGrade(for: input), onGrade: grade)
+                        GradeButtonsView(suggested: content.suggestedGrade(for: input) ?? aiSuggestion?.grade, onGrade: grade)
                     }
                 } else {
                     Section {

@@ -6,12 +6,13 @@ struct SessionRunnerView: View {
     let engine: SessionEngine
 
     @AppStorage(SettingsKey.asksConfidence) private var asksConfidence = false
+    @AppStorage(SettingsKey.aiModel) private var aiModel = FoundationModelsProvider.ModelChoice.onDevice.rawValue
 
     var body: some View {
         VStack(spacing: 0) {
             SessionHeaderView(engine: engine)
             if let prompt = engine.currentPrompt, let concept = engine.currentConcept {
-                PromptCardView(prompt: prompt, concept: concept, mode: engine.config.mode, asksConfidence: asksConfidence, onGrade: answer)
+                PromptCardView(prompt: prompt, concept: concept, mode: engine.config.mode, asksConfidence: asksConfidence, provider: FoundationModelsProvider(storedChoice: aiModel), onGrade: answer)
                     .id(engine.position)
             }
         }
