@@ -11,6 +11,9 @@ public protocol AIProvider: Sendable {
 
     /// Rewords a question without changing what it asks or its correct answer.
     func rephrase(question: String, answer: String, count: Int) async throws -> [String]
+
+    /// Writes starter prompts for a concept that only has an explanation.
+    func generatePrompts(title: String, explanation: String) async throws -> [PromptContent]
 }
 
 public struct GradingRequest: Hashable, Sendable {

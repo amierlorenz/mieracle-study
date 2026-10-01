@@ -26,6 +26,14 @@ final class MockAIProvider: AIProvider {
         return suggestion
     }
 
+    func generatePrompts(title: String, explanation: String) async throws -> [PromptContent] {
+        calls.withLock { $0 += 1 }
+        return [
+            .flashcard(.init(front: "What is \(title)?", back: explanation)),
+            .shortAnswer(.init(question: "Why does \(title) matter?", modelAnswer: explanation, keyPoints: ["point"])),
+        ]
+    }
+
     func rephrase(question: String, answer: String, count: Int) async throws -> [String] {
         let call = calls.withLock { $0 += 1; return $0 }
         return rephrasings(question, call)

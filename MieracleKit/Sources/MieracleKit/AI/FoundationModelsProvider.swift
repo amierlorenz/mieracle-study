@@ -56,6 +56,17 @@ public struct FoundationModelsProvider: AIProvider {
         return Array(output.questions.prefix(count))
     }
 
+    public func generatePrompts(title: String, explanation: String) async throws -> [PromptContent] {
+        let prompt = "Concept: \(title)\n\nExplanation:\n\(explanation)"
+        let output = try await session(instructions: Self.generationInstructions)
+            .respond(to: prompt, generating: GeneratedPrompts.self)
+            .content
+        return [
+            .flashcard(.init(front: output.flashcardFront, back: output.flashcardBack)),
+            .shortAnswer(.init(question: output.question, modelAnswer: output.modelAnswer, keyPoints: output.keyPoints)),
+        ]
+    }
+
     private func session(instructions: String) -> LanguageModelSession {
         if usesPrivateCloud, #available(iOS 27, macOS 27, *) {
             return LanguageModelSession(model: PrivateCloudComputeLanguageModel(), instructions: instructions)
@@ -80,6 +91,13 @@ public struct FoundationModelsProvider: AIProvider {
     Do not reveal or hint at the answer. Do not add new facts.
     Keep any Markdown, LaTeX ($...$), and code exactly as written.
     Vary the phrasing or angle, for example a different sentence structure or a short scenario.
+    """
+
+    static let generationInstructions = """
+    You write study questions from a concept and its explanation, for spaced-repetition practice.
+    Use only facts stated in the explanation. Questions must require recall, not recognition.
+    The flashcard asks for one key fact. The short-answer question asks why or how, and its key points are what a correct answer must mention.
+    Keep any LaTeX ($...$) and code exactly as written.
     """
 
     static func gradingPrompt(for request: GradingRequest) -> String {
@@ -125,6 +143,20 @@ enum GeneratedGrade {
         case .easy: .easy
         }
     }
+}
+
+@Generable
+struct GeneratedPrompts {
+    @Guide(description: "Flashcard question asking for one key fact")
+    var flashcardFront: String
+    @Guide(description: "Flashcard answer, one or two sentences")
+    var flashcardBack: String
+    @Guide(description: "A why or how question about the concept")
+    var question: String
+    @Guide(description: "Model answer to that question, two or three sentences")
+    var modelAnswer: String
+    @Guide(description: "Points a correct answer must mention", .count(2...4))
+    var keyPoints: [String]
 }
 
 @Generable

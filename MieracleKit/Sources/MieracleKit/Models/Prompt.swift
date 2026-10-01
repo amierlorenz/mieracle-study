@@ -59,5 +59,8 @@ public final class Prompt {
 public enum PromptOrigin: String, Codable, CaseIterable, Sendable {
     case imported
     case manual
+    /// A reworded copy of another prompt.
     case aiVariant
+    /// Written by AI from a concept's explanation (lean imports).
+    case aiGenerated
 }

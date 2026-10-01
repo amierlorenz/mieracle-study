@@ -37,3 +37,15 @@ struct FoundationModelsProviderTests {
         #expect(questions.allSatisfy { !$0.lowercased().contains("root") })
     }
 }
+
+extension FoundationModelsProviderTests {
+    @Test(.enabled(if: SystemLanguageModel.default.isAvailable, "Apple Intelligence unavailable"), .timeLimit(.minutes(1)))
+    func generatesValidPromptsFromExplanation() async throws {
+        let contents = try await provider.generatePrompts(
+            title: "Spaced practice",
+            explanation: "Spaced practice means studying material several times with time in between, so some forgetting happens first. Reconstructing the idea from memory takes effort, which makes it more durable."
+        )
+        #expect(contents.map(\.kind) == [.flashcard, .shortAnswer])
+        #expect(contents.allSatisfy { !$0.questionText.isEmpty })
+    }
+}

@@ -78,7 +78,7 @@ public struct ImportValidator: Sendable {
                     checkID(concept.id, kind: "concept", at: conceptPath)
                     requireText(concept.title, "Concept title", at: conceptPath)
                     if concept.prompts.isEmpty {
-                        warning(conceptPath, "Concept has no prompts, so it can't be studied.")
+                        warning(conceptPath, concept.explanation.isEmpty ? "Concept has no prompts or explanation, so it can't be studied." : "No prompts; the Mac app will write some from the explanation when AI is available.")
                     }
                     for (ri, resource) in concept.resources.enumerated() where !["http", "https"].contains(resource.url.scheme ?? "") {
                         error("\(conceptPath).resources[\(ri)]", "Resource URL must be http or https.")
