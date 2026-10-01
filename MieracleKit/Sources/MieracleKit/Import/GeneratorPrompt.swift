@@ -51,7 +51,7 @@ public struct GeneratorPrompt: Sendable {
         - Include "why" or "how" questions, not only "what".
         - `shortAnswer`: a model answer plus 2–4 `keyPoints` a correct answer must mention.
         - `multipleChoice`: 3–5 options; wrong options are plausible misconceptions, not jokes.
-        - Programming material: `codeImplement` (Python function with test cases), `codeComplexity` (Big-O of a snippet), and `patternPick` (choose the approach or data structure, with the reason in `explanation`).
+        - Programming material: `codeImplement` (Python function with test cases), `codeComplexity` (Big-O of a snippet), and `patternPick` (choose the approach or data structure, with the reason in `explanation`). For classic interview problems, add one `fullProblem` that combines all stages: pattern, plan, code with tests, and Big-O.
         - Math uses LaTeX: `$inline$` and `$$display$$`. Code uses fenced blocks. Escape backslashes for JSON (`\\\\frac`).
         - Every prompt must be answerable from the concept's explanation or the material.
 
@@ -83,7 +83,8 @@ public struct GeneratorPrompt: Sendable {
                   {"id": "….multipleChoice-1", "type": "multipleChoice", "question": "…", "options": ["…", "…", "…"], "correctIndex": 0, "explanation": "…"},
                   {"id": "….codeImplement-1", "type": "codeImplement", "statement": "…", "functionName": "solve", "starterCode": "def solve(nums):\\n    pass", "tests": [{"args": [[1, 2]], "expected": 3}, {"args": [[]], "expected": 0, "hidden": true}], "comparison": "exact"},
                   {"id": "….codeComplexity-1", "type": "codeComplexity", "code": "…", "time": "O(n log n)", "space": "O(n)", "explanation": "…"},
-                  {"id": "….patternPick-1", "type": "patternPick", "statement": "…", "options": ["…", "…"], "correctIndex": 0, "answer": "…", "explanation": "…"}
+                  {"id": "….patternPick-1", "type": "patternPick", "statement": "…", "options": ["…", "…"], "correctIndex": 0, "answer": "…", "explanation": "…"},
+                  {"id": "….fullProblem-1", "type": "fullProblem", "statement": "…", "options": ["…", "…"], "correctIndex": 0, "pattern": "…", "plan": "1. …\\n2. …", "functionName": "solve", "starterCode": "def solve(nums):\\n    pass", "tests": [{"args": [[1, 2]], "expected": 3}], "time": "O(n)", "space": "O(1)", "explanation": "…"}
                 ]
               }]
             }]

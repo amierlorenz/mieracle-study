@@ -8,11 +8,12 @@ public enum PromptKind: String, Codable, CaseIterable, Identifiable, Sendable {
     case codeImplement
     case codeComplexity
     case patternPick
+    case fullProblem
 
     public var id: Self { self }
 
     /// Whether the kind needs a code runner, which only exists on macOS.
-    public var requiresCodeRunner: Bool { self == .codeImplement }
+    public var requiresCodeRunner: Bool { self == .codeImplement || self == .fullProblem }
 
     public var displayName: String {
         switch self {
@@ -22,6 +23,7 @@ public enum PromptKind: String, Codable, CaseIterable, Identifiable, Sendable {
         case .codeImplement: "Code: implement"
         case .codeComplexity: "Code: complexity"
         case .patternPick: "Code: pattern pick"
+        case .fullProblem: "Code: full problem"
         }
     }
 }
@@ -41,6 +43,7 @@ public enum PromptContent: Hashable, Sendable {
     case codeImplement(CodeImplement)
     case codeComplexity(CodeComplexity)
     case patternPick(PatternPick)
+    case fullProblem(FullProblem)
 
     public var kind: PromptKind {
         switch self {
@@ -50,6 +53,7 @@ public enum PromptContent: Hashable, Sendable {
         case .codeImplement: .codeImplement
         case .codeComplexity: .codeComplexity
         case .patternPick: .patternPick
+        case .fullProblem: .fullProblem
         }
     }
 
@@ -62,6 +66,7 @@ public enum PromptContent: Hashable, Sendable {
         case .codeImplement(let c): c.statement
         case .codeComplexity(let c): c.code
         case .patternPick(let c): c.statement
+        case .fullProblem(let c): c.statement
         }
     }
 }
@@ -115,6 +120,7 @@ extension PromptContent: Codable {
         case .codeImplement: self = .codeImplement(try CodeImplement(from: decoder))
         case .codeComplexity: self = .codeComplexity(try CodeComplexity(from: decoder))
         case .patternPick: self = .patternPick(try PatternPick(from: decoder))
+        case .fullProblem: self = .fullProblem(try FullProblem(from: decoder))
         }
     }
 
@@ -128,6 +134,7 @@ extension PromptContent: Codable {
         case .codeImplement(let c): try c.encode(to: encoder)
         case .codeComplexity(let c): try c.encode(to: encoder)
         case .patternPick(let c): try c.encode(to: encoder)
+        case .fullProblem(let c): try c.encode(to: encoder)
         }
     }
 }
@@ -264,6 +271,93 @@ extension PromptContent {
             self.correctIndex = correctIndex
             self.answer = answer
             self.explanation = explanation
+        }
+    }
+}
+
+extension PromptContent {
+    /// A whole interview problem in stages: choose the approach, plan it, code
+    /// it against tests, then state its complexity.
+    public struct FullProblem: Codable, Hashable, Sendable {
+        public var statement: String
+        public var options: [String]?
+        public var correctIndex: Int?
+        /// The approach or data structure that fits.
+        public var pattern: String
+        /// A model plan, usually a few numbered steps.
+        public var plan: String
+        public var language: CodeLanguage
+        public var functionName: String
+        public var starterCode: String
+        public var tests: [CodeTestCase]
+        public var comparison: OutputComparison
+        public var referenceSolution: String?
+        public var time: String
+        public var space: String
+        public var explanation: String
+
+        public init(
+            statement: String,
+            options: [String]? = nil,
+            correctIndex: Int? = nil,
+            pattern: String,
+            plan: String,
+            language: CodeLanguage = .python,
+            functionName: String,
+            starterCode: String,
+            tests: [CodeTestCase],
+            comparison: OutputComparison = .exact,
+            referenceSolution: String? = nil,
+            time: String,
+            space: String,
+            explanation: String
+        ) {
+            self.statement = statement
+            self.options = options
+            self.correctIndex = correctIndex
+            self.pattern = pattern
+            self.plan = plan
+            self.language = language
+            self.functionName = functionName
+            self.starterCode = starterCode
+            self.tests = tests
+            self.comparison = comparison
+            self.referenceSolution = referenceSolution
+            self.time = time
+            self.space = space
+            self.explanation = explanation
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            statement = try c.decode(String.self, forKey: .statement)
+            options = try c.decodeIfPresent([String].self, forKey: .options)
+            correctIndex = try c.decodeIfPresent(Int.self, forKey: .correctIndex)
+            pattern = try c.decode(String.self, forKey: .pattern)
+            plan = try c.decode(String.self, forKey: .plan)
+            language = try c.decodeIfPresent(CodeLanguage.self, forKey: .language) ?? .python
+            functionName = try c.decode(String.self, forKey: .functionName)
+            starterCode = try c.decodeIfPresent(String.self, forKey: .starterCode) ?? ""
+            tests = try c.decode([CodeTestCase].self, forKey: .tests)
+            comparison = try c.decodeIfPresent(OutputComparison.self, forKey: .comparison) ?? .exact
+            referenceSolution = try c.decodeIfPresent(String.self, forKey: .referenceSolution)
+            time = try c.decode(String.self, forKey: .time)
+            space = try c.decode(String.self, forKey: .space)
+            explanation = try c.decodeIfPresent(String.self, forKey: .explanation) ?? ""
+        }
+
+        /// The coding stage as a standalone problem, for the code runner.
+        public var implementation: CodeImplement {
+            CodeImplement(
+                statement: statement,
+                language: language,
+                functionName: functionName,
+                starterCode: starterCode,
+                tests: tests,
+                comparison: comparison,
+                referenceSolution: referenceSolution,
+                explanation: explanation
+            )
         }
     }
 }

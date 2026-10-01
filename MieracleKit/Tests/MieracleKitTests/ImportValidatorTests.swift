@@ -44,6 +44,8 @@ struct ImportValidatorTests {
         (.codeImplement(.init(statement: "S", functionName: "f", starterCode: "", tests: [])), "Needs at least one test."),
         (.codeComplexity(.init(code: "x", time: "", space: "O(1)", explanation: "")), "time is empty."),
         (.patternPick(.init(statement: "S", options: ["a", "b"], answer: "a", explanation: "")), "options and correctIndex must be given together."),
+        (.fullProblem(.init(statement: "S", pattern: "P", plan: "", functionName: "f", starterCode: "", tests: [.init(args: [], expected: .null)], time: "O(n)", space: "O(1)", explanation: "")), "plan is empty."),
+        (.fullProblem(.init(statement: "S", pattern: "P", plan: "x", functionName: "f", starterCode: "", tests: [], time: "O(n)", space: "O(1)", explanation: "")), "Needs at least one test."),
     ])
     func rejectsInvalidPromptContent(content: PromptContent, expected: String) {
         let doc = document(prompts: [.init(id: "p", content: content)])

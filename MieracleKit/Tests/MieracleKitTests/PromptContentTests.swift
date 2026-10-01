@@ -16,6 +16,19 @@ struct PromptContentTests {
         )),
         .codeComplexity(.init(code: "for i in range(n): pass", time: "O(n)", space: "O(1)", explanation: "One loop.")),
         .patternPick(.init(statement: "Top k elements?", options: ["Heap", "Stack"], correctIndex: 0, answer: "Heap", explanation: "Size-k heap.")),
+        .fullProblem(.init(
+            statement: "Pair summing to target in a sorted array.",
+            options: ["Two pointers", "Stack"],
+            correctIndex: 0,
+            pattern: "Two pointers",
+            plan: "1. Pointers at both ends\n2. Move inward by comparing the sum",
+            functionName: "pair_sum",
+            starterCode: "def pair_sum(nums, target):\n    pass",
+            tests: [.init(args: [.array([.number(1), .number(3)]), .number(4)], expected: .array([.number(0), .number(1)]))],
+            time: "O(n)",
+            space: "O(1)",
+            explanation: "Each step discards one element."
+        )),
     ]
 
     @Test(arguments: samples)

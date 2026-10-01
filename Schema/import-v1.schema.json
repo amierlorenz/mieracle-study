@@ -398,6 +398,110 @@
               "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
             }
           }
+        },
+        {
+          "description": "A whole interview problem in stages: choose the pattern (multiple choice with options + correctIndex, or free text), write a plan, code it against tests, state its Big-O.",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "statement",
+            "pattern",
+            "plan",
+            "functionName",
+            "tests",
+            "time",
+            "space"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "type": {
+              "const": "fullProblem"
+            },
+            "statement": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 2
+            },
+            "correctIndex": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "pattern": {
+              "type": "string",
+              "minLength": 1
+            },
+            "plan": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "language": {
+              "enum": [
+                "python"
+              ]
+            },
+            "functionName": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            },
+            "starterCode": {
+              "type": "string"
+            },
+            "tests": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "args",
+                  "expected"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "args": {
+                    "type": "array",
+                    "description": "Positional arguments."
+                  },
+                  "expected": {},
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "comparison": {
+              "enum": [
+                "exact",
+                "unordered",
+                "float"
+              ]
+            },
+            "referenceSolution": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string",
+              "pattern": "^O\\("
+            },
+            "space": {
+              "type": "string",
+              "pattern": "^O\\("
+            },
+            "explanation": {
+              "type": "string",
+              "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            }
+          }
         }
       ]
     },

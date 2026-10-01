@@ -134,6 +134,17 @@ public struct ImportValidator: Sendable {
             }
         }
 
+        func checkOptionalOptions(_ options: [String]?, _ correctIndex: Int?) {
+            switch (options, correctIndex) {
+            case (let options?, let index?):
+                checkOptions(options, index)
+            case (nil, nil):
+                break
+            default:
+                problems.append(("options", "options and correctIndex must be given together."))
+            }
+        }
+
         switch content {
         case .flashcard(let c):
             requireText(c.front, "front")
@@ -159,14 +170,15 @@ public struct ImportValidator: Sendable {
         case .patternPick(let c):
             requireText(c.statement, "statement")
             requireText(c.answer, "answer")
-            switch (c.options, c.correctIndex) {
-            case (let options?, let index?):
-                checkOptions(options, index)
-            case (nil, nil):
-                break
-            default:
-                problems.append(("options", "options and correctIndex must be given together."))
-            }
+            checkOptionalOptions(c.options, c.correctIndex)
+        case .fullProblem(let c):
+            requireText(c.statement, "statement")
+            requireText(c.pattern, "pattern")
+            requireText(c.plan, "plan")
+            requireText(c.time, "time")
+            requireText(c.space, "space")
+            checkOptionalOptions(c.options, c.correctIndex)
+            problems += self.problems(in: .codeImplement(c.implementation)).filter { $0.0 != "statement" }
         }
         return problems
     }

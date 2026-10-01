@@ -73,8 +73,9 @@ struct SessionBuilderTests {
             concept("code", prompts: [.init(id: "c", kind: .codeImplement)]),
             concept("mc", prompts: [.init(id: "m", kind: .multipleChoice)]),
             concept("mixed", prompts: [.init(id: "x1", kind: .codeImplement), .init(id: "x2", kind: .flashcard)]),
+            concept("full", prompts: [.init(id: "fp", kind: .fullProblem)]),
         ]
-        let items = build(candidates, .init(mode: .practice, promptKinds: [.flashcard, .codeImplement]), code: false)
+        let items = build(candidates, .init(mode: .practice, promptKinds: [.flashcard, .codeImplement, .fullProblem]), code: false)
         #expect(items.map(\.promptID) == ["x2"])
     }
 
