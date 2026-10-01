@@ -34,10 +34,11 @@ struct SessionSummaryView: View {
                         Button("Review These Again", systemImage: "arrow.counterclockwise") {
                             onReviewAgain(engine.summary.needsWork)
                         }
+                        .buttonStyle(.glass)
                     }
                     Spacer()
                     Button("Done", action: onDone)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.glassProminent)
                         .keyboardShortcut(.defaultAction)
                 }
             }

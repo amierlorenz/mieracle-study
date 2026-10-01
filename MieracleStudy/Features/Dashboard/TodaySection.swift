@@ -14,9 +14,10 @@ struct TodaySection: View {
             LabeledContent("Answered today", value: "\(reviewedToday)")
             HStack {
                 Button("Review Due", systemImage: "arrow.counterclockwise", action: onReview)
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.glassProminent)
                     .disabled(due == 0)
                 Button("Learn New", systemImage: "sparkles", action: onLearn)
+                    .buttonStyle(.glass)
                     .disabled(newRemaining == 0)
             }
         }

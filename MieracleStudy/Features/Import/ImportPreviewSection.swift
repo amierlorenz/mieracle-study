@@ -17,7 +17,7 @@ struct ImportPreviewSection: View {
                 Button("Cancel", role: .cancel, action: onCancel)
                 Spacer()
                 Button("Import", action: onApply)
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.glassProminent)
                     .disabled(!pending.plan.canApply || !pending.plan.hasChanges)
             }
         }

@@ -15,6 +15,7 @@ struct CourseCountsRow: View {
             }
             Spacer()
             Button("Review", action: onReview)
+                .buttonStyle(.glass)
                 .disabled(course.due == 0)
         }
     }

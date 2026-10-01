@@ -17,6 +17,7 @@ struct CodeRunSection: View {
             Button(isRunning ? (problem.language == .swift ? "Compiling and running…" : "Running…") : "Run Tests", systemImage: "play.fill") {
                 Task { await run() }
             }
+            .buttonStyle(.glass)
             .disabled(isRunning)
             .keyboardShortcut("r", modifiers: .command)
             if let errorMessage {

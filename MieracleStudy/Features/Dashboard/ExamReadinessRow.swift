@@ -24,6 +24,7 @@ struct ExamReadinessRow: View {
                     .foregroundStyle(.orange)
             } else {
                 Button("Exam Prep (25 min, weakest first)", systemImage: "target", action: onPrepare)
+                    .buttonStyle(.glass)
             }
         }
     }

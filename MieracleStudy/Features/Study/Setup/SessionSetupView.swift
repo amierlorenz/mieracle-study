@@ -52,10 +52,16 @@ struct SessionSetupView: View {
             }
             PromptKindsSection(kinds: $draft.promptKinds, kindsInScope: kindsInScope)
             Section {
-                Button("Start Session", systemImage: "play.fill") { onStart(draft.config) }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(draft.promptKinds.isDisjoint(with: kindsInScope))
-                    .keyboardShortcut(.defaultAction)
+                Button { onStart(draft.config) } label: {
+                    Label("Start Session", systemImage: "play.fill")
+                        .font(.headline)
+                        .padding(.horizontal, 24)
+                }
+                .buttonStyle(.glassProminent)
+                .controlSize(.large)
+                .frame(maxWidth: .infinity)
+                .disabled(draft.promptKinds.isDisjoint(with: kindsInScope))
+                .keyboardShortcut(.defaultAction)
             }
         }
         .formStyle(.grouped)

@@ -18,7 +18,9 @@ struct CanvasSuggestionRow: View {
             }
             Spacer()
             Button("Make Exam", action: makeExam)
+                .buttonStyle(.glass)
             Button("Dismiss", action: dismissItem)
+                .buttonStyle(.glass)
         }
     }
 
