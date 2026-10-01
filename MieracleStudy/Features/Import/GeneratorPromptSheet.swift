@@ -7,6 +7,7 @@ struct GeneratorPromptSheet: View {
     @Query(sort: \Course.name) private var courses: [Course]
     @State private var selectedCourseID: String?
     @State private var newCourseName = ""
+    @State private var newCourseIsCoding = false
     @State private var didCopy = false
 
     var body: some View {
@@ -21,6 +22,9 @@ struct GeneratorPromptSheet: View {
                     }
                     if selectedCourse == nil {
                         TextField("New class name", text: $newCourseName)
+                        Toggle("Programming class", isOn: $newCourseIsCoding)
+                    } else if let selectedCourse {
+                        LabeledContent("Prompt types", value: selectedCourse.allowsCodingPrompts ? "All, including code" : "Flashcard, short answer, multiple choice")
                     }
                 }
                 Section("Prompt") {
@@ -51,14 +55,15 @@ struct GeneratorPromptSheet: View {
     private var generator: GeneratorPrompt {
         guard let course = selectedCourse else {
             let name = newCourseName.trimmingCharacters(in: .whitespaces)
-            return GeneratorPrompt(courseID: GeneratorPrompt.slug(name.isEmpty ? "course" : name), courseName: name.isEmpty ? "Course name" : name)
+            return GeneratorPrompt(courseID: GeneratorPrompt.slug(name.isEmpty ? "course" : name), courseName: name.isEmpty ? "Course name" : name, isCodingClass: newCourseIsCoding)
         }
         let units = course.sortedUnits
         return GeneratorPrompt(
             courseID: course.externalID,
             courseName: course.name,
             units: units.map { .init(id: $0.externalID, name: $0.name) },
-            existingConceptIDs: units.flatMap { ($0.concepts ?? []).map(\.externalID) }
+            existingConceptIDs: units.flatMap { ($0.concepts ?? []).map(\.externalID) },
+            isCodingClass: course.allowsCodingPrompts
         )
     }
 

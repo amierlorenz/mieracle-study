@@ -52,7 +52,7 @@ struct ConceptDetailView: View {
         .toolbar {
             Button("Edit Concept", systemImage: "pencil") { isEditing = true }
             Menu("Add Prompt", systemImage: "plus") {
-                ForEach(PromptKind.allCases, id: \.self) { kind in
+                ForEach(allowedKinds) { kind in
                     Button(kind.displayName) { newPromptKind = kind }
                 }
             }
@@ -61,13 +61,22 @@ struct ConceptDetailView: View {
             ConceptEditorSheet(title: "Edit Concept", draft: ConceptDraft(concept: concept), onSave: update)
         }
         .sheet(item: $newPromptKind) { kind in
-            PromptEditorSheet(title: "New Prompt", draft: PromptDraft(kind: kind), onSave: addPrompt)
+            PromptEditorSheet(title: "New Prompt", draft: PromptDraft(kind: kind), allowedKinds: allowedKinds, onSave: addPrompt)
         }
         .sheet(item: $editingPrompt) { prompt in
-            PromptEditorSheet(title: "Edit Prompt", draft: PromptDraft(prompt: prompt)) { content in
+            PromptEditorSheet(title: "Edit Prompt", draft: PromptDraft(prompt: prompt), allowedKinds: allowedKinds(including: prompt.kind)) { content in
                 update(prompt, content: content)
             }
         }
+    }
+
+    private var allowedKinds: [PromptKind] {
+        concept.unit?.course?.allowedPromptKinds ?? PromptKind.allCases
+    }
+
+    /// Keeps an existing prompt's kind selectable even if the class no longer allows it.
+    private func allowedKinds(including kind: PromptKind) -> [PromptKind] {
+        allowedKinds.contains(kind) ? allowedKinds : allowedKinds + [kind]
     }
 
     private var sortedPrompts: [Prompt] {

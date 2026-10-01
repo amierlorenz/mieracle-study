@@ -3,14 +3,16 @@ import SwiftUI
 
 struct PromptEditorSheet: View {
     let title: String
+    let allowedKinds: [PromptKind]
     let onSave: (PromptContent) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var draft: PromptDraft
     @State private var errorMessage: String?
 
-    init(title: String, draft: PromptDraft, onSave: @escaping (PromptContent) -> Void) {
+    init(title: String, draft: PromptDraft, allowedKinds: [PromptKind], onSave: @escaping (PromptContent) -> Void) {
         self.title = title
+        self.allowedKinds = allowedKinds
         self.onSave = onSave
         _draft = State(initialValue: draft)
     }
@@ -19,7 +21,7 @@ struct PromptEditorSheet: View {
         NavigationStack {
             Form {
                 Picker("Kind", selection: $draft.kind) {
-                    ForEach(PromptKind.allCases) { kind in
+                    ForEach(allowedKinds) { kind in
                         Text(kind.displayName).tag(kind)
                     }
                 }

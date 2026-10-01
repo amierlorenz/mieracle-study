@@ -12,6 +12,11 @@ struct CourseDetailView: View {
 
     var body: some View {
         List {
+            Section {
+                Toggle("Programming class", isOn: codingBinding)
+            } footer: {
+                Text("Programming classes can use code prompt types (implement, complexity, pattern pick, full problem).")
+            }
             ForEach(course.sortedUnits) { unit in
                 NavigationLink(value: unit) {
                     LabeledContent(unit.name, value: "\(unit.concepts?.count ?? 0) concepts")
@@ -43,6 +48,15 @@ struct CourseDetailView: View {
             UnitEditorSheet(title: "Edit Unit", name: unit.name, sortIndex: unit.sortIndex) { name, index in
                 update(unit, name: name, sortIndex: index)
             }
+        }
+    }
+
+    private var codingBinding: Binding<Bool> {
+        Binding {
+            course.allowsCodingPrompts
+        } set: {
+            course.allowsCodingPrompts = $0
+            modelContext.saveLogging()
         }
     }
 
