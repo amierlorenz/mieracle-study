@@ -55,9 +55,26 @@ public struct RichTextView: View {
             if let measured = result as? Double, measured > 0 {
                 height = measured
             }
+            try await settleHeight(of: page)
         } catch is CancellationError {
         } catch {
             Logger.rendering.error("Rendering failed: \(error)")
+        }
+    }
+
+    /// The web view can still be resizing to its final width when content is
+    /// first measured, so re-measure briefly until the height stops changing.
+    private func settleHeight(of page: WebPage) async throws {
+        var stableCount = 0
+        for _ in 0..<10 where stableCount < 2 {
+            try await Task.sleep(for: .milliseconds(80))
+            guard let measured = try await page.callJavaScript("return measure()") as? Double, measured > 0 else { continue }
+            if abs(measured - height) < 1 {
+                stableCount += 1
+            } else {
+                stableCount = 0
+                height = measured
+            }
         }
     }
 
