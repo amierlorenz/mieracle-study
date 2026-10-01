@@ -27,7 +27,7 @@ Produce a schema v1 import file (`Schema/import-v1.schema.json`) that MieracleSt
 | Thing | Rule |
 |---|---|
 | Ids | lowercase kebab-case, parent-prefixed: `cs201.heaps.top-k.flashcard-1` |
-| Prompts per concept | 2–4, mixed; at least one `flashcard` or `shortAnswer` |
+| Prompts per concept | 2–4, mixed; at least one `flashcard` or `shortAnswer`. Quick notes may omit `prompts` (lean): the Mac app writes two from the explanation |
 | `shortAnswer` | `question`, `modelAnswer`, 2–4 `keyPoints` |
 | `multipleChoice` | 3–5 `options`, 0-based `correctIndex`, plausible distractors |
 | `codeImplement` | `functionName`, `tests: [{args: [...], expected}]` — `args` is the positional argument list |

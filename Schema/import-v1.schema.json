@@ -85,8 +85,7 @@
       "type": "object",
       "required": [
         "id",
-        "title",
-        "prompts"
+        "title"
       ],
       "additionalProperties": false,
       "properties": {
@@ -131,10 +130,10 @@
         },
         "prompts": {
           "type": "array",
-          "minItems": 1,
           "items": {
             "$ref": "#/$defs/prompt"
-          }
+          },
+          "description": "Optional. Concepts with an explanation and no prompts (lean import) get a flashcard and a short-answer prompt written by on-device AI on the Mac."
         }
       }
     },

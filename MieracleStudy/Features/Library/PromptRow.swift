@@ -10,8 +10,8 @@ struct PromptRow: View {
                 Text(prompt.kind.displayName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if prompt.origin == .aiVariant {
-                    Text("AI variant")
+                if prompt.origin == .aiVariant || prompt.origin == .aiGenerated {
+                    Text(prompt.origin == .aiVariant ? "AI variant" : "AI written")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

@@ -3,7 +3,8 @@ import Observation
 import OSLog
 import SwiftData
 
-/// Runs ``VariantGenerator`` in the background on the Mac, one run at a time.
+/// Runs AI content generation in the background on the Mac, one run at a time:
+/// prompts for lean-imported concepts first, then question variants.
 @MainActor
 @Observable
 final class VariantGenerationService {
@@ -22,6 +23,7 @@ final class VariantGenerationService {
             repeat {
                 needsRerun = false
                 do {
+                    try await PromptGenerator(context: context, provider: provider).run()
                     lastCreated = try await VariantGenerator(context: context, provider: provider).run()
                 } catch {
                     Logger.app.error("Variant generation stopped: \(error)")
