@@ -23,7 +23,7 @@ public struct CanvasClient: Sendable {
     }
 
     public func assignments(courseID: Int) async throws -> [CanvasAssignment] {
-        try await getAll("api/v1/courses/\(courseID)/assignments")
+        try await getAll("api/v1/courses/\(courseID)/assignments", query: [URLQueryItem(name: "include[]", value: "submission")])
     }
 
     public func events(courseID: Int) async throws -> [CanvasEvent] {

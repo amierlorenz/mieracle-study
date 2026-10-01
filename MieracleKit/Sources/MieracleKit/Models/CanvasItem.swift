@@ -16,7 +16,12 @@ public final class CanvasItem {
     /// When the item opens to students (Canvas `unlock_at`).
     public var unlockAt: Date?
     public var isExam: Bool = false
+    /// Hidden from exam suggestions.
     public var isDismissed: Bool = false
+    /// Turned in on Canvas, as of the last sync.
+    public var isSubmitted: Bool = false
+    /// Marked done in the app, for work Canvas doesn't track as a submission.
+    public var isMarkedDone: Bool = false
     public var lastSyncedAt: Date = Date.now
 
     public init(canvasID: String, canvasCourseID: Int, name: String, kind: CanvasItemKind, dueAt: Date?) {

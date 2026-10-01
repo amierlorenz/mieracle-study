@@ -8,7 +8,7 @@ struct CanvasClientTests {
     @Test func followsPaginationAndSendsToken() async throws {
         let page2 = "https://school.instructure.com/api/v1/courses/7/assignments?page=2&per_page=100"
         let stub = StubURLProtocol.stub([
-            "/api/v1/courses/7/assignments?per_page=100": .init(
+            "/api/v1/courses/7/assignments": .init(
                 body: #"[{"id": 1, "name": "Midterm 1", "due_at": "2026-10-20T15:00:00Z"}]"#,
                 headers: ["Link": "<\(page2)>; rel=\"next\", <https://school.instructure.com/x?page=1>; rel=\"first\""]
             ),
@@ -24,6 +24,7 @@ struct CanvasClientTests {
         let requests = stub.requests
         #expect(requests.count == 2)
         #expect(requests.allSatisfy { $0.value(forHTTPHeaderField: "Authorization") == "Bearer fake-token-for-tests" })
+        #expect(requests.first?.url?.query()?.contains("submission") == true)
     }
 
     @Test func decodesCoursesAndEvents() async throws {

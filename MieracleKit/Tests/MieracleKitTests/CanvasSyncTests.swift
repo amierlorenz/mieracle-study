@@ -21,7 +21,7 @@ struct CanvasSyncTests {
     func client(midtermDue: String) -> CanvasClient {
         let stub = StubURLProtocol.stub([
             "/api/v1/courses/7/assignments": .init(body: """
-            [{"id": 1, "name": "Midterm 1", "due_at": "\(midtermDue)", "unlock_at": "2026-10-01T05:00:00Z"}, {"id": 2, "name": "Lab 3", "due_at": null}]
+            [{"id": 1, "name": "Midterm 1", "due_at": "\(midtermDue)", "unlock_at": "2026-10-01T05:00:00Z"}, {"id": 2, "name": "Lab 3", "due_at": null, "submission": {"workflow_state": "submitted"}}]
             """),
             "/api/v1/calendar_events": .init(body: #"[{"id": 9, "title": "Final Exam", "start_at": "2026-12-12T14:00:00Z"}]"#),
         ])
@@ -34,6 +34,7 @@ struct CanvasSyncTests {
         let items = try context.fetch(FetchDescriptor<CanvasItem>(sortBy: [SortDescriptor(\.canvasID)]))
         #expect(items.map(\.canvasID) == ["assignment_1", "assignment_2", "event_9"])
         #expect(items.map(\.looksLikeExam) == [true, false, true])
+        #expect(items.map(\.isSubmitted) == [false, true, false])
         #expect(items[0].unlockAt == ISO8601DateFormatter().date(from: "2026-10-01T05:00:00Z"))
     }
 
