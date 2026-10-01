@@ -26,6 +26,7 @@ struct SettingsView: View {
                 #if os(macOS)
                 CodingSettingsSection()
                 #endif
+                DataSettingsSection()
             }
             .formStyle(.grouped)
             .navigationTitle("Settings")
