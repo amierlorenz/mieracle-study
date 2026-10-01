@@ -12,6 +12,9 @@ public protocol AIProvider: Sendable {
     /// Rewords a question without changing what it asks or its correct answer.
     func rephrase(question: String, answer: String, count: Int) async throws -> [String]
 
+    /// Explains in two or three sentences why one answer choice is right or wrong.
+    func explainChoice(question: String, choice: String, correctChoice: String, context: String) async throws -> String
+
     /// Writes starter prompts for a concept that only has an explanation.
     func generatePrompts(title: String, explanation: String) async throws -> [PromptContent]
 }

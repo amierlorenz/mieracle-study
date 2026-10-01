@@ -56,6 +56,26 @@ public struct FoundationModelsProvider: AIProvider {
         return Array(output.questions.prefix(count))
     }
 
+    public func explainChoice(question: String, choice: String, correctChoice: String, context: String) async throws -> String {
+        let isCorrect = choice == correctChoice
+        let verdict = isCorrect ? "This is the correct answer." : "This answer is wrong; the correct answer is: \(correctChoice)"
+        let prompt = """
+        Question:
+        \(question)
+
+        Answer choice:
+        \(choice)
+
+        \(verdict)
+
+        Background from the study material:
+        \(context)
+
+        In two or three sentences, explain why this answer choice is \(isCorrect ? "right" : "wrong").
+        """
+        return try await session(instructions: Self.explanationInstructions).respond(to: prompt).content
+    }
+
     public func generatePrompts(title: String, explanation: String) async throws -> [PromptContent] {
         let prompt = "Concept: \(title)\n\nExplanation:\n\(explanation)"
         let output = try await session(instructions: Self.generationInstructions)
@@ -91,6 +111,11 @@ public struct FoundationModelsProvider: AIProvider {
     Do not reveal or hint at the answer. Do not add new facts.
     Keep any Markdown, LaTeX ($...$), and code exactly as written.
     Vary the phrasing or angle, for example a different sentence structure or a short scenario.
+    """
+
+    static let explanationInstructions = """
+    You are a patient tutor. Explain why a multiple-choice answer is right or wrong, plainly and briefly.
+    Stay consistent with the stated correct answer and the background material. Address the student directly.
     """
 
     static let generationInstructions = """

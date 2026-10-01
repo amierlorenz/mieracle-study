@@ -26,6 +26,11 @@ final class MockAIProvider: AIProvider {
         return suggestion
     }
 
+    func explainChoice(question: String, choice: String, correctChoice: String, context: String) async throws -> String {
+        calls.withLock { $0 += 1 }
+        return choice == correctChoice ? "Right because \(context)." : "Wrong; \(correctChoice) is right."
+    }
+
     func generatePrompts(title: String, explanation: String) async throws -> [PromptContent] {
         calls.withLock { $0 += 1 }
         return [
