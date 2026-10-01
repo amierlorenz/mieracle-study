@@ -89,7 +89,7 @@ struct FullProblemCardView: View {
             }
         }
         .formStyle(.grouped)
-        .onAppear { code = code.isEmpty ? problem.starterCode : code }
+        .onAppear { code = code.isEmpty ? StarterCode.withoutImports(problem.starterCode) : code }
     }
 
     private var suggestedGrade: Grade {

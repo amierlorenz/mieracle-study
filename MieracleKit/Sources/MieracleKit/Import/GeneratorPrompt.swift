@@ -102,7 +102,7 @@ public struct GeneratorPrompt: Sendable {
           "exams": [{"id": "\(courseID).midterm-1", "courseId": "\(courseID)", "name": "Midterm 1", "date": "YYYY-MM-DD", "unitIds": ["\(courseID).unit-slug"]}]
         }
         ```
-        Field notes: Coding problems default to Python. For Swift, set `"language": "swift"`, add `"signature": {"parameters": ["[Int]", "Int"], "returns": "[Int]"}`, and write `starterCode` with unlabeled parameters (`func solve(_ nums: [Int], _ target: Int) -> [Int]`). `comparison` is `exact`, `unordered` (lists in any order), or `float`. `tests[].args` are positional arguments. `patternPick` without `options`/`correctIndex` is graded as free text against `answer`. Optional fields may be omitted.
+        Field notes: `starterCode` holds only the function signature, never imports (choosing what to import is part of the answer). Coding problems default to Python. For Swift, set `"language": "swift"`, add `"signature": {"parameters": ["[Int]", "Int"], "returns": "[Int]"}`, and write `starterCode` with unlabeled parameters (`func solve(_ nums: [Int], _ target: Int) -> [Int]`). `comparison` is `exact`, `unordered` (lists in any order), or `float`. `tests[].args` are positional arguments. `patternPick` without `options`/`correctIndex` is graded as free text against `answer`. Optional fields may be omitted.
         """
     }
 

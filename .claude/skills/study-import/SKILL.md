@@ -40,7 +40,7 @@ Produce a schema v1 import file (`Schema/import-v1.schema.json`) that MieracleSt
 | Prompts per concept | 2–4, mixed; at least one `flashcard` or `shortAnswer`. Quick notes may omit `prompts` (lean): the Mac app writes two from the explanation |
 | `shortAnswer` | `question`, `modelAnswer`, 2–4 `keyPoints` |
 | `multipleChoice` | 3–5 `options`, 0-based `correctIndex`, plausible distractors |
-| `codeImplement` | `functionName`, `tests: [{args: [...], expected}]` — `args` is the positional argument list |
+| `codeImplement` | `functionName`, `tests: [{args: [...], expected}]` — `args` is the positional argument list; `starterCode` is the signature only, no imports |
 | `codeComplexity` | `code`, `time`, `space` as `O(...)`, `explanation` |
 | `patternPick` | `answer` + `explanation`; `options` and `correctIndex` together or not at all |
 | Math / code | `$inline$`, `$$display$$`, fenced code blocks in any text field |

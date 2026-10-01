@@ -85,7 +85,7 @@ struct PromptCardView: View {
 
     private func prefill(from content: PromptContent) {
         if case .codeImplement(let problem) = content, input.text.isEmpty {
-            input.text = problem.starterCode
+            input.text = StarterCode.withoutImports(problem.starterCode)
         }
     }
 
