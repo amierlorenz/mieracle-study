@@ -10,6 +10,11 @@ import SwiftData
 /// section, and `-startSession <review|practice|learnNew>` starts a session.
 @MainActor
 enum DebugLaunchOptions {
+    /// `-selectAllOnSetup YES` pre-selects every class on the Study screen.
+    nonisolated static var selectsAllOnSetup: Bool {
+        UserDefaults.standard.bool(forKey: "selectAllOnSetup")
+    }
+
     nonisolated static var usesLocalStore: Bool {
         UserDefaults.standard.bool(forKey: "localStore")
     }
