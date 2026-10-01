@@ -41,7 +41,7 @@ public struct StudyOverview: Equatable, Sendable {
             let concepts = course.sortedUnits.flatMap { $0.concepts ?? [] }
             return CourseCounts(
                 id: course.externalID,
-                name: course.name,
+                name: course.displayName,
                 due: concepts.count { $0.isDue(at: now) },
                 new: concepts.count(where: \.isNew),
                 total: concepts.count
@@ -57,7 +57,7 @@ public struct StudyOverview: Equatable, Sendable {
                 return ExamReadiness(
                     id: exam.externalID,
                     name: exam.name,
-                    courseName: exam.course?.name ?? "",
+                    courseName: exam.course?.displayName ?? "",
                     date: exam.date,
                     daysLeft: calendar.dateComponents([.day], from: today, to: calendar.startOfDay(for: exam.date)).day ?? 0,
                     conceptCount: concepts.count,

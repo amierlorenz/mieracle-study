@@ -9,6 +9,8 @@ public final class Course {
     /// Stable identifier used to match imported content across re-imports.
     public var externalID: String = UUID().uuidString
     public var name: String = ""
+    /// A compact label such as "CSC 395 | Swift"; `nil` shows the full name.
+    public var shortName: String?
     /// The linked Canvas course, when Canvas sync is configured.
     public var canvasCourseID: Int?
     /// Whether coding prompt kinds make sense for this class.
@@ -24,6 +26,12 @@ public final class Course {
     public init(externalID: String = UUID().uuidString, name: String) {
         self.externalID = externalID
         self.name = name
+    }
+
+    /// The short name when set, otherwise the full name.
+    public var displayName: String {
+        guard let shortName, !shortName.trimmingCharacters(in: .whitespaces).isEmpty else { return name }
+        return shortName
     }
 
     /// The prompt kinds that make sense for this class.
