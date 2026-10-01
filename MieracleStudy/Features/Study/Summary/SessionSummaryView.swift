@@ -43,6 +43,7 @@ struct SessionSummaryView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Summary")
+        .inlineTitleOnPhone()
     }
 
     private var needsWork: [Concept] {

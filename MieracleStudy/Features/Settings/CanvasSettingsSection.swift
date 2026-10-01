@@ -10,7 +10,7 @@ struct CanvasSettingsSection: View {
 
     var body: some View {
         Section {
-            TextField("Canvas URL", text: $baseURL, prompt: Text("https://school.instructure.com"))
+            TextField("Canvas URL", text: $baseURL, prompt: Text(verbatim: "https://school.instructure.com"))
                 .autocorrectionDisabled()
             SecureField(hasToken ? "Token saved — paste to replace" : "Access token", text: $tokenInput)
             HStack {

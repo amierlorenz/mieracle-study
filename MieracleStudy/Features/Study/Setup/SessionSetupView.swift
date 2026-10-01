@@ -58,5 +58,6 @@ struct SessionSetupView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Study")
+        .inlineTitleOnPhone()
     }
 }

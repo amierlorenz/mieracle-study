@@ -56,6 +56,7 @@ struct ImportView: View {
             }
             .formStyle(.grouped)
             .navigationTitle("Import")
+            .inlineTitleOnPhone()
             .fileImporter(isPresented: $isChoosingFile, allowedContentTypes: [.json], onCompletion: importFile)
             .fileExporter(isPresented: isExporting, document: export, contentType: .json, defaultFilename: exportFilename) { _ in
                 export = nil

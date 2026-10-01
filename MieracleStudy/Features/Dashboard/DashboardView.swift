@@ -42,6 +42,7 @@ struct DashboardView: View {
             }
             .formStyle(.grouped)
             .navigationTitle("Dashboard")
+            .inlineTitleOnPhone()
         }
     }
 
