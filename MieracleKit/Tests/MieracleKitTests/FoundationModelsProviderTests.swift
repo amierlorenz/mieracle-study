@@ -49,3 +49,16 @@ extension FoundationModelsProviderTests {
         #expect(contents.allSatisfy { !$0.questionText.isEmpty })
     }
 }
+
+extension FoundationModelsProviderTests {
+    @Test(.enabled(if: SystemLanguageModel.default.isAvailable, "Apple Intelligence unavailable"), .timeLimit(.minutes(1)))
+    func explainsWhyAChoiceIsWrong() async throws {
+        let text = try await provider.explainChoice(
+            question: "Which practice plan builds the better hitter?",
+            choice: "15 fastballs, then 15 curveballs",
+            correctChoice: "Random pitches mixed throughout",
+            context: "Interleaving different problem types trains discrimination between them."
+        )
+        #expect(!text.isEmpty)
+    }
+}
