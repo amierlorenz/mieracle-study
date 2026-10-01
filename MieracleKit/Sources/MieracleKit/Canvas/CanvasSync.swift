@@ -105,7 +105,13 @@ public struct CanvasSync {
 
 extension CanvasItem {
     /// Whether the name suggests a graded test worth tracking as an exam.
+    ///
+    /// Words like "final" and "test" also appear in projects and labs
+    /// ("Final Project – Video Demo", "Lab 3 – Pen Test Execution"), so names
+    /// that also mention a deliverable are excluded.
     public var looksLikeExam: Bool {
-        name.lowercased().contains(/\b(exam|midterm|final|quiz|test)\b/)
+        let lowered = name.lowercased()
+        guard lowered.contains(/\b(exam|midterm|final|quiz|test)\b/) else { return false }
+        return !lowered.contains(/\b(project|presentation|submission|report|proposal|peer|evaluation|demo|update|lab|homework|assignment|analysis|pen test|penetration)\b/)
     }
 }

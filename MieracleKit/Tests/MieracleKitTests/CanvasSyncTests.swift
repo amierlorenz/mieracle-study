@@ -73,7 +73,13 @@ struct CanvasSyncTests {
         #expect(CanvasSync.isDue(lastSync: offset.map { now.addingTimeInterval($0) }, now: now) == expected)
     }
 
-    @Test(arguments: [("Midterm 2", true), ("Final Exam", true), ("Quiz 4", true), ("Testing lab", false), ("Homework 3", false)])
+    @Test(arguments: [
+        ("Midterm 2", true), ("Final Exam", true), ("Final Exam - Comprehensive", true), ("Quiz 4", true), ("Chapter 4 Quiz", true),
+        ("Test 2", true), ("Exam 2 (Midterm)", true),
+        ("Testing lab", false), ("Homework 3", false), ("Final Project - Video Demo", false), ("Lab 3 - Pen Test Execution", false),
+        ("Final Peer Evaluation", false), ("Midterm Presentation - App Idea Design with Keynote", false), ("Final Project Update # 1", false),
+        ("Final Analysis Submission", false),
+    ])
     func examHeuristic(name: String, expected: Bool) {
         #expect(CanvasItem(canvasID: "x", canvasCourseID: 1, name: name, kind: .assignment, dueAt: nil).looksLikeExam == expected)
     }
