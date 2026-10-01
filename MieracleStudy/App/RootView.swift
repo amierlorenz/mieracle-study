@@ -5,6 +5,7 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(VariantGenerationService.self) private var variantGeneration
     @AppStorage(SettingsKey.aiModel) private var aiModel = FoundationModelsProvider.ModelChoice.onDevice.rawValue
     @Environment(AppNavigation.self) private var navigation
@@ -21,6 +22,11 @@ struct RootView: View {
             SectionDetailView(section: navigation.selection ?? .dashboard)
         }
         .task(prepareStore)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await canvas.syncIfDue(context: modelContext) }
+            }
+        }
     }
 
     private func prepareStore() async {

@@ -21,6 +21,7 @@ struct DashboardView: View {
                     onReview: { navigation.startSession(SessionConfig(mode: .review)) },
                     onLearn: { navigation.startSession(SessionConfig(mode: .learnNew)) }
                 )
+                AssignmentsSection()
                 if !overview.exams.isEmpty {
                     Section("Upcoming exams") {
                         ForEach(overview.exams) { exam in
