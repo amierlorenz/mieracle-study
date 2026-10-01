@@ -7,9 +7,10 @@ struct ExamsView: View {
     @Environment(CanvasService.self) private var canvas
     @Query(sort: \Exam.date) private var exams: [Exam]
     @State private var isAdding = false
+    @State private var path: [Exam] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 CanvasExamsSection()
                 Section("Upcoming") {
@@ -35,7 +36,7 @@ struct ExamsView: View {
                 Button("Add Exam", systemImage: "plus") { isAdding = true }
             }
             .sheet(isPresented: $isAdding) {
-                NewExamSheet()
+                NewExamSheet { path.append($0) }
             }
         }
     }

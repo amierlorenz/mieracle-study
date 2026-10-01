@@ -3,6 +3,8 @@ import SwiftData
 import SwiftUI
 
 struct NewExamSheet: View {
+    let onCreate: (Exam) -> Void
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Course.name) private var courses: [Course]
@@ -45,5 +47,6 @@ struct NewExamSheet: View {
         exam.course = courses.first { $0.externalID == courseID }
         modelContext.saveLogging()
         dismiss()
+        onCreate(exam)
     }
 }
