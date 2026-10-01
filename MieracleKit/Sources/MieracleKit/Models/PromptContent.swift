@@ -194,6 +194,8 @@ extension PromptContent {
         public var comparison: OutputComparison
         public var referenceSolution: String?
         public var explanation: String?
+        /// Parameter and return types; required for Swift, which can't call functions dynamically.
+        public var signature: FunctionSignature?
 
         public init(
             statement: String,
@@ -203,7 +205,8 @@ extension PromptContent {
             tests: [CodeTestCase],
             comparison: OutputComparison = .exact,
             referenceSolution: String? = nil,
-            explanation: String? = nil
+            explanation: String? = nil,
+            signature: FunctionSignature? = nil
         ) {
             self.statement = statement
             self.language = language
@@ -213,6 +216,7 @@ extension PromptContent {
             self.comparison = comparison
             self.referenceSolution = referenceSolution
             self.explanation = explanation
+            self.signature = signature
         }
 
         public init(from decoder: any Decoder) throws {
@@ -225,6 +229,7 @@ extension PromptContent {
             comparison = try c.decodeIfPresent(OutputComparison.self, forKey: .comparison) ?? .exact
             referenceSolution = try c.decodeIfPresent(String.self, forKey: .referenceSolution)
             explanation = try c.decodeIfPresent(String.self, forKey: .explanation)
+            signature = try c.decodeIfPresent(FunctionSignature.self, forKey: .signature)
         }
     }
 
@@ -295,6 +300,7 @@ extension PromptContent {
         public var time: String
         public var space: String
         public var explanation: String
+        public var signature: FunctionSignature?
 
         public init(
             statement: String,
@@ -310,7 +316,8 @@ extension PromptContent {
             referenceSolution: String? = nil,
             time: String,
             space: String,
-            explanation: String
+            explanation: String,
+            signature: FunctionSignature? = nil
         ) {
             self.statement = statement
             self.options = options
@@ -326,6 +333,7 @@ extension PromptContent {
             self.time = time
             self.space = space
             self.explanation = explanation
+            self.signature = signature
         }
 
         public init(from decoder: any Decoder) throws {
@@ -344,6 +352,7 @@ extension PromptContent {
             time = try c.decode(String.self, forKey: .time)
             space = try c.decode(String.self, forKey: .space)
             explanation = try c.decodeIfPresent(String.self, forKey: .explanation) ?? ""
+            signature = try c.decodeIfPresent(FunctionSignature.self, forKey: .signature)
         }
 
         /// The coding stage as a standalone problem, for the code runner.
@@ -356,7 +365,8 @@ extension PromptContent {
                 tests: tests,
                 comparison: comparison,
                 referenceSolution: referenceSolution,
-                explanation: explanation
+                explanation: explanation,
+                signature: signature
             )
         }
     }
@@ -374,6 +384,19 @@ public enum OutputComparison: String, Codable, CaseIterable, Sendable {
     case unordered
     /// Numbers compared with a small tolerance.
     case float
+}
+
+/// The Swift types of a function's parameters and result, such as
+/// `{"parameters": ["[Int]", "Int"], "returns": "[Int]"}`. Every type must be
+/// `Codable` and match the JSON of the test arguments.
+public struct FunctionSignature: Codable, Hashable, Sendable {
+    public var parameters: [String]
+    public var returns: String
+
+    public init(parameters: [String], returns: String) {
+        self.parameters = parameters
+        self.returns = returns
+    }
 }
 
 /// One call to the function under test.

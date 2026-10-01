@@ -163,6 +163,15 @@ public struct ImportValidator: Sendable {
             if c.tests.isEmpty {
                 problems.append(("tests", "Needs at least one test."))
             }
+            if c.language == .swift {
+                if let signature = c.signature {
+                    for (index, test) in c.tests.enumerated() where test.args.count != signature.parameters.count {
+                        problems.append(("tests[\(index)].args", "Has \(test.args.count) arguments but the signature has \(signature.parameters.count)."))
+                    }
+                } else {
+                    problems.append(("signature", "Swift problems need a signature with parameter and return types."))
+                }
+            }
         case .codeComplexity(let c):
             requireText(c.code, "code")
             requireText(c.time, "time")

@@ -46,6 +46,8 @@ struct ImportValidatorTests {
         (.patternPick(.init(statement: "S", options: ["a", "b"], answer: "a", explanation: "")), "options and correctIndex must be given together."),
         (.fullProblem(.init(statement: "S", pattern: "P", plan: "", functionName: "f", starterCode: "", tests: [.init(args: [], expected: .null)], time: "O(n)", space: "O(1)", explanation: "")), "plan is empty."),
         (.fullProblem(.init(statement: "S", pattern: "P", plan: "x", functionName: "f", starterCode: "", tests: [], time: "O(n)", space: "O(1)", explanation: "")), "Needs at least one test."),
+        (.codeImplement(.init(statement: "S", language: .swift, functionName: "f", starterCode: "", tests: [.init(args: [], expected: .null)])), "Swift problems need a signature with parameter and return types."),
+        (.codeImplement(.init(statement: "S", language: .swift, functionName: "f", starterCode: "", tests: [.init(args: [.number(1)], expected: .null)], signature: .init(parameters: [], returns: "Int"))), "Has 1 arguments but the signature has 0."),
     ])
     func rejectsInvalidPromptContent(content: PromptContent, expected: String) {
         let doc = document(prompts: [.init(id: "p", content: content)])

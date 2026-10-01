@@ -42,11 +42,14 @@ public struct PythonRunner: CodeRunner {
         ]
         try JSONSerialization.data(withJSONObject: config).write(to: directory.appending(path: "tests.json"))
 
-        let (stdout, stderr, timedOut) = try await execute(in: directory)
-        var result = CodeRunResult(timedOut: timedOut, stderr: stderr)
-        guard !timedOut else { return result }
-        guard let line = stdout.split(separator: "\n").last(where: { $0.hasPrefix(Self.marker) }) else {
-            throw RunnerError.unreadableOutput(stderr.isEmpty ? stdout : stderr)
+        let run = try await ProcessRunner.run(
+            pythonPath, ["-I", "harness.py"], in: directory, timeout: timeout,
+            environment: ["PYTHONDONTWRITEBYTECODE": "1", "PYTHONIOENCODING": "utf-8", "PATH": "/usr/bin:/bin"]
+        )
+        var result = CodeRunResult(timedOut: run.timedOut, stderr: run.stderr)
+        guard !run.timedOut else { return result }
+        guard let line = run.stdout.split(separator: "\n").last(where: { $0.hasPrefix(Self.marker) }) else {
+            throw RunnerError.unreadableOutput(run.stderr.isEmpty ? run.stdout : run.stderr)
         }
         let output = try JSONDecoder().decode(HarnessOutput.self, from: Data(line.dropFirst(Self.marker.count).utf8))
         result.setupError = output.setupError
@@ -76,60 +79,6 @@ public struct PythonRunner: CodeRunner {
         return try Data(contentsOf: url)
     }
 
-    #if os(macOS)
-    private func execute(in directory: URL) async throws -> (stdout: String, stderr: String, timedOut: Bool) {
-        let stdoutURL = directory.appending(path: "stdout.txt")
-        let stderrURL = directory.appending(path: "stderr.txt")
-        FileManager.default.createFile(atPath: stdoutURL.path(), contents: nil)
-        FileManager.default.createFile(atPath: stderrURL.path(), contents: nil)
-        let stdoutHandle = try FileHandle(forWritingTo: stdoutURL)
-        let stderrHandle = try FileHandle(forWritingTo: stderrURL)
-        defer {
-            try? stdoutHandle.close()
-            try? stderrHandle.close()
-        }
-
-        let process = Process()
-        process.executableURL = URL(filePath: pythonPath)
-        process.arguments = ["-I", "harness.py"]
-        process.currentDirectoryURL = directory
-        process.environment = ["PYTHONDONTWRITEBYTECODE": "1", "PYTHONIOENCODING": "utf-8", "PATH": "/usr/bin:/bin"]
-        process.standardOutput = stdoutHandle
-        process.standardError = stderrHandle
-        process.standardInput = FileHandle.nullDevice
-
-        let timedOut = try await withThrowingTaskGroup(of: Bool.self) { group in
-            group.addTask {
-                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
-                    process.terminationHandler = { _ in continuation.resume() }
-                    do {
-                        try process.run()
-                    } catch {
-                        process.terminationHandler = nil
-                        continuation.resume(throwing: error)
-                    }
-                }
-                return false
-            }
-            group.addTask { [timeout] in
-                try await Task.sleep(for: timeout)
-                return true
-            }
-            let first = try await group.next() ?? false
-            if first {
-                process.terminate()
-                try? await Task.sleep(for: .milliseconds(300))
-                if process.isRunning { kill(process.processIdentifier, SIGKILL) }
-            }
-            group.cancelAll()
-            return first
-        }
-
-        let stdout = (try? String(contentsOf: stdoutURL, encoding: .utf8)) ?? ""
-        let stderr = (try? String(contentsOf: stderrURL, encoding: .utf8)) ?? ""
-        return (stdout, stderr, timedOut)
-    }
-    #endif
 }
 
 private struct TestPayload: Encodable {
