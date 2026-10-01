@@ -2,45 +2,44 @@ import Foundation
 @testable import MieracleKit
 import Testing
 
-@Suite(.serialized)
 struct CanvasClientTests {
     let base = URL(string: "https://school.instructure.com")!
 
     @Test func followsPaginationAndSendsToken() async throws {
         let page2 = "https://school.instructure.com/api/v1/courses/7/assignments?page=2&per_page=100"
-        let session = StubURLProtocol.session([
+        let stub = StubURLProtocol.stub([
             "/api/v1/courses/7/assignments?per_page=100": .init(
                 body: #"[{"id": 1, "name": "Midterm 1", "due_at": "2026-10-20T15:00:00Z"}]"#,
                 headers: ["Link": "<\(page2)>; rel=\"next\", <https://school.instructure.com/x?page=1>; rel=\"first\""]
             ),
             "/api/v1/courses/7/assignments?page=2&per_page=100": .init(body: #"[{"id": 2, "name": "Lab 3", "due_at": null}]"#),
         ])
-        let client = CanvasClient(baseURL: base, token: "fake-token-for-tests", session: session)
+        let client = CanvasClient(baseURL: base, token: "fake-token-for-tests", session: stub.session)
 
         let assignments = try await client.assignments(courseID: 7)
 
         #expect(assignments.map(\.name) == ["Midterm 1", "Lab 3"])
         #expect(assignments[0].dueAt == ISO8601DateFormatter().date(from: "2026-10-20T15:00:00Z"))
         #expect(assignments[1].dueAt == nil)
-        let requests = StubURLProtocol.requests.withLock { $0 }
+        let requests = stub.requests
         #expect(requests.count == 2)
         #expect(requests.allSatisfy { $0.value(forHTTPHeaderField: "Authorization") == "Bearer fake-token-for-tests" })
     }
 
     @Test func decodesCoursesAndEvents() async throws {
-        let session = StubURLProtocol.session([
+        let stub = StubURLProtocol.stub([
             "/api/v1/courses": .init(body: #"[{"id": 7, "name": "Data Structures", "course_code": "CS 201"}]"#),
             "/api/v1/calendar_events": .init(body: #"[{"id": 9, "title": "Final Exam", "start_at": "2026-12-12T14:00:00Z"}]"#),
         ])
-        let client = CanvasClient(baseURL: base, token: "t", session: session)
+        let client = CanvasClient(baseURL: base, token: "t", session: stub.session)
         #expect(try await client.activeCourses() == [CanvasCourse(id: 7, name: "Data Structures", courseCode: "CS 201")])
         #expect(try await client.events(courseID: 7).first?.title == "Final Exam")
     }
 
     @Test func unauthorizedIsDistinct() async throws {
-        let session = StubURLProtocol.session(["/api/v1/courses": .init(status: 401, body: "{}")])
+        let stub = StubURLProtocol.stub(["/api/v1/courses": .init(status: 401, body: "{}")])
         await #expect(throws: CanvasClient.ClientError.unauthorized) {
-            try await CanvasClient(baseURL: base, token: "bad", session: session).activeCourses()
+            try await CanvasClient(baseURL: base, token: "bad", session: stub.session).activeCourses()
         }
     }
 

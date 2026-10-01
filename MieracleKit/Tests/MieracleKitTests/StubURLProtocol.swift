@@ -1,7 +1,8 @@
 import Foundation
 import Synchronization
 
-/// Serves canned responses keyed by URL path, and records requests.
+/// Serves canned responses keyed by URL path and records requests. Each
+/// session gets its own table, so suites can run in parallel.
 final class StubURLProtocol: URLProtocol {
     struct Response: Sendable {
         var status = 200
@@ -9,25 +10,37 @@ final class StubURLProtocol: URLProtocol {
         var headers: [String: String] = [:]
     }
 
-    static let responses = Mutex<[String: Response]>([:])
-    static let requests = Mutex<[URLRequest]>([])
+    struct Stub: Sendable {
+        let session: URLSession
+        let id: String
 
-    static func session(_ responses: [String: Response]) -> URLSession {
-        Self.responses.withLock { $0 = responses }
-        Self.requests.withLock { $0 = [] }
+        var requests: [URLRequest] {
+            StubURLProtocol.requests.withLock { $0[id] ?? [] }
+        }
+    }
+
+    private static let header = "X-Stub-ID"
+    private static let responses = Mutex<[String: [String: Response]]>([:])
+    private static let requests = Mutex<[String: [URLRequest]]>([:])
+
+    static func stub(_ responses: [String: Response]) -> Stub {
+        let id = UUID().uuidString
+        Self.responses.withLock { $0[id] = responses }
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [StubURLProtocol.self]
-        return URLSession(configuration: configuration)
+        configuration.httpAdditionalHeaders = [header: id]
+        return Stub(session: URLSession(configuration: configuration), id: id)
     }
 
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
     override func startLoading() {
-        Self.requests.withLock { $0.append(request) }
+        let id = request.value(forHTTPHeaderField: Self.header) ?? ""
+        Self.requests.withLock { $0[id, default: []].append(request) }
         let url = request.url!
         let key = url.query().map { "\(url.path())?\($0)" } ?? url.path()
-        let stub = Self.responses.withLock { $0[key] ?? $0[url.path()] } ?? Response(status: 404, body: "[]")
+        let stub = Self.responses.withLock { $0[id]?[key] ?? $0[id]?[url.path()] } ?? Response(status: 404, body: "[]")
         let response = HTTPURLResponse(url: url, statusCode: stub.status, httpVersion: nil, headerFields: stub.headers)!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Data(stub.body.utf8))
