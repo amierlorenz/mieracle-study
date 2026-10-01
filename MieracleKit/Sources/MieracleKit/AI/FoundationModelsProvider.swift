@@ -28,7 +28,8 @@ public struct FoundationModelsProvider: AIProvider {
     }
 
     private var usesPrivateCloud: Bool {
-        choice == .privateCloud && PrivateCloudComputeLanguageModel().isAvailable
+        guard choice == .privateCloud, #available(iOS 27, macOS 27, *) else { return false }
+        return PrivateCloudComputeLanguageModel().isAvailable
     }
 
     public func grade(_ request: GradingRequest) async throws -> GradeSuggestion {
@@ -56,11 +57,10 @@ public struct FoundationModelsProvider: AIProvider {
     }
 
     private func session(instructions: String) -> LanguageModelSession {
-        if usesPrivateCloud {
-            LanguageModelSession(model: PrivateCloudComputeLanguageModel(), instructions: instructions)
-        } else {
-            LanguageModelSession(model: .default, instructions: instructions)
+        if usesPrivateCloud, #available(iOS 27, macOS 27, *) {
+            return LanguageModelSession(model: PrivateCloudComputeLanguageModel(), instructions: instructions)
         }
+        return LanguageModelSession(model: .default, instructions: instructions)
     }
 
     static let gradingInstructions = """
