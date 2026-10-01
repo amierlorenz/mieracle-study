@@ -66,6 +66,40 @@ public enum PromptContent: Hashable, Sendable {
     }
 }
 
+extension PromptContent {
+    /// Whether AI variants can be generated: only kinds whose question can be
+    /// reworded without touching the answer.
+    public var supportsVariants: Bool {
+        switch self {
+        case .flashcard, .shortAnswer: true
+        default: false
+        }
+    }
+
+    /// The answer text a reworded question must stay faithful to.
+    public var answerText: String? {
+        switch self {
+        case .flashcard(let c): c.back
+        case .shortAnswer(let c): c.modelAnswer
+        default: nil
+        }
+    }
+
+    /// A copy with the question replaced and every answer field unchanged.
+    public func replacingQuestion(with question: String) -> PromptContent {
+        switch self {
+        case .flashcard(var c):
+            c.front = question
+            return .flashcard(c)
+        case .shortAnswer(var c):
+            c.question = question
+            return .shortAnswer(c)
+        default:
+            return self
+        }
+    }
+}
+
 extension PromptContent: Codable {
     private enum TypeKey: String, CodingKey {
         case type

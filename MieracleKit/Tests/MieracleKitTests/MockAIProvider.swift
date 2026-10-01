@@ -1,7 +1,8 @@
 import MieracleKit
 import Synchronization
 
-/// Scripted ``AIProvider`` that records calls.
+/// Scripted ``AIProvider`` that records calls. `rephrasings` receives the
+/// question and the 1-based call number.
 final class MockAIProvider: AIProvider {
     let isAvailable: Bool
     let suggestion: GradeSuggestion
@@ -11,7 +12,7 @@ final class MockAIProvider: AIProvider {
     init(
         isAvailable: Bool = true,
         suggestion: GradeSuggestion = .init(grade: .good, feedback: "Nice."),
-        rephrasings: @escaping @Sendable (String, Int) -> [String] = { question, count in (1...count).map { "\(question) (v\($0))" } }
+        rephrasings: @escaping @Sendable (String, Int) -> [String] = { question, call in ["\(question) (variant \(call))"] }
     ) {
         self.isAvailable = isAvailable
         self.suggestion = suggestion
@@ -26,7 +27,7 @@ final class MockAIProvider: AIProvider {
     }
 
     func rephrase(question: String, answer: String, count: Int) async throws -> [String] {
-        calls.withLock { $0 += 1 }
-        return rephrasings(question, count)
+        let call = calls.withLock { $0 += 1; return $0 }
+        return rephrasings(question, call)
     }
 }
