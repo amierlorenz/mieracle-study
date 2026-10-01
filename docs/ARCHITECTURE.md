@@ -60,6 +60,39 @@ A `CodeRunner` protocol with a macOS `PythonRunner` that writes the user's solut
 ### App (`MieracleStudy/`)
 Minimal stock SwiftUI: a sidebar with Dashboard, Study, Library, Exams, Import, and Settings. `AppNavigation` lets one screen open another (the dashboard starts sessions), and `CanvasService` and `VariantGenerationService` run background work. Debug builds accept launch arguments (`-localStore YES`, `-seedImport <path>`, `-section <name>`, `-startSession <mode>`) for simulator runs and screenshots.
 
+## Where Things Go
+
+The app follows **MV with services**: views read SwiftData directly (`@Query`) and write through `modelContext`; logic that needs tests lives in `MieracleKit`; long-lived state lives in `@Observable` services.
+
+```
+MieracleStudy/                       app target
+├── App/                             entry point, root split view, sidebar, debug launch options
+├── Services/                        @Observable objects shared across screens (navigation, Canvas, AI generation)
+├── Features/<Screen>/               one folder per sidebar screen; subfolders group that screen's parts
+│   ├── Dashboard/Assignments/
+│   ├── Exams/Canvas/
+│   ├── Library/Editors/PromptEditor/
+│   └── Study/{Setup,Runner,Runner/Coding,Summary}/
+└── Shared/
+    ├── Components/                  reusable views used by several screens
+    ├── Extensions/                  small extensions on SwiftUI, SwiftData, OSLog types
+    └── Support/                     settings keys, clipboard, platform checks
+
+MieracleKit/Sources/MieracleKit/     package, organized by domain area
+├── Models/        SwiftData models, payloads, schema, container, duplicate merge
+├── Scheduling/    Scheduler, SM-2, review policy, recorder, daily budget
+├── Sessions/      config, builder, engine, summary
+├── Import/        document, validator, importer, exporter, generator prompt
+├── Grading/       Big-O normalizer, full-problem grader
+├── AI/            provider protocol, Foundation Models, variants, prompt generation
+├── Coding/        code runner, Python runner, harness
+├── Canvas/        Keychain, client, sync, assignment schedule
+├── Overview/      dashboard numbers
+└── Rendering/     RichTextView and bundled web assets
+```
+
+Rules of thumb: a type used by one screen sits in that screen's folder; used by several screens → `Shared/`; holds state beyond one screen → `Services/`; has logic worth testing or no UI → `MieracleKit`.
+
 ## Key Design Decisions
 
 - **Concept-centric scheduling** so varied prompts test the idea instead of one phrasing (*Make It Stick*: variation).
