@@ -1,12 +1,10 @@
 import MieracleKit
-import SwiftData
 import SwiftUI
 
 struct AssignmentRow: View {
     let item: CanvasItem
     let courseName: String?
-
-    @Environment(\.modelContext) private var modelContext
+    let onComplete: (CanvasItem) -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -36,7 +34,6 @@ struct AssignmentRow: View {
     }
 
     private func markDone() {
-        item.isMarkedDone = true
-        modelContext.saveLogging()
+        onComplete(item)
     }
 }

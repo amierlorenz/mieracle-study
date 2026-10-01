@@ -4,6 +4,8 @@ import SwiftUI
 
 /// Canvas work surfacing today, with a link to every open assignment.
 struct AssignmentsSection: View {
+    let onComplete: (CanvasItem) -> Void
+
     @Query(sort: \CanvasItem.dueAt) private var items: [CanvasItem]
     @Query private var courses: [Course]
 
@@ -14,14 +16,14 @@ struct AssignmentsSection: View {
         if !open.isEmpty {
             Section {
                 ForEach(today) { item in
-                    AssignmentRow(item: item, courseName: courseName(for: item))
+                    AssignmentRow(item: item, courseName: courseName(for: item), onComplete: onComplete)
                 }
                 if today.isEmpty {
                     Text("Nothing due in the next two weeks.")
                         .foregroundStyle(.secondary)
                 }
                 NavigationLink("All open assignments (\(open.count))") {
-                    AllAssignmentsView(items: open, courseNames: courseNames)
+                    AllAssignmentsView(items: open, courseNames: courseNames, onComplete: onComplete)
                 }
             } header: {
                 Text("Assignments")
