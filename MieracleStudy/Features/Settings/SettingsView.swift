@@ -11,6 +11,15 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section {
+                    NavigationLink {
+                        ImportView()
+                    } label: {
+                        Label("Import & Export", systemImage: "square.and.arrow.down.on.square")
+                    }
+                } footer: {
+                    Text("Import study files, copy the AI generator prompt, or back up everything.")
+                }
+                Section {
                     Stepper("New concepts per day: \(dailyNewLimit)", value: $dailyNewLimit, in: 0...200, step: 5)
                 } header: {
                     Text("Learning")

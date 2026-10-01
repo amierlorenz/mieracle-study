@@ -16,7 +16,7 @@ struct ImportView: View {
     @State private var export: JSONFileDocument?
 
     var body: some View {
-        NavigationStack {
+        Group {
             Form {
                 Section {
                     Button("Copy AI Generator Prompt…", systemImage: "sparkles") { isShowingGenerator = true }
@@ -55,7 +55,7 @@ struct ImportView: View {
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle("Import")
+            .navigationTitle("Import & Export")
             .inlineTitleOnPhone()
             .fileImporter(isPresented: $isChoosingFile, allowedContentTypes: [.json], onCompletion: importFile)
             .fileExporter(isPresented: isExporting, document: export, contentType: .json, defaultFilename: exportFilename) { _ in
