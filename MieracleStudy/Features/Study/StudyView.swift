@@ -13,7 +13,7 @@ struct StudyView: View {
     var body: some View {
         NavigationStack {
             if let engine, engine.isFinished, engine.summary.answered > 0 {
-                SessionSummaryView(engine: engine, onReviewAgain: reviewAgain, onDone: reset)
+                SessionSummaryView(engine: engine, onReviewAgain: reviewAgain, onDone: finishToDashboard)
             } else if let engine, !engine.isFinished {
                 SessionRunnerView(engine: engine)
             } else {
@@ -49,9 +49,10 @@ struct StudyView: View {
         start(SessionConfig(scope: .init(conceptIDs: Set(conceptIDs)), mode: .practice))
     }
 
-    private func reset() {
+    private func finishToDashboard() {
         engine = nil
         message = nil
+        navigation.selection = .dashboard
     }
 
     private func emptyMessage(for mode: StudyMode) -> String {
