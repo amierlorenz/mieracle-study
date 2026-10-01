@@ -22,6 +22,9 @@ struct PromptDraft {
     var time = ""
     var space = ""
     var plan = ""
+    var language = CodeLanguage.python
+    var parameterTypes = ""
+    var returnType = ""
 
     init(kind: PromptKind) {
         self.kind = kind
@@ -44,6 +47,7 @@ struct PromptDraft {
             correctIndex = c.correctIndex
             explanation = c.explanation ?? ""
         case .codeImplement(let c):
+            loadSignature(language: c.language, signature: c.signature)
             self.prompt = c.statement
             functionName = c.functionName
             starterCode = c.starterCode
@@ -63,6 +67,7 @@ struct PromptDraft {
             answer = c.answer
             explanation = c.explanation
         case .fullProblem(let c):
+            loadSignature(language: c.language, signature: c.signature)
             self.prompt = c.statement
             listText = (c.options ?? []).joined(separator: "\n")
             correctIndex = c.correctIndex ?? 0
@@ -117,6 +122,7 @@ struct PromptDraft {
                 correctIndex: options.isEmpty ? nil : correctIndex,
                 pattern: answer,
                 plan: plan,
+                language: language,
                 functionName: functionName.trimmingCharacters(in: .whitespaces),
                 starterCode: starterCode,
                 tests: tests,
@@ -124,19 +130,22 @@ struct PromptDraft {
                 referenceSolution: optional(referenceSolution),
                 time: time,
                 space: space,
-                explanation: explanation
+                explanation: explanation,
+                signature: try signature()
             ))
         case .codeImplement:
             try require(functionName, "The function name is empty.")
             let tests = try decodedTests()
             return .codeImplement(.init(
                 statement: prompt,
+                language: language,
                 functionName: functionName.trimmingCharacters(in: .whitespaces),
                 starterCode: starterCode,
                 tests: tests,
                 comparison: comparison,
                 referenceSolution: optional(referenceSolution),
-                explanation: optional(explanation)
+                explanation: optional(explanation),
+                signature: try signature()
             ))
         case .codeComplexity:
             try require(time, "The time complexity is empty.")
@@ -156,6 +165,21 @@ struct PromptDraft {
                 explanation: explanation
             ))
         }
+    }
+
+    private mutating func loadSignature(language: CodeLanguage, signature: FunctionSignature?) {
+        self.language = language
+        parameterTypes = signature?.parameters.joined(separator: "; ") ?? ""
+        returnType = signature?.returns ?? ""
+    }
+
+    /// Parameter types are separated by semicolons, since types like
+    /// `[String: Int]` contain commas.
+    private func signature() throws(DraftError) -> FunctionSignature? {
+        guard language == .swift else { return nil }
+        try require(returnType, "Swift problems need a return type.")
+        let parameters = parameterTypes.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        return FunctionSignature(parameters: parameters, returns: returnType.trimmingCharacters(in: .whitespaces))
     }
 
     private func decodedTests() throws(DraftError) -> [CodeTestCase] {

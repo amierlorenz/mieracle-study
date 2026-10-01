@@ -14,7 +14,7 @@ struct CodeRunSection: View {
 
     var body: some View {
         Section {
-            Button(isRunning ? "Running…" : "Run Tests", systemImage: "play.fill") {
+            Button(isRunning ? (problem.language == .swift ? "Compiling and running…" : "Running…") : "Run Tests", systemImage: "play.fill") {
                 Task { await run() }
             }
             .disabled(isRunning)
@@ -33,14 +33,25 @@ struct CodeRunSection: View {
         }
     }
 
+    private var runner: any CodeRunner {
+        switch problem.language {
+        case .python: PythonRunner(pythonPath: pythonPath)
+        case .swift: SwiftRunner()
+        }
+    }
+
     private func run() async {
         isRunning = true
         defer { isRunning = false }
         do {
-            result = try await PythonRunner(pythonPath: pythonPath).run(source: source, problem: problem)
+            result = try await runner.run(source: source, problem: problem)
             errorMessage = nil
         } catch PythonRunner.RunnerError.pythonNotFound(let path) {
             errorMessage = "No python3 at \(path). Set it in Settings → Coding."
+        } catch SwiftRunner.RunnerError.toolchainNotFound {
+            errorMessage = "Swift needs Xcode or the Command Line Tools installed."
+        } catch SwiftRunner.RunnerError.missingSignature {
+            errorMessage = "This Swift problem has no signature. Add one in the Library."
         } catch {
             Logger.app.error("Code run failed: \(error)")
             errorMessage = "Couldn't run the code: \(error.localizedDescription)"

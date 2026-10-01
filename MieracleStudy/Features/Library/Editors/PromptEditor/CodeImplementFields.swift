@@ -8,9 +8,19 @@ struct CodeImplementFields: View {
         Section("Problem statement") {
             TextField("Statement", text: $draft.prompt, axis: .vertical).lineLimit(4...)
         }
-        Section("Python function") {
+        Section("Function") {
+            Picker("Language", selection: $draft.language) {
+                Text("Python").tag(CodeLanguage.python)
+                Text("Swift").tag(CodeLanguage.swift)
+            }
             TextField("Function name", text: $draft.functionName)
                 .monospaced()
+            if draft.language == .swift {
+                TextField("Parameter types, separated by ;", text: $draft.parameterTypes, prompt: Text(verbatim: "[Int]; Int"))
+                    .monospaced()
+                TextField("Return type", text: $draft.returnType, prompt: Text(verbatim: "[Int]"))
+                    .monospaced()
+            }
             TextField("Starter code", text: $draft.starterCode, axis: .vertical)
                 .lineLimit(4...)
                 .monospaced()

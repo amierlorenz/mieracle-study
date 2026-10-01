@@ -8,14 +8,15 @@ struct CodingSettingsSection: View {
         Section {
             TextField("Python interpreter", text: $pythonPath)
                 .monospaced()
-            LabeledContent("Status", value: isInstalled ? "Found" : "Not found")
+            LabeledContent("Python", value: isInstalled ? "Found" : "Not found")
+            LabeledContent("Swift", value: SwiftRunner.isAvailable ? "Found (xcrun swiftc)" : "Needs Xcode or Command Line Tools")
             if let detected = PythonRunner.detectedPythonPath, detected != pythonPath {
                 Button("Use \(detected)") { pythonPath = detected }
             }
         } header: {
             Text("Coding")
         } footer: {
-            Text("Coding problems run your solution with this python3 in a temporary folder, stopping after 5 seconds.")
+            Text("Solutions run in a temporary folder and stop after 5 seconds per run. Swift solutions are compiled first, which takes a few seconds.")
         }
     }
 

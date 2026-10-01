@@ -242,7 +242,7 @@
           }
         },
         {
-          "description": "Write a Python function graded by test cases.",
+          "description": "Write a Python or Swift function graded by test cases.",
           "type": "object",
           "required": [
             "id",
@@ -265,7 +265,8 @@
             },
             "language": {
               "enum": [
-                "python"
+                "python",
+                "swift"
               ]
             },
             "functionName": {
@@ -310,6 +311,28 @@
             "explanation": {
               "type": "string",
               "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "signature": {
+              "type": "object",
+              "required": [
+                "parameters",
+                "returns"
+              ],
+              "additionalProperties": false,
+              "description": "Required for Swift: the Codable Swift types of each argument and the result, e.g. {\"parameters\": [\"[Int]\", \"Int\"], \"returns\": \"[Int]\"}. Write starterCode with unlabeled parameters (func f(_ a: [Int], _ b: Int) -> [Int]).",
+              "properties": {
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "returns": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           }
         },
@@ -447,7 +470,8 @@
             },
             "language": {
               "enum": [
-                "python"
+                "python",
+                "swift"
               ]
             },
             "functionName": {
@@ -500,6 +524,28 @@
             "explanation": {
               "type": "string",
               "description": "Markdown. Math: $inline$ or $$display$$. Code: fenced blocks."
+            },
+            "signature": {
+              "type": "object",
+              "required": [
+                "parameters",
+                "returns"
+              ],
+              "additionalProperties": false,
+              "description": "Required for Swift: the Codable Swift types of each argument and the result, e.g. {\"parameters\": [\"[Int]\", \"Int\"], \"returns\": \"[Int]\"}. Write starterCode with unlabeled parameters (func f(_ a: [Int], _ b: Int) -> [Int]).",
+              "properties": {
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "returns": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           }
         }
