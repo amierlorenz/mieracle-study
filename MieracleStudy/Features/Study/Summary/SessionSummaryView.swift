@@ -27,6 +27,7 @@ struct SessionSummaryView: View {
                     Text("Missed or hard this session. They're already scheduled to come back soon.")
                 }
             }
+            ReflectionSection(engine: engine)
             Section {
                 HStack {
                     if !needsWork.isEmpty {

@@ -29,6 +29,7 @@ struct DashboardView: View {
                         }
                     }
                 }
+                CalibrationSection()
                 Section("Classes") {
                     ForEach(overview.courses) { course in
                         CourseCountsRow(course: course) {
