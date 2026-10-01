@@ -20,10 +20,7 @@ struct AnswerInputView: View {
                 TextField("Space, e.g. O(1)", text: $input.space)
                     .disabled(isRevealed)
             case .codeImplement:
-                TextField("Your solution", text: $input.text, axis: .vertical)
-                    .lineLimit(8...)
-                    .monospaced()
-                    .disabled(isRevealed)
+                CodeEditorField(source: $input.text, isDisabled: isRevealed)
             default:
                 TextField("Your answer", text: $input.text, axis: .vertical)
                     .lineLimit(3...)

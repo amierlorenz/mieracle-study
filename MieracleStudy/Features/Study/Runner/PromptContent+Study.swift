@@ -7,7 +7,7 @@ extension PromptContent {
         case .flashcard(let c): c.front
         case .shortAnswer(let c): c.question
         case .multipleChoice(let c): c.question
-        case .codeImplement(let c): "\(c.statement)\n\n```\(c.language.rawValue)\n\(c.starterCode)\n```"
+        case .codeImplement(let c): c.statement
         case .codeComplexity(let c): "What are the time and space complexity?\n\n```\(c.language.rawValue)\n\(c.code)\n```"
         case .patternPick(let c): "\(c.statement)\n\nWhich approach or data structure fits, and why?"
         }
@@ -44,6 +44,14 @@ extension PromptContent {
 
     /// A grade the app can infer on its own, before the learner confirms.
     func suggestedGrade(for input: AnswerInput) -> Grade? {
+        if case .codeComplexity(let c) = self {
+            let correct = [(input.time, c.time), (input.space, c.space)].count { BigONormalizer.areEquivalent($0, $1) }
+            return switch correct {
+            case 2: .good
+            case 1: .hard
+            default: .again
+            }
+        }
         guard let correct = correctOption, let selected = input.selectedOption else { return nil }
         return selected == correct ? .good : .again
     }

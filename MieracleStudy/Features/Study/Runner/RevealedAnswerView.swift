@@ -3,6 +3,7 @@ import SwiftUI
 
 struct RevealedAnswerView: View {
     let content: PromptContent
+    let input: AnswerInput
 
     var body: some View {
         switch content {
@@ -25,6 +26,7 @@ struct RevealedAnswerView: View {
                 RichTextView(markdown: explanation)
             }
         case .codeComplexity(let c):
+            ComplexityCheckView(expected: c, input: input)
             RichTextView(markdown: "**Time** \(c.time) · **Space** \(c.space)\n\n\(c.explanation)")
         case .patternPick(let c):
             RichTextView(markdown: "**\(c.answer)**\n\n\(c.explanation)")
