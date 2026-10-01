@@ -103,6 +103,15 @@ public final class SessionEngine {
         try context.save()
     }
 
+    /// The end-of-session reflection note (*Make It Stick*: reflection).
+    public var reflection: String {
+        get { record.reflection ?? "" }
+        set {
+            record.reflection = newValue.isEmpty ? nil : newValue
+            try? context.save()
+        }
+    }
+
     private func retryPromptID(for item: SessionItem) -> String {
         guard let concept = concepts[item.conceptID] else { return item.promptID }
         let others = builder.eligiblePrompts(of: ConceptSnapshot(concept)).filter { $0.id != item.promptID }

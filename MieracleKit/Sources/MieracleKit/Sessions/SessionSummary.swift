@@ -31,5 +31,5 @@ public struct SessionSummary: Equatable, Sendable {
 extension Grade {
     var rank: Int { Grade.allCases.firstIndex(of: self)! }
 
-    func isAtLeast(_ other: Grade) -> Bool { rank >= other.rank }
+    public func isAtLeast(_ other: Grade) -> Bool { rank >= other.rank }
 }
