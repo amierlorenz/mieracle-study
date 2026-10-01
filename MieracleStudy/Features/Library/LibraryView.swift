@@ -10,6 +10,7 @@ struct LibraryView: View {
     var body: some View {
         NavigationStack {
             List {
+                FlaggedPromptsSection()
                 ForEach(courses) { course in
                     NavigationLink(course.name, value: course)
                         .contextMenu {
