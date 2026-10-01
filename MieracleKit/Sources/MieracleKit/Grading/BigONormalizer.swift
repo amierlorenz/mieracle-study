@@ -47,7 +47,6 @@ public enum BigONormalizer {
                 others.append("log(\(argument))")
             } else if scanner.consume("sqrt") || scanner.consume("√") {
                 guard let argument = scanner.argument() else { return nil }
-                powers[argument, default: 0] += 0
                 others.append("sqrt(\(argument))")
             } else if let number = scanner.number() {
                 if scanner.consume("^") {
