@@ -11,15 +11,25 @@ struct LibraryView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                FlaggedPromptsSection()
-                ForEach(courses) { course in
-                    NavigationLink(course.displayName, value: course)
-                        .contextMenu {
-                            Button("Delete", systemImage: "trash", role: .destructive) { delete(course) }
+            ScrollView {
+                VStack(spacing: 24) {
+                    FlaggedPromptsCard()
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 14, alignment: .top)], spacing: 14) {
+                        ForEach(courses) { course in
+                            NavigationLink(value: course) {
+                                LibraryClassCard(course: course)
+                            }
+                            .buttonStyle(.plain)
+                            .contextMenu {
+                                Button("Delete", systemImage: "trash", role: .destructive) { delete(course) }
+                            }
                         }
+                    }
                 }
-                .onDelete(perform: deleteCourses)
+                .padding(24)
+                .frame(maxWidth: 980)
+                .frame(maxWidth: .infinity)
+                .animation(.spring(duration: 0.4), value: courses.map(\.displayName))
             }
             .overlay {
                 if courses.isEmpty {
@@ -61,11 +71,6 @@ struct LibraryView: View {
 
     private func delete(_ course: Course) {
         modelContext.delete(course)
-        modelContext.saveLogging()
-    }
-
-    private func deleteCourses(at offsets: IndexSet) {
-        offsets.map { courses[$0] }.forEach(modelContext.delete)
         modelContext.saveLogging()
     }
 }
