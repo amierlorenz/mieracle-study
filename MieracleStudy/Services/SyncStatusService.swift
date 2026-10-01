@@ -46,6 +46,9 @@ final class SyncStatusService {
     }
 
     func refreshAccountStatus() async {
+        #if DEBUG
+        if DebugLaunchOptions.usesLocalStore { return }
+        #endif
         accountStatus = try? await CKContainer(identifier: ModelContainerFactory.cloudKitContainerID).accountStatus()
     }
 
