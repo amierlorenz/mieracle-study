@@ -28,6 +28,7 @@ struct SettingsView: View {
                 #if os(macOS)
                 CodingSettingsSection()
                 #endif
+                SyncSettingsSection()
                 DataSettingsSection()
             }
             .formStyle(.grouped)

@@ -48,5 +48,6 @@ struct RootView: View {
         .environment(VariantGenerationService())
         .environment(AppNavigation())
         .environment(CanvasService())
+        .environment(SyncStatusService())
         .modelContainer(try! ModelContainerFactory.make(storage: .inMemory))
 }

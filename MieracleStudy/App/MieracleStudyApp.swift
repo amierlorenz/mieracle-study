@@ -9,6 +9,7 @@ struct MieracleStudyApp: App {
     @State private var variantGeneration = VariantGenerationService()
     @State private var navigation = AppNavigation()
     @State private var canvas = CanvasService()
+    @State private var syncStatus = SyncStatusService()
 
     init() {
         container = Self.makeContainer()
@@ -20,6 +21,8 @@ struct MieracleStudyApp: App {
                 .environment(variantGeneration)
                 .environment(navigation)
                 .environment(canvas)
+                .environment(syncStatus)
+                .task { syncStatus.start() }
         }
         .modelContainer(container)
     }
