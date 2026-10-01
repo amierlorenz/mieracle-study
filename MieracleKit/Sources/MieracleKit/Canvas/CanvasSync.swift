@@ -70,6 +70,22 @@ public struct CanvasSync {
         return result
     }
 
+    /// Adds a class for each Canvas course not linked yet. Classes can be
+    /// renamed freely afterwards; the link is the stored Canvas course id.
+    @discardableResult
+    public static func importCourses(_ courses: [CanvasCourse], into context: ModelContext) throws -> Int {
+        let linked = Set(try context.fetch(FetchDescriptor<Course>()).compactMap(\.canvasCourseID))
+        var added = 0
+        for canvasCourse in courses where !linked.contains(canvasCourse.id) {
+            let course = Course(externalID: "canvas-\(canvasCourse.id)", name: canvasCourse.name)
+            course.canvasCourseID = canvasCourse.id
+            context.insert(course)
+            added += 1
+        }
+        try context.save()
+        return added
+    }
+
     /// Creates an exam from a Canvas item in the matching linked course.
     @discardableResult
     public static func makeExam(from item: CanvasItem, in context: ModelContext, now: Date = .now) throws -> Exam {

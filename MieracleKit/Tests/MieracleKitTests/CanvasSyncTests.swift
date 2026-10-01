@@ -56,6 +56,17 @@ struct CanvasSyncTests {
         #expect(try context.fetchCount(FetchDescriptor<CanvasItem>()) == 3)
     }
 
+    @Test func importsUnlinkedCoursesOnceAndKeepsAliases() throws {
+        let canvasCourses = [CanvasCourse(id: 7, name: "Data Structures"), CanvasCourse(id: 8, name: "Linear Algebra")]
+        #expect(try CanvasSync.importCourses(canvasCourses, into: context) == 1)
+
+        let algebra = try #require(try context.fetch(FetchDescriptor<Course>()).first { $0.canvasCourseID == 8 })
+        #expect(algebra.externalID == "canvas-8")
+        algebra.name = "Lin Alg"
+        #expect(try CanvasSync.importCourses(canvasCourses, into: context) == 0)
+        #expect(algebra.name == "Lin Alg")
+    }
+
     @Test(arguments: [(nil, true), (-3600.0, false), (-90_000.0, true)] as [(Double?, Bool)])
     func syncsAtMostDaily(offset: Double?, expected: Bool) {
         #expect(CanvasSync.isDue(lastSync: offset.map { now.addingTimeInterval($0) }, now: now) == expected)

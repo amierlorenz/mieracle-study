@@ -14,6 +14,12 @@ struct CanvasLinkSheet: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Button("Add All Canvas Courses as Classes", systemImage: "square.and.arrow.down.on.square", action: importAll)
+                        .disabled(canvasCourses.isEmpty)
+                } footer: {
+                    Text("Creates a class for each active Canvas course that isn't linked yet. Rename classes anytime in the Library; they stay linked.")
+                }
                 if let errorMessage {
                     Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
@@ -40,6 +46,14 @@ struct CanvasLinkSheet: View {
             canvasCourses = try await client.activeCourses()
         } catch {
             errorMessage = "Couldn't load Canvas courses: \(error.localizedDescription)"
+        }
+    }
+
+    private func importAll() {
+        do {
+            try CanvasSync.importCourses(canvasCourses, into: modelContext)
+        } catch {
+            errorMessage = "Couldn't add classes: \(error.localizedDescription)"
         }
     }
 
