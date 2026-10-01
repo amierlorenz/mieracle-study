@@ -9,23 +9,35 @@ struct CanvasLinkSheet: View {
     @Environment(CanvasService.self) private var canvas
     @Query(sort: \Course.name) private var courses: [Course]
     @State private var canvasCourses: [CanvasCourse] = []
+    @State private var selectedToAdd: Set<Int> = []
     @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Button("Add All Canvas Courses as Classes", systemImage: "square.and.arrow.down.on.square", action: importAll)
-                        .disabled(canvasCourses.isEmpty)
-                } footer: {
-                    Text("Creates a class for each active Canvas course that isn't linked yet. Rename classes anytime in the Library; they stay linked.")
+                if !unlinkedCourses.isEmpty {
+                    Section {
+                        ForEach(unlinkedCourses) { canvasCourse in
+                            Toggle(canvasCourse.name, isOn: selection(for: canvasCourse.id))
+                        }
+                        Button("Add \(selectedToAdd.count) as Classes", systemImage: "plus.circle", action: addSelected)
+                            .disabled(selectedToAdd.isEmpty)
+                    } header: {
+                        Text("Add classes from Canvas")
+                    } footer: {
+                        Text("Rename classes anytime in the Library; they stay linked to Canvas.")
+                    }
+                }
+                if !courses.isEmpty {
+                    Section("Link existing classes") {
+                        ForEach(courses) { course in
+                            CanvasCoursePicker(course: course, canvasCourses: canvasCourses)
+                        }
+                    }
                 }
                 if let errorMessage {
                     Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
-                }
-                ForEach(courses) { course in
-                    CanvasCoursePicker(course: course, canvasCourses: canvasCourses)
                 }
             }
             .formStyle(.grouped)
@@ -49,9 +61,23 @@ struct CanvasLinkSheet: View {
         }
     }
 
-    private func importAll() {
+    private var unlinkedCourses: [CanvasCourse] {
+        let linked = Set(courses.compactMap(\.canvasCourseID))
+        return canvasCourses.filter { !linked.contains($0.id) }
+    }
+
+    private func selection(for id: Int) -> Binding<Bool> {
+        Binding {
+            selectedToAdd.contains(id)
+        } set: { isOn in
+            if isOn { selectedToAdd.insert(id) } else { selectedToAdd.remove(id) }
+        }
+    }
+
+    private func addSelected() {
         do {
-            try CanvasSync.importCourses(canvasCourses, into: modelContext)
+            try CanvasSync.importCourses(canvasCourses.filter { selectedToAdd.contains($0.id) }, into: modelContext)
+            selectedToAdd = []
         } catch {
             errorMessage = "Couldn't add classes: \(error.localizedDescription)"
         }
