@@ -12,6 +12,7 @@ struct PromptFieldsView: View {
         case .codeImplement: CodeImplementFields(draft: $draft)
         case .codeComplexity: CodeComplexityFields(draft: $draft)
         case .patternPick: PatternPickFields(draft: $draft)
+        case .fullProblem: FullProblemFields(draft: $draft)
         }
     }
 }

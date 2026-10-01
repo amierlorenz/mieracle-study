@@ -30,6 +30,8 @@ struct RevealedAnswerView: View {
             RichTextView(markdown: "**Time** \(c.time) · **Space** \(c.space)\n\n\(c.explanation)")
         case .patternPick(let c):
             RichTextView(markdown: "**\(c.answer)**\n\n\(c.explanation)")
+        case .fullProblem(let c):
+            RichTextView(markdown: c.revealMarkdown)
         }
     }
 }

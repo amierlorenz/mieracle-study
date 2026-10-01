@@ -11,7 +11,10 @@ struct SessionRunnerView: View {
     var body: some View {
         VStack(spacing: 0) {
             SessionHeaderView(engine: engine)
-            if let prompt = engine.currentPrompt, let concept = engine.currentConcept {
+            if let prompt = engine.currentPrompt, let concept = engine.currentConcept, case .fullProblem(let problem) = prompt.content {
+                FullProblemCardView(prompt: prompt, problem: problem, concept: concept, mode: engine.config.mode, onGrade: answer)
+                    .id(engine.position)
+            } else if let prompt = engine.currentPrompt, let concept = engine.currentConcept {
                 PromptCardView(prompt: prompt, concept: concept, mode: engine.config.mode, asksConfidence: asksConfidence, provider: FoundationModelsProvider(storedChoice: aiModel), onGrade: answer)
                     .id(engine.position)
             }

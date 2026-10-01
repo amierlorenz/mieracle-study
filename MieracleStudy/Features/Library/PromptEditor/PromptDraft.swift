@@ -21,6 +21,7 @@ struct PromptDraft {
     var referenceSolution = ""
     var time = ""
     var space = ""
+    var plan = ""
 
     init(kind: PromptKind) {
         self.kind = kind
@@ -61,6 +62,20 @@ struct PromptDraft {
             correctIndex = c.correctIndex ?? 0
             answer = c.answer
             explanation = c.explanation
+        case .fullProblem(let c):
+            self.prompt = c.statement
+            listText = (c.options ?? []).joined(separator: "\n")
+            correctIndex = c.correctIndex ?? 0
+            answer = c.pattern
+            plan = c.plan
+            functionName = c.functionName
+            starterCode = c.starterCode
+            testsJSON = Self.encodeTests(c.tests)
+            comparison = c.comparison
+            referenceSolution = c.referenceSolution ?? ""
+            time = c.time
+            space = c.space
+            explanation = c.explanation
         }
     }
 
@@ -85,15 +100,35 @@ struct PromptDraft {
             guard options.count >= 2 else { throw DraftError("Add at least two options.") }
             guard options.indices.contains(correctIndex) else { throw DraftError("Choose the correct option.") }
             return .multipleChoice(.init(question: prompt, options: options, correctIndex: correctIndex, explanation: optional(explanation)))
+        case .fullProblem:
+            try require(answer, "The pattern is empty.")
+            try require(plan, "The plan is empty.")
+            try require(functionName, "The function name is empty.")
+            try require(time, "The time complexity is empty.")
+            try require(space, "The space complexity is empty.")
+            let tests = try decodedTests()
+            let options = listItems
+            if !options.isEmpty, !options.indices.contains(correctIndex) {
+                throw DraftError("Choose the correct option.")
+            }
+            return .fullProblem(.init(
+                statement: prompt,
+                options: options.isEmpty ? nil : options,
+                correctIndex: options.isEmpty ? nil : correctIndex,
+                pattern: answer,
+                plan: plan,
+                functionName: functionName.trimmingCharacters(in: .whitespaces),
+                starterCode: starterCode,
+                tests: tests,
+                comparison: comparison,
+                referenceSolution: optional(referenceSolution),
+                time: time,
+                space: space,
+                explanation: explanation
+            ))
         case .codeImplement:
             try require(functionName, "The function name is empty.")
-            let tests: [CodeTestCase]
-            do {
-                tests = try JSONDecoder().decode([CodeTestCase].self, from: Data(testsJSON.utf8))
-            } catch {
-                throw DraftError("Tests must be a JSON array of {\"args\": [...], \"expected\": ...}.")
-            }
-            guard !tests.isEmpty else { throw DraftError("Add at least one test.") }
+            let tests = try decodedTests()
             return .codeImplement(.init(
                 statement: prompt,
                 functionName: functionName.trimmingCharacters(in: .whitespaces),
@@ -121,6 +156,17 @@ struct PromptDraft {
                 explanation: explanation
             ))
         }
+    }
+
+    private func decodedTests() throws(DraftError) -> [CodeTestCase] {
+        let tests: [CodeTestCase]
+        do {
+            tests = try JSONDecoder().decode([CodeTestCase].self, from: Data(testsJSON.utf8))
+        } catch {
+            throw DraftError("Tests must be a JSON array of {\"args\": [...], \"expected\": ...}.")
+        }
+        guard !tests.isEmpty else { throw DraftError("Add at least one test.") }
+        return tests
     }
 
     private func require(_ text: String, _ message: String) throws(DraftError) {

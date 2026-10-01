@@ -10,6 +10,7 @@ extension PromptContent {
         case .codeImplement(let c): c.statement
         case .codeComplexity(let c): "What are the time and space complexity?\n\n```\(c.language.rawValue)\n\(c.code)\n```"
         case .patternPick(let c): "\(c.statement)\n\nWhich approach or data structure fits, and why?"
+        case .fullProblem(let c): c.statement
         }
     }
 
