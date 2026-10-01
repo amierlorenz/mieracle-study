@@ -70,6 +70,19 @@ struct ImportValidatorTests {
         #expect(messages(doc, validator: validator).isEmpty)
     }
 
+    @Test func findsIDsDuplicatedAcrossFiles() {
+        let first = document(prompts: [card])
+        var second = document(prompts: [.init(id: "p2", content: card.content)])
+        second.courses[0].units[0].concepts[0].id = "c.u.other"
+        #expect(ImportValidator.crossDocumentDuplicates([("a.json", first), ("b.json", second)]).isEmpty)
+
+        let issues = ImportValidator.crossDocumentDuplicates([("a.json", first), ("b.json", first)])
+        #expect(issues.map(\.description) == [
+            "error: b.json: Concept id \"c.u.k\" is also in a.json.",
+            "error: b.json: Prompt id \"p1\" is also in a.json.",
+        ])
+    }
+
     @Test func warnsAboutConceptsWithoutPrompts() {
         let issues = ImportValidator().validate(document(prompts: []))
         #expect(issues.map(\.severity) == [.warning])

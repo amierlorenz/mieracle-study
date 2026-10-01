@@ -22,6 +22,16 @@ Produce a schema v1 import file (`Schema/import-v1.schema.json`) that MieracleSt
    Run from the repo root. Fix every `error:` line; read every `warning:`.
 6. **Report** file paths and counts, then tell the user: Import → *Choose JSON File…* (or paste).
 
+## Large Imports (several decks or a whole course)
+
+1. Do steps 1–3 yourself: fix the unit list and unit ids first, so every file agrees.
+2. Give each deck or unit to its own subagent with: the course id/name, its unit id, the existing concept ids, and this skill. Each writes `<unit-slug>.json` containing only its unit (repeat the course `id`/`name`; leave `exams` to one file).
+3. Validate every file together, which also catches ids two agents both used:
+   ```sh
+   swift run --package-path MieracleKit --scratch-path ~/Library/Caches/MieracleKit-build mieracle-validate out/*.json
+   ```
+4. Fix `is also in` errors by renaming the later id, re-run until `across N files: OK`, then import the files one at a time.
+
 ## Quick Reference
 
 | Thing | Rule |

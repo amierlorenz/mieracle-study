@@ -8,10 +8,12 @@ guard !paths.isEmpty else {
 }
 
 var failed = false
+var decoded: [(name: String, document: ImportDocument)] = []
 for path in paths {
     let url = URL(filePath: path)
     do {
         let document = try ImportDocument.decode(from: Data(contentsOf: url))
+        decoded.append((path, document))
         let issues = ImportValidator().validate(document)
         for issue in issues {
             print("\(path): \(issue)")
@@ -28,5 +30,13 @@ for path in paths {
         print("\(path): error: \(error.localizedDescription)")
         failed = true
     }
+}
+if decoded.count > 1 {
+    let duplicates = ImportValidator.crossDocumentDuplicates(decoded)
+    for issue in duplicates {
+        print("\(issue.path): \(issue.severity.rawValue): \(issue.message)")
+    }
+    print("across \(decoded.count) files: \(duplicates.isEmpty ? "OK" : "FAILED") — \(duplicates.count) duplicate ids")
+    failed = failed || !duplicates.isEmpty
 }
 exit(failed ? 1 : 0)

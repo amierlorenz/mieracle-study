@@ -117,6 +117,29 @@ public struct ImportValidator: Sendable {
         return issues
     }
 
+    /// Ids reused across several documents, such as files written by parallel
+    /// agents. Repeating a course or unit is fine (files may share them); a
+    /// concept, prompt, or exam in two files is an error.
+    public static func crossDocumentDuplicates(_ documents: [(name: String, document: ImportDocument)]) -> [ImportIssue] {
+        var owners: [String: [String: String]] = [:]
+        var issues: [ImportIssue] = []
+        func record(_ id: String, kind: String, in name: String) {
+            if let first = owners[kind]?[id], first != name {
+                issues.append(ImportIssue(severity: .error, path: name, message: "\(kind.capitalized) id \"\(id)\" is also in \(first)."))
+            } else {
+                owners[kind, default: [:]][id] = name
+            }
+        }
+        for (name, document) in documents {
+            for concept in document.courses.flatMap({ $0.units.flatMap(\.concepts) }) {
+                record(concept.id, kind: "concept", in: name)
+                concept.prompts.forEach { record($0.id, kind: "prompt", in: name) }
+            }
+            document.exams.forEach { record($0.id, kind: "exam", in: name) }
+        }
+        return issues
+    }
+
     /// Kind-specific problems as (relative path, message) pairs.
     static func problems(in content: PromptContent) -> [(String, String)] {
         var problems: [(String, String)] = []
