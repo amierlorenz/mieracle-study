@@ -34,7 +34,7 @@ public struct PythonRunner: CodeRunner {
         defer { try? FileManager.default.removeItem(at: directory) }
 
         try Data(source.utf8).write(to: directory.appending(path: "solution.py"))
-        try Self.harness().write(to: directory.appending(path: "harness.py"))
+        try Data(PythonHarness.source.utf8).write(to: directory.appending(path: "harness.py"))
         let config: [String: Any] = [
             "functionName": problem.functionName,
             "comparison": problem.comparison.rawValue,
@@ -71,13 +71,6 @@ public struct PythonRunner: CodeRunner {
     }
 
     private static let marker = "__MIERACLE_RESULT__"
-
-    private static func harness() throws -> Data {
-        guard let url = Bundle.module.url(forResource: "harness", withExtension: "py") else {
-            throw CocoaError(.fileNoSuchFile)
-        }
-        return try Data(contentsOf: url)
-    }
 
 }
 

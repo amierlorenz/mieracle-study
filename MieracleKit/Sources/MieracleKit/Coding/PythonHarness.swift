@@ -1,3 +1,8 @@
+/// The Python test harness, embedded so it can't go missing from a stale
+/// resource bundle. Runs `solution.py` against `tests.json` and prints one
+/// JSON result line after a marker.
+enum PythonHarness {
+    static let source = #"""
 """Runs solution.py against tests.json and prints one JSON result line."""
 import contextlib
 import copy
@@ -75,3 +80,5 @@ def main():
 
 
 main()
+"""#
+}

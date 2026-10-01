@@ -10,7 +10,7 @@ let package = Package(
         .executable(name: "mieracle-validate", targets: ["mieracle-validate"]),
     ],
     targets: [
-        .target(name: "MieracleKit", resources: [.copy("Rendering/Web"), .copy("Coding/Resources/harness.py")]),
+        .target(name: "MieracleKit", resources: [.copy("Rendering/Web")]),
         .executableTarget(name: "mieracle-validate", dependencies: ["MieracleKit"]),
         .testTarget(name: "MieracleKitTests", dependencies: ["MieracleKit"], resources: [.copy("Fixtures")])
     ]
