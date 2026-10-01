@@ -29,10 +29,11 @@ struct ExamDetailView: View {
                 ForEach(exam.course?.sortedUnits ?? []) { unit in
                     Toggle(unit.name, isOn: membership(unit, in: \.units))
                 }
+                Button("Suggest Units", systemImage: "wand.and.stars", action: suggestUnits)
             } header: {
                 Text("Units covered")
             } footer: {
-                Text("Concepts in these units are scheduled to come up before the exam.")
+                Text("Concepts in these units are scheduled to come up before the exam. Suggestions: a final covers everything; other exams cover units added since the previous exam.")
             }
             if !tags.isEmpty {
                 Section("Tags covered") {
@@ -63,6 +64,11 @@ struct ExamDetailView: View {
             exam[keyPath: keyPath] = items
             modelContext.saveLogging()
         }
+    }
+
+    private func suggestUnits() {
+        exam.units = ExamUnitSuggester.suggestUnits(for: exam)
+        modelContext.saveLogging()
     }
 
     private func delete() {
