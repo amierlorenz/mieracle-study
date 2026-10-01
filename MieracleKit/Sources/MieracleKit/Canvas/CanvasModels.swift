@@ -20,9 +20,10 @@ public struct CanvasAssignment: Decodable, Hashable, Sendable {
     public let id: Int
     public let name: String
     public let dueAt: Date?
+    public let unlockAt: Date?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, dueAt = "due_at"
+        case id, name, dueAt = "due_at", unlockAt = "unlock_at"
     }
 }
 

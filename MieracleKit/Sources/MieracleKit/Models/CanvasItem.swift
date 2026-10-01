@@ -13,6 +13,8 @@ public final class CanvasItem {
     public var name: String = ""
     public var kindRaw: String = CanvasItemKind.assignment.rawValue
     public var dueAt: Date?
+    /// When the item opens to students (Canvas `unlock_at`).
+    public var unlockAt: Date?
     public var isExam: Bool = false
     public var isDismissed: Bool = false
     public var lastSyncedAt: Date = Date.now
