@@ -43,16 +43,22 @@ struct PromptCardView: View {
                     revealedSections(for: content)
                 } else {
                     Section {
-                        if showsConfidence {
-                            ConfidencePicker(selection: $confidence)
+                    } header: {
+                        VStack(spacing: 16) {
+                            if showsConfidence {
+                                ConfidencePicker(selection: $confidence)
+                            }
+                            PrimaryActionButtons(
+                                primaryTitle: content.kind == .flashcard ? "Show Answer" : "Check Answer",
+                                isPrimaryDisabled: content.options != nil && input.selectedOption == nil,
+                                primary: reveal,
+                                secondaryTitle: content.allowsGettingAnswer ? "Get Answer" : nil,
+                                secondary: giveUp
+                            )
                         }
-                        PrimaryActionButtons(
-                            primaryTitle: content.kind == .flashcard ? "Show Answer" : "Check Answer",
-                            isPrimaryDisabled: content.options != nil && input.selectedOption == nil,
-                            primary: reveal,
-                            secondaryTitle: content.allowsGettingAnswer ? "Get Answer" : nil,
-                            secondary: giveUp
-                        )
+                        .textCase(nil)
+                        .foregroundStyle(.primary)
+                        .padding(.vertical, 8)
                     }
                 }
             }

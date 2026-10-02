@@ -28,7 +28,7 @@ struct SettingsView: View {
                 }
                 Section {
                     Toggle("Show confidence buttons", isOn: $asksConfidence)
-                    Toggle("Hide answer choices for 3 seconds", isOn: $blursChoices)
+                    Toggle("Hide answer choices for 5 seconds", isOn: $blursChoices)
                 } footer: {
                     Text("Confidence buttons (Sure, Not sure, No idea) are optional and feed the calibration stats. Hiding choices makes you recall the answer before recognizing it.")
                 }

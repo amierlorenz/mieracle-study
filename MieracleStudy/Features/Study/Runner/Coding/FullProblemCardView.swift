@@ -80,11 +80,14 @@ struct FullProblemCardView: View {
                 }
             } else {
                 Section {
+                } header: {
                     PrimaryActionButtons(
                         primaryTitle: stage == 3 ? "Check Answer" : "Next Stage",
                         isPrimaryDisabled: stage == 0 && problem.options != nil && input.selectedOption == nil,
                         primary: advance
                     )
+                    .textCase(nil)
+                    .foregroundStyle(.primary)
                 }
             }
         }

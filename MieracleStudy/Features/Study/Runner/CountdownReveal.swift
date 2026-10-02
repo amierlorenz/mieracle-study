@@ -4,7 +4,7 @@ import SwiftUI
 /// learner tries to recall the answer before seeing the choices.
 struct CountdownReveal<Content: View>: View {
     let isEnabled: Bool
-    var seconds = 3
+    var seconds = 5
     @ViewBuilder let content: Content
 
     @State private var remaining: Int?
@@ -16,7 +16,7 @@ struct CountdownReveal<Content: View>: View {
             .accessibilityHidden(isHidden)
             .overlay {
                 if isHidden, let remaining {
-                    Text("Think of the answer first… \(remaining)")
+                    Text("Revealing choices in \(remaining)…")
                         .font(.headline)
                         .monospacedDigit()
                         .padding(.horizontal, 16)
