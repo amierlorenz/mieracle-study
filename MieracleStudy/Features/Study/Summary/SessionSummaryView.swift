@@ -45,6 +45,9 @@ struct SessionSummaryView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Summary")
+        .toolbar {
+            UndoAnswerButton(engine: engine)
+        }
         .inlineTitleOnPhone()
     }
 

@@ -8,6 +8,7 @@ struct SessionRunnerView: View {
     @AppStorage(SettingsKey.asksConfidence) private var showsConfidence = true
     @AppStorage(SettingsKey.blursChoices) private var blursChoices = true
     @AppStorage(SettingsKey.aiModel) private var aiModel = FoundationModelsProvider.ModelChoice.onDevice.rawValue
+    @Environment(\.undoManager) private var undoManager
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,6 +23,7 @@ struct SessionRunnerView: View {
         }
         .navigationTitle(engine.config.mode.title)
         .toolbar {
+            UndoAnswerButton(engine: engine)
             Button("End Session", systemImage: "stop.fill", action: finish)
         }
     }
@@ -29,6 +31,7 @@ struct SessionRunnerView: View {
     private func answer(_ grade: Grade, confidence: Confidence?, duration: TimeInterval) {
         do {
             try engine.answer(grade, confidence: confidence, duration: duration)
+            engine.registerAnswerUndo(with: undoManager)
         } catch {
             Logger.app.error("Recording answer failed: \(error)")
         }

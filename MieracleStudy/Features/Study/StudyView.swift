@@ -7,6 +7,7 @@ struct StudyView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppNavigation.self) private var navigation
     @AppStorage(SettingsKey.dailyNewLimit) private var dailyNewLimit = NewConceptBudget.defaultLimit
+    @Environment(\.undoManager) private var undoManager
     @State private var engine: SessionEngine?
     @State private var message: String?
 
@@ -30,6 +31,7 @@ struct StudyView: View {
     }
 
     private func start(_ config: SessionConfig) {
+        if let engine { undoManager?.removeAllActions(withTarget: engine) }
         do {
             let engine = try SessionEngine(
                 config: config,
@@ -50,6 +52,7 @@ struct StudyView: View {
     }
 
     private func finishToDashboard() {
+        if let engine { undoManager?.removeAllActions(withTarget: engine) }
         engine = nil
         message = nil
         navigation.selection = .dashboard
