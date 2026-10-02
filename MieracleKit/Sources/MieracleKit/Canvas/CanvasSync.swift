@@ -36,12 +36,12 @@ public struct CanvasSync {
     @discardableResult
     public func run(now: Date = .now) async throws -> Result {
         let courseIDs = Set(try context.fetch(FetchDescriptor<Course>()).compactMap(\.canvasCourseID))
-        var fetched: [(id: String, course: Int, name: String, kind: CanvasItemKind, due: Date?, unlock: Date?, submitted: Bool)] = []
+        var fetched: [(id: String, course: Int, name: String, kind: CanvasItemKind, due: Date?, unlock: Date?, submitted: Bool, url: URL?)] = []
         for courseID in courseIDs.sorted() {
             async let assignments = client.assignments(courseID: courseID)
             async let events = client.events(courseID: courseID)
-            fetched += try await assignments.map { ("assignment_\($0.id)", courseID, $0.name, .assignment, $0.dueAt, $0.unlockAt, $0.isSubmitted) }
-            fetched += try await events.map { ("event_\($0.id)", courseID, $0.title, .event, $0.startAt, nil, false) }
+            fetched += try await assignments.map { ("assignment_\($0.id)", courseID, $0.name, .assignment, $0.dueAt, $0.unlockAt, $0.isSubmitted, $0.htmlURL) }
+            fetched += try await events.map { ("event_\($0.id)", courseID, $0.title, .event, $0.startAt, nil, false, $0.htmlURL) }
         }
 
         var items = Dictionary(try context.fetch(FetchDescriptor<CanvasItem>()).map { ($0.canvasID, $0) }, uniquingKeysWith: { first, _ in first })
@@ -63,11 +63,13 @@ public struct CanvasSync {
                     item.unlockAt = entry.unlock
                     item.isSubmitted = entry.submitted
                 }
+                item.htmlURL = entry.url?.absoluteString ?? item.htmlURL
                 item.lastSyncedAt = now
             } else {
                 let item = CanvasItem(canvasID: entry.id, canvasCourseID: entry.course, name: entry.name, kind: entry.kind, dueAt: entry.due)
                 item.unlockAt = entry.unlock
                 item.isSubmitted = entry.submitted
+                item.htmlURL = entry.url?.absoluteString
                 item.lastSyncedAt = now
                 context.insert(item)
                 items[entry.id] = item
