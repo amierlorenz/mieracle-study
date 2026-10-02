@@ -11,10 +11,13 @@ struct SelectableChip: View {
         Button(action: action) {
             Label(title, systemImage: state == .all ? "checkmark" : state == .some ? "minus" : "plus")
                 .font(.callout)
+                .lineLimit(1)
+                .truncationMode(.tail)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
         }
         .buttonStyle(.plain)
+        .help(title)
         .glassEffect(state == .none ? .regular.interactive() : .regular.tint(.accentColor.opacity(0.2)).interactive(), in: .capsule)
     }
 }

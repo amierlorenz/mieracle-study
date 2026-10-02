@@ -58,6 +58,7 @@ struct ClassCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .clipShape(.rect(cornerRadius: 22))
         .contentShape(.rect(cornerRadius: 22))
         .onTapGesture {
             withAnimation(.spring(duration: 0.35)) { scope.toggleCourse(course.externalID, in: catalog) }
