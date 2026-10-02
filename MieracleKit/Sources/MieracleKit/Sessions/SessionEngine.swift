@@ -25,6 +25,27 @@ public final class SessionEngine {
     @ObservationIgnored private var concepts: [String: Concept]
     @ObservationIgnored private var prompts: [String: Prompt]
     @ObservationIgnored private var requeued: Set<String> = []
+    @ObservationIgnored private var undoStack: [AnswerSnapshot] = []
+
+    /// Everything an answer changes, captured just before it, so the answer
+    /// can be taken back.
+    private struct AnswerSnapshot {
+        let log: ReviewLog
+        let concept: Concept
+        let schedule: ScheduleState
+        let introducedAt: Date?
+        let prompt: Prompt
+        let promptLastShownAt: Date?
+        let queue: [SessionItem]
+        let position: Int
+        let summary: SessionSummary
+        let requeued: Set<String>
+        let wasFinished: Bool
+        let endedAt: Date?
+    }
+
+    /// Whether there's an answer to take back.
+    public var canUndo: Bool { !undoStack.isEmpty }
 
     /// Builds the queue from the store and starts a session.
     public init(
@@ -81,8 +102,15 @@ public final class SessionEngine {
     }
 
     public func answer(_ grade: Grade, confidence: Confidence? = nil, duration: TimeInterval, now: Date = .now) throws {
-        guard let item = currentItem, let prompt = prompts[item.promptID] else { return }
-        try recorder.record(grade, for: prompt, confidence: confidence, duration: duration, mode: config.mode, sessionID: sessionID, now: now)
+        guard let item = currentItem, let prompt = prompts[item.promptID], let concept = concepts[item.conceptID] else { return }
+        let before = (schedule: concept.scheduleState, introducedAt: concept.introducedAt, lastShownAt: prompt.lastShownAt,
+                      queue: queue, position: position, summary: summary, requeued: requeued, wasFinished: isFinished, endedAt: record.endedAt)
+        let log = try recorder.record(grade, for: prompt, confidence: confidence, duration: duration, mode: config.mode, sessionID: sessionID, now: now)
+        undoStack.append(AnswerSnapshot(
+            log: log, concept: concept, schedule: before.schedule, introducedAt: before.introducedAt,
+            prompt: prompt, promptLastShownAt: before.lastShownAt, queue: before.queue, position: before.position,
+            summary: before.summary, requeued: before.requeued, wasFinished: before.wasFinished, endedAt: before.endedAt
+        ))
         summary.record(grade, for: item.conceptID)
         if grade == .again, !requeued.contains(item.conceptID) {
             requeued.insert(item.conceptID)
@@ -93,6 +121,23 @@ public final class SessionEngine {
         if position >= queue.count || timeRemaining(at: now) == 0 {
             try finish(at: now)
         }
+    }
+
+    /// Takes back the most recent answer: the review is deleted, the concept's
+    /// schedule restored, and the same item shown again, unanswered.
+    public func undoLastAnswer() throws {
+        guard let snapshot = undoStack.popLast() else { return }
+        context.delete(snapshot.log)
+        snapshot.concept.scheduleState = snapshot.schedule
+        snapshot.concept.introducedAt = snapshot.introducedAt
+        snapshot.prompt.lastShownAt = snapshot.promptLastShownAt
+        queue = snapshot.queue
+        position = snapshot.position
+        summary = snapshot.summary
+        requeued = snapshot.requeued
+        isFinished = snapshot.wasFinished
+        record.endedAt = snapshot.endedAt
+        try context.save()
     }
 
     /// Ends the session early or after the last item.
