@@ -21,10 +21,7 @@ struct RootView: View {
         }
     }
 
-    @ViewBuilder
     private var root: some View {
-        @Bindable var navigation = navigation
-        #if os(iOS)
         TabView(selection: tabSelection) {
             ForEach(SidebarSection.tabs) { section in
                 Tab(section.title, systemImage: section.systemImage, value: section) {
@@ -32,16 +29,7 @@ struct RootView: View {
                 }
             }
         }
-        #else
-        NavigationSplitView {
-            List(SidebarSection.allCases, selection: $navigation.selection) { section in
-                Label(section.title, systemImage: section.systemImage)
-            }
-            .navigationTitle("MieracleStudy")
-        } detail: {
-            SectionDetailView(section: navigation.selection ?? .dashboard)
-        }
-        #endif
+        .tabViewStyle(.tabBarOnly)
     }
 
     private var tabSelection: Binding<SidebarSection> {

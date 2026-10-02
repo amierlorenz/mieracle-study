@@ -7,8 +7,14 @@ enum SidebarSection: String, CaseIterable, Identifiable {
 
     var id: Self { self }
 
-    /// Tabs on iPhone; Settings lives in the Dashboard's toolbar there.
-    static let tabs: [SidebarSection] = [.dashboard, .study, .library, .exams]
+    /// The app's tabs. On iPhone, Settings opens from the Home toolbar instead.
+    static var tabs: [SidebarSection] {
+        #if os(iOS)
+        [.dashboard, .study, .library, .exams]
+        #else
+        allCases
+        #endif
+    }
 
     var title: String {
         switch self {
