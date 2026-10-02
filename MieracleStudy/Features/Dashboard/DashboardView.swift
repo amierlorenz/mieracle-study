@@ -59,7 +59,7 @@ struct DashboardView: View {
         }
         .overlay(alignment: .bottom) {
             if let completed {
-                UndoToast(message: "Marked “\(completed.name)” done", onUndo: undoCompletion, onExpire: { clearToast(for: completed) })
+                UndoToast(message: "Assignment completed", onUndo: undoCompletion, onExpire: { clearToast(for: completed) })
                     .id(completed.canvasID)
             }
         }

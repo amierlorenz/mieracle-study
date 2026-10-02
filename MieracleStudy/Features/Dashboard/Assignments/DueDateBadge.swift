@@ -5,7 +5,7 @@ struct DueDateBadge: View {
     let date: Date
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 0) {
+        VStack(alignment: .center, spacing: 0) {
             Text(date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
                 .font(.subheadline.weight(.semibold))
             Text(date.formatted(.relative(presentation: .named)))
