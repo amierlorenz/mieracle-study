@@ -20,6 +20,7 @@ struct AssignmentRow: View {
                 }
             }
             Spacer()
+            CopyCanvasLinkButton(item: item)
             if let due = item.dueAt {
                 DueDateBadge(date: due)
             }

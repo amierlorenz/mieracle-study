@@ -5,6 +5,7 @@ import SwiftUI
 
 struct CanvasSuggestionRow: View {
     let item: CanvasItem
+    let courseName: String?
 
     @Environment(\.modelContext) private var modelContext
 
@@ -12,11 +13,12 @@ struct CanvasSuggestionRow: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(item.name)
-                Text(item.dueAt?.formatted(date: .abbreviated, time: .shortened) ?? "No date")
+                Text([courseName, item.dueAt?.formatted(date: .abbreviated, time: .shortened) ?? "No date"].compactMap { $0 }.joined(separator: " · "))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
+            CopyCanvasLinkButton(item: item)
             Button("Make Exam", action: makeExam)
                 .buttonStyle(.glass)
             Button("Dismiss", action: dismissItem)

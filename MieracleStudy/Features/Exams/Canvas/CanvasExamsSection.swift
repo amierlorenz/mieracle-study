@@ -7,6 +7,7 @@ struct CanvasExamsSection: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(CanvasService.self) private var canvas
     @Query(sort: \CanvasItem.dueAt) private var items: [CanvasItem]
+    @Query private var courses: [Course]
     @State private var isLinking = false
 
     var body: some View {
@@ -42,7 +43,7 @@ struct CanvasExamsSection: View {
             if !suggestions.isEmpty {
                 Section {
                     ForEach(suggestions) { item in
-                        CanvasSuggestionRow(item: item)
+                        CanvasSuggestionRow(item: item, courseName: courses.first { $0.canvasCourseID == item.canvasCourseID }?.displayName)
                     }
                 } header: {
                     Text("Suggested from Canvas")
