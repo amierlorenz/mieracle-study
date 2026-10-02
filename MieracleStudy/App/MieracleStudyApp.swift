@@ -10,6 +10,7 @@ struct MieracleStudyApp: App {
     @State private var navigation = AppNavigation()
     @State private var canvas = CanvasService()
     @State private var syncStatus = SyncStatusService()
+    @State private var settingsSync = SettingsSync()
 
     init() {
         container = Self.makeContainer()
@@ -22,7 +23,13 @@ struct MieracleStudyApp: App {
                 .environment(navigation)
                 .environment(canvas)
                 .environment(syncStatus)
-                .task { syncStatus.start() }
+                .task {
+                    syncStatus.start()
+                    #if DEBUG
+                    if DebugLaunchOptions.usesLocalStore { return }
+                    #endif
+                    settingsSync.start()
+                }
         }
         .modelContainer(container)
     }
