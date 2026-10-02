@@ -14,7 +14,7 @@ struct LibraryView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     FlaggedPromptsCard()
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 14, alignment: .top)], spacing: 14) {
+                    MasonryLayout {
                         ForEach(courses) { course in
                             NavigationLink(value: course) {
                                 LibraryClassCard(course: course)

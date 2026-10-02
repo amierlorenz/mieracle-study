@@ -20,7 +20,7 @@ struct ClassCardGrid: View {
             .buttonStyle(.glass)
             .controlSize(.small)
             .animation(.spring(duration: 0.35), value: scope)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 14, alignment: .top)], spacing: 14) {
+            MasonryLayout {
                 ForEach(courses) { course in
                     ClassCard(course: course, catalog: catalog, scope: $scope)
                 }
