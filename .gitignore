@@ -13,3 +13,4 @@ Secrets.xcconfig
 *.p12
 *.mobileprovision
 *.provisionprofile
+.claude/worktrees/
