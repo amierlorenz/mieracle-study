@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["flashcard", "shortAnswer", "multipleChoice"],
+  "properties": {
+    "flashcard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["front", "back"],
+      "properties": {
+        "front": {"type": "string", "description": "Question asking for one key idea"},
+        "back": {"type": "string", "description": "Answer, one or two sentences"}
+      }
+    },
+    "shortAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "modelAnswer", "keyPoints"],
+      "properties": {
+        "question": {"type": "string", "description": "Asks the student to state, explain, or apply the concept"},
+        "modelAnswer": {"type": "string", "description": "Model answer, two or three sentences"},
+        "keyPoints": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 4, "description": "Points a correct answer must mention"}
+      }
+    },
+    "multipleChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "options", "correctIndex", "explanation"],
+      "properties": {
+        "question": {"type": "string"},
+        "options": {"type": "array", "items": {"type": "string"}, "minItems": 4, "maxItems": 4, "description": "Exactly 4 options of similar length, one correct"},
+        "correctIndex": {"type": "integer", "description": "0-based index of the correct option"},
+        "explanation": {"type": "string", "description": "Why the correct option is right and what the most tempting wrong one gets wrong"}
+      }
+    }
+  }
+}
