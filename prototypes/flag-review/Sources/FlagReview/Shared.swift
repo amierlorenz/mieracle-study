@@ -216,9 +216,11 @@ struct ApproveButton: View {
     @State private var showing = false
 
     var body: some View {
-        Button(store.approved ? "Approved" : "Approve \(store.live.count)…") { showing = true }
+        let blocking = store.openFlags.filter { [.merge, .enrichment, .gapFill].contains($0.type) }.count
+        Button(store.approved ? "Approved" : blocking > 0 ? "\(blocking) to decide before approving" : "Approve \(store.live.count)…") { showing = true }
             .buttonStyle(.borderedProminent)
-            .disabled(store.approved)
+            .disabled(store.approved || blocking > 0)
+            .help("Merge candidates, matches to existing concepts and gap-fill claims must be decided first. Other flags are accepted as is.")
             .sheet(isPresented: $showing) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Approve this extraction?").font(.headline)
