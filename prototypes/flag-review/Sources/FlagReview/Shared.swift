@@ -85,6 +85,7 @@ struct FlagActions: View {
     @Environment(ReviewStore.self) private var store
     var flag: Flag
     @State private var editing: EditTarget?
+    @State private var merging: MergeTarget?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -96,6 +97,7 @@ struct FlagActions: View {
             }
         }
         .sheet(item: $editing) { EditSheet(target: $0) }
+        .sheet(item: $merging) { MergeSheet(target: $0) }
     }
 
     private var cid: String { flag.candidateID ?? "" }
@@ -131,7 +133,7 @@ struct FlagActions: View {
             Button("Keep as new concept") { store.resolve(flag, .keptSeparate) }
             Button("Drop", role: .destructive) { store.drop(cid) }
         case .merge:
-            Button("Merge into “\(store.title(flag.pair[1]))”") { store.merge(flag.pair[0], into: flag.pair[1]) }
+            Button("Compare and decide…") { merging = MergeTarget(first: flag.pair[0], second: flag.pair[1], flag: flag) }
             Button("Keep both") { store.resolve(flag, .keptSeparate) }
         case .lowConfidence:
             Button("Keep") { store.resolve(flag, .kept) }

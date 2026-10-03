@@ -52,39 +52,67 @@ func matches(_ line: OCRLine, _ quote: String) -> Bool {
     let l = " " + line.words.joined(separator: " ") + " "
     if line.words.count >= 4, q.contains(l) || l.contains(q) { return true }
     let set = Set(qWords)
-    return line.words.count >= 5 && Double(line.words.filter(set.contains).count) / Double(line.words.count) >= 0.8
+    return line.words.count >= 5 && Double(line.words.filter(set.contains).count) / Double(line.words.count) >= 0.9
+}
+
+struct SlideQuote {
+    var owner: String
+    var text: String
 }
 
 struct SlideView: View {
     var page: Int
-    var quotes: [String]
+    var quotes: [SlideQuote]
+    var focused: String? = nil
+    var onTap: ((String) -> Void)? = nil
     @State private var loaded: (image: NSImage, lines: [OCRLine])?
+
+    init(page: Int, quotes: [String]) {
+        self.page = page
+        self.quotes = quotes.map { SlideQuote(owner: $0, text: $0) }
+    }
+
+    init(page: Int, quotes: [SlideQuote], focused: String?, onTap: @escaping (String) -> Void) {
+        self.page = page
+        self.quotes = quotes
+        self.focused = focused
+        self.onTap = onTap
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             if let loaded {
-                let hits = loaded.lines.filter { line in quotes.contains { matches(line, $0) } }
+                let hits: [(owner: String, box: CGRect)] = loaded.lines.compactMap { line in
+                    quotes.first { matches(line, $0.text) }.map { ($0.owner, line.box) }
+                }
                 Image(nsImage: loaded.image)
                     .resizable()
                     .scaledToFit()
                     .overlay {
                         GeometryReader { geo in
-                            ForEach(Array(hits.enumerated()), id: \.offset) { _, line in
+                            ForEach(Array(hits.enumerated()), id: \.offset) { _, hit in
+                                let strong = focused == nil || focused == hit.owner
                                 Rectangle()
-                                    .fill(.yellow.opacity(0.35))
-                                    .border(.orange)
-                                    .frame(width: line.box.width * geo.size.width, height: line.box.height * geo.size.height)
-                                    .position(x: line.box.midX * geo.size.width, y: (1 - line.box.midY) * geo.size.height)
+                                    .fill(.yellow.opacity(strong ? 0.4 : 0.08))
+                                    .border(strong ? Color.orange : Color.orange.opacity(0.3), width: focused == hit.owner ? 2 : 1)
+                                    .contentShape(.rect)
+                                    .onTapGesture { onTap?(hit.owner) }
+                                    .help(onTap == nil ? "" : "Show the concept this quote supports")
+                                    .frame(width: hit.box.width * geo.size.width, height: hit.box.height * geo.size.height)
+                                    .position(x: hit.box.midX * geo.size.width, y: (1 - hit.box.midY) * geo.size.height)
                             }
                         }
                     }
                     .border(.separator)
-                let wanted = quotes.filter { !$0.isEmpty }
-                Text(wanted.isEmpty ? "Slide \(page) · no quote to find"
+                let focusedQuote = quotes.first { $0.owner == focused && !$0.text.isEmpty }
+                let focusedHits = hits.filter { $0.owner == focused }.count
+                Text(focused != nil && focusedQuote == nil ? "Slide \(page) · this concept has no quote to find"
+                     : focused != nil && focusedHits == 0 ? "Slide \(page) · its quote wasn't found by OCR (formula or image text?): check the slide by eye"
+                     : quotes.allSatisfy { $0.text.isEmpty } ? "Slide \(page) · no quote to find"
                      : hits.isEmpty ? "Slide \(page) · quote not found by OCR (formula or image text?)"
-                     : "Slide \(page) · \(hits.count) matching line\(hits.count == 1 ? "" : "s") highlighted")
+                     : "Slide \(page) · \(hits.count) matching line\(hits.count == 1 ? "" : "s") highlighted" + (onTap == nil ? "" : " · click one to find its concept"))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(focused != nil && focusedQuote != nil && focusedHits == 0 ? .orange : .secondary)
             } else if SlideCache.shared.deck == nil {
                 ContentUnavailableView("No deck", systemImage: "doc", description: Text("Pass --deck <pdf> to see slides."))
             } else {

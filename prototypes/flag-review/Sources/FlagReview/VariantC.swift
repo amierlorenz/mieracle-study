@@ -1,12 +1,15 @@
 // PROTOTYPE — throwaway. Variant C: read along the deck. One slide at a time, large, with every quote
-// on it highlighted; the concepts cited on that slide sit beside it with their flags inline. A strip of
-// slide numbers shows where flags are. After the last slide: the method group, then Approve.
+// on it highlighted; the concepts cited on that slide sit beside it with their flags inline. Clicking a
+// concept focuses its quote on the slide; clicking a highlight focuses and scrolls to its concept.
+// A strip of slide numbers shows where flags are. After the last slide: the method group, then Approve.
 import SwiftUI
 
 struct VariantC: View {
     @Environment(ReviewStore.self) private var store
-    @State private var step = 1
+    @State private var step = Int(Args.value("--step") ?? "") ?? 1
+    @State private var focused: String? = Args.value("--focus")
     @State private var editing: EditTarget?
+    @State private var merging: MergeTarget?
 
     private var pages: Int { max(SlideCache.shared.pageCount, store.candidates.map(\.page).max() ?? 1) }
     private var groupStep: Int { pages + 1 }
@@ -28,33 +31,50 @@ struct VariantC: View {
                     .frame(maxWidth: 760, alignment: .leading)
                 }
             } else {
-                HSplitView {
-                    ScrollView {
-                        SlideView(page: step, quotes: onPage.flatMap { $0.claims.compactMap { $0.citation?.page == step ? $0.citation?.quote : nil } })
+                ScrollViewReader { proxy in
+                    HSplitView {
+                        ScrollView {
+                            SlideView(page: step, quotes: quotes, focused: focused) { id in
+                                focused = focused == id ? nil : id
+                                withAnimation { proxy.scrollTo(id, anchor: .top) }
+                            }
                             .padding()
-                    }
-                    .frame(minWidth: 420)
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 12) {
-                            if onPage.isEmpty { Text("No concepts cite this slide.").foregroundStyle(.secondary) }
-                            ForEach(onPage) { card($0) }
                         }
-                        .padding()
-                        .padding(.bottom, 160)
+                        .frame(minWidth: 420)
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 12) {
+                                if onPage.isEmpty { Text("No concepts cite this slide.").foregroundStyle(.secondary) }
+                                ForEach(onPage) { card($0).id($0.id) }
+                            }
+                            .padding()
+                            .padding(.bottom, 160)
+                        }
+                        .frame(minWidth: 380)
                     }
-                    .frame(minWidth: 380)
                 }
             }
         }
         .toolbar {
-            ToolbarItem { Button("Previous", systemImage: "chevron.up") { step = max(1, step - 1) }.keyboardShortcut(.upArrow, modifiers: .command) }
-            ToolbarItem { Button("Next", systemImage: "chevron.down") { step = min(groupStep, step + 1) }.keyboardShortcut(.downArrow, modifiers: .command) }
+            ToolbarItem { Button("Previous", systemImage: "chevron.up") { go(max(1, step - 1)) }.keyboardShortcut(.upArrow, modifiers: .command) }
+            ToolbarItem { Button("Next", systemImage: "chevron.down") { go(min(groupStep, step + 1)) }.keyboardShortcut(.downArrow, modifiers: .command) }
             ToolbarItem { ApproveButton() }
         }
         .sheet(item: $editing) { EditSheet(target: $0) }
+        .sheet(item: $merging) { MergeSheet(target: $0) }
     }
 
     private var onPage: [Candidate] { store.live.filter { $0.page == step } }
+
+    private var quotes: [SlideQuote] {
+        onPage.flatMap { c in
+            c.claims.compactMap { $0.citation?.page == step ? SlideQuote(owner: c.id, text: $0.citation!.quote) : nil }
+        }
+    }
+
+    private func go(_ s: Int) {
+        step = s
+        focused = nil
+    }
 
     private var strip: some View {
         ScrollView(.horizontal) {
@@ -65,7 +85,7 @@ struct VariantC: View {
                         : store.live.filter { $0.page == s }.flatMap { store.openFlags(for: $0.id) }.filter { $0.type != .missingContrast }.count
                     let count = s == groupStep ? 0 : store.live.filter { $0.page == s }.count
                     Button {
-                        step = s
+                        go(s)
                     } label: {
                         VStack(spacing: 2) {
                             Text(s == groupStep ? "Methods" : "Slide \(s)").bold(s == step)
@@ -88,10 +108,22 @@ struct VariantC: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(verbatim: c.title).font(.headline)
-                    Text(c.kind.rawValue).foregroundStyle(.secondary)
                     Spacer()
-                    Menu("Concept") { CandidateMenu(id: c.id, editing: $editing) }.fixedSize()
+                    if focused == c.id { Label("Shown on slide", systemImage: "eye").font(.caption).foregroundStyle(.orange) }
                 }
+                HStack {
+                    Picker("Kind", selection: Binding(get: { c.kind }, set: { store.setKind(c.id, $0) })) {
+                        ForEach(Kind.allCases, id: \.self) { Text($0.rawValue) }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+                    Spacer()
+                    Button("Rename…") { editing = EditTarget(title: "Title", text: c.title) { store.rename(c.id, to: $0) } }
+                    Button("Merge…") { merging = MergeTarget(first: c.id) }
+                    Button("Drop", role: .destructive) { store.drop(c.id) }
+                }
+                .controlSize(.small)
                 ForEach(store.flags(for: c.id).filter { $0.type != .missingContrast }) { flag in
                     VStack(alignment: .leading, spacing: 4) {
                         FlagHeader(flag: flag)
@@ -104,5 +136,10 @@ struct VariantC: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8).strokeBorder(focused == c.id ? Color.orange : .clear, lineWidth: 2)
+        }
+        .contentShape(.rect)
+        .onTapGesture { focused = focused == c.id ? nil : c.id }
     }
 }
