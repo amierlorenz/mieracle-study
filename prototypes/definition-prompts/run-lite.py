@@ -15,6 +15,20 @@ if not key:
     sys.exit("no key: set GEMINI_API_KEY or add keychain item mieracle-gemini-prototype")
 
 gen_schema = json.loads((here / "schema.json").read_text())
+pattern = os.environ.get("PATTERN") == "1"
+
+
+def add_pattern(node):
+    if node.get("type") == "string":
+        node["pattern"] = "^[^\\t\\x08\\x0c]*$"
+    for child in node.get("properties", {}).values():
+        add_pattern(child)
+    if "items" in node:
+        add_pattern(node["items"])
+
+
+if pattern:
+    add_pattern(gen_schema)
 check = {"type": "object", "additionalProperties": False,
          "required": ["correct", "withinClaims", "noLeak", "singleBest", "issue"],
          "properties": {"correct": {"type": "boolean"}, "withinClaims": {"type": "boolean"}, "noLeak": {"type": "boolean"},
@@ -73,12 +87,12 @@ for r in records:
     results.append(entry)
     print(f"lite: {r['title']}: {entry.get('seconds')}s + verify {entry.get('verifySeconds')}s {entry.get('error', '')}")
 path_requests = stats["requests"]
-meta = {"provider": f"Gemini {model} (free tier) + verify", "seconds": round(time.time() - start), **stats}
-(here / "out/lite.json").write_text(json.dumps({"meta": meta, "results": results}, indent=2, ensure_ascii=False))
+meta = {"provider": f"Gemini {model} (free tier) + verify" + (" + pattern" if pattern else ""), "seconds": round(time.time() - start), **stats}
+(here / ("out/lite-pattern.json" if pattern else "out/lite.json")).write_text(json.dumps({"meta": meta, "results": results}, indent=2, ensure_ascii=False))
 print(f"lite: {len(results)} concepts, {path_requests} requests, {meta['seconds']}s")
 
 fm_path = here / "out/fm.json"
-if fm_path.exists():
+if fm_path.exists() and not pattern:
     fm = json.loads(fm_path.read_text())
     by_id = {r["id"]: r for r in records}
     before = stats["requests"]

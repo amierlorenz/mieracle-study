@@ -6,7 +6,7 @@ here = Path(__file__).parent
 out = here / "out"
 records = {r["id"]: r for r in json.loads((out / "records.json").read_text())}
 providers = {}
-for name, files in {"fm": ["fm-judged.json", "fm.json"], "fmRepaired": ["fm-repaired.json"], "coreai": ["coreai.json"], "coreaiPattern": ["coreai-pattern.json"], "lite": ["lite.json"]}.items():
+for name, files in {"fm": ["fm-judged.json", "fm.json"], "fmRepaired": ["fm-repaired.json"], "coreai": ["coreai.json"], "coreaiPattern": ["coreai-pattern.json"], "lite": ["lite.json"], "litePattern": ["lite-pattern.json"]}.items():
     for f in files:
         if (out / f).exists():
             providers[name] = json.loads((out / f).read_text())
