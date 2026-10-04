@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "model": "gemini-3.8-flash",
+    "seconds": 30,
+    "usage": {
+      "promptTokenCount": 4505,
+      "candidatesTokenCount": 3201,
+      "totalTokenCount": 8357,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 4505
+        }
+      ],
+      "thoughtsTokenCount": 651,
+      "serviceTier": "standard"
+    },
+    "failed_attempts": [
+      "gemini-3.8-flash: HTTP 503"
+    ],
+    "course": "CSC 301"
+  },
+  "concepts": [
+    {
+      "title": "Bounded-Buffer Problem (Semaphore Solution)",
+      "kind": "method",
+      "definition": "A classical synchronization problem where a producer and a consumer share a fixed buffer of size $n$. It is synchronized using three semaphores: a binary semaphore `mutex` (initialized to 1) for mutual exclusion on buffer access, a counting semaphore `empty` (initialized to $n$) tracking available slots, and a counting semaphore `full` (initialized to 0) tracking occupied slots. The producer executes `wait(empty)`, `wait(mutex)`, produces, `signal(mutex)`, `signal(full)`; the consumer executes `wait(full)`, `wait(mutex)`, consumes, `signal(mutex)`, `signal(empty)`.",
+      "slide": 4,
+      "evidence": "Semaphore mutex initialized to the value 1\nSemaphore full initialized to the value 0\nSemaphore empty initialized to the value n",
+      "useWhen": [
+        "Coordinating producer and consumer processes sharing a fixed-size buffer using semaphores"
+      ],
+      "confusedWith": [
+        "Readers-Writers Problem",
+        "Dining-Philosophers Problem"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "confusable",
+        "id": "canvas-16132.ch6-mutex-locks-and-semaphores.semaphore-usage"
+      }
+    },
+    {
+      "title": "Readers-Writers Problem",
+      "kind": "term",
+      "definition": "A classical synchronization problem involving a data set shared among concurrent processes where readers only read data without modifying it and writers can both read and write. The synchronization requirement is that multiple readers may read simultaneously, but only a single writer may access the shared data exclusively at any given time.",
+      "slide": 7,
+      "evidence": "Problem \u2013 allow multiple readers to read at the same time\nOnly one single writer can access the shared data at the same time",
+      "useWhen": [],
+      "confusedWith": [
+        "Bounded-Buffer Problem (Semaphore Solution)",
+        "Dining-Philosophers Problem"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "First and Second Readers-Writers Problem Variations",
+      "kind": "fact",
+      "definition": "Variations of the readers-writers problem based on priority: In the first readers-writers problem, no reader is kept waiting unless a writer has already obtained permission to use the shared object (which can starve writers). In the second readers-writers problem, once a writer is ready, no newly arrived reader may start reading, prioritizing writers (which can starve readers).",
+      "slide": 11,
+      "evidence": "The solution in previous slide can result in a situation where a writer process never writes. It is referred to as the \u201cFirst reader-writer\u201d problem.\nThe \u201cSecond reader-writer\u201d problem is a variation the first reader-writer problem that state:\nOnce a writer is ready to write, no \u201cnewly arrived reader\u201d is allowed to read.",
+      "useWhen": [],
+      "confusedWith": [
+        "Readers-Writers Problem"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Dining-Philosophers Problem",
+      "kind": "term",
+      "definition": "A classical synchronization problem modeling resource allocation among $N$ processes (philosophers) seated around a table who alternate between thinking and eating. Eating requires acquiring two shared adjacent resources (chopsticks), picked up one at a time. A naive semaphore solution where every philosopher simultaneously picks up their left chopstick leads to deadlock.",
+      "slide": 12,
+      "evidence": "N philosophers\u2019 sit at a round table with a bowel of rice in the middle.\nThey spend their lives alternating thinking and eating.\nThey do not interact with their neighbors.\nOccasionally try to pick up 2 chopsticks (one at a time) to eat from bowl\nNeed both to eat, then release both when done",
+      "useWhen": [],
+      "confusedWith": [
+        "Dining-Philosophers Monitor Solution"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "confusable",
+        "id": "canvas-16132.ch6-liveness.deadlock"
+      }
+    },
+    {
+      "title": "Dining-Philosophers Monitor Solution",
+      "kind": "method",
+      "definition": "A deadlock-free solution to the dining-philosophers problem implemented inside a monitor. Each philosopher tracks their state as `THINKING`, `HUNGRY`, or `EATING`. A philosopher may transition to `EATING` only if neither neighbor is currently eating (`state[(i+4)%5] != EATING && state[(i+1)%5] != EATING`). If chopsticks are unavailable, the philosopher invokes `wait()` on a condition variable `self[i]`. When putting down chopsticks, a philosopher tests both neighbors to signal them if they are waiting and eligible to eat. This eliminates deadlock, though starvation is still possible.",
+      "slide": 14,
+      "evidence": "monitor DiningPhilosophers\n{\nenum {THINKING; HUNGRY, EATING} state [5];\ncondition self [5];",
+      "useWhen": [
+        "Designing a deadlock-free dining-philosophers solution using monitors and condition variables"
+      ],
+      "confusedWith": [
+        "Dining-Philosophers Problem"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Windows Dispatcher Objects",
+      "kind": "term",
+      "definition": "Kernel synchronization mechanisms in Windows available to user-space threads, encompassing mutexes, semaphores, events, and timers. Dispatcher objects exist in either a signaled state (the object is available, allowing an acquiring thread to proceed without blocking) or a non-signaled state (the object is unavailable, causing an acquiring thread to block).",
+      "slide": 17,
+      "evidence": "Also provides dispatcher objects user-land which may act mutexes, semaphores, events, and timers\nDispatcher objects either signaled-state (object available) or non-signaled state (thread will block)",
+      "useWhen": [],
+      "confusedWith": [],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "POSIX Named vs. Unnamed Semaphores",
+      "kind": "fact",
+      "definition": "POSIX provides semaphores in two forms: named semaphores, which have a name in the filesystem and can be shared and accessed by unrelated processes, and unnamed semaphores, which reside in memory and can only be used by threads of the same process or processes sharing memory.",
+      "slide": 23,
+      "evidence": "POSIX provides two versions \u2013 named and unnamed.\nNamed semaphores can be used by unrelated processes, unnamed cannot.",
+      "useWhen": [],
+      "confusedWith": [],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "POSIX Condition Variables",
+      "kind": "method",
+      "definition": "Synchronization primitives in POSIX (Pthreads) that allow threads to block until a specific predicate is satisfied. Because C and C++ lack built-in monitor language constructs, every POSIX condition variable (`pthread_cond_t`) is explicitly associated with a POSIX mutex lock (`pthread_mutex_t`) to ensure mutual exclusion while checking conditions and waiting.",
+      "slide": 26,
+      "evidence": "Since POSIX is typically used in C/C++ and these languages do not provide a monitor, POSIX condition variables are associated with a POSIX mutex lock to provide mutual exclusion",
+      "useWhen": [
+        "Synchronizing threads in C/C++ under POSIX based on conditional state changes"
+      ],
+      "confusedWith": [
+        "Java Condition Variables",
+        "Java Monitors"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "confusable",
+        "id": "canvas-16132.ch6-monitors.condition-variables"
+      }
+    },
+    {
+      "title": "Java Monitors",
+      "kind": "term",
+      "definition": "Java's language-level synchronization mechanism where every object has an associated intrinsic lock and two thread queues: an entry set and a wait set. Calling a `synchronized` method requires acquiring the object's lock; if unavailable, the thread joins the entry set. Inside synchronized code, calling `wait()` releases the lock and places the thread into the wait set; calling `notify()` selects an arbitrary thread from the wait set, moves it to the entry set, and marks it runnable to compete for the lock.",
+      "slide": 29,
+      "evidence": "Every Java object has associated with it a single lock.\nIf a method is declared as synchronized , a calling thread must own the lock for the object.\nLocks are released when the owning thread exits the synchronized method.",
+      "useWhen": [],
+      "confusedWith": [
+        "Java Condition Variables",
+        "POSIX Condition Variables"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "confusable",
+        "id": "canvas-16132.ch6-monitors.monitor-concept"
+      }
+    },
+    {
+      "title": "Java Condition Variables",
+      "kind": "term",
+      "definition": "Explicit condition synchronization objects created from an instance of `java.util.concurrent.locks.ReentrantLock` via `newCondition()`. Threads suspend execution by calling `await()` (which atomically releases the lock) and resume waiting threads by calling `signal()` or `signalAll()`, allowing multiple independent wait-conditions per explicit lock.",
+      "slide": 38,
+      "evidence": "Condition variables are associated with an ReentrantLock.\nCreating a condition variable using newCondition () method of ReentrantLock :\nA thread waits by calling the await() method, and signals by calling the signal() method.",
+      "useWhen": [
+        "Implementing multiple conditional waiting queues on an explicit Java ReentrantLock"
+      ],
+      "confusedWith": [
+        "Java Monitors",
+        "POSIX Condition Variables"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "confusable",
+        "id": "canvas-16132.ch6-monitors.condition-variables"
+      }
+    },
+    {
+      "title": "Transactional Memory",
+      "kind": "term",
+      "definition": "A synchronization approach where a sequence of memory read-write operations is executed as an atomic transaction (e.g., within an `atomic { S }` block). If all operations in the transaction complete without conflict from other threads, the transaction commits; if a conflict occurs, changes are aborted and rolled back, and the transaction is retried.",
+      "slide": 42,
+      "evidence": "A memory transaction is a sequence of read-write operations to memory that are performed atomically. A transaction can be completed by adding atomic{S} which ensure statements in S are executed atomically",
+      "useWhen": [],
+      "confusedWith": [
+        "OpenMP Critical Section Directive"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "OpenMP Critical Section Directive",
+      "kind": "method",
+      "definition": "A compiler directive in OpenMP written as `#pragma omp critical` that designates the immediately following structured block of code as a critical section, ensuring it is executed by only one thread at a time atomically.",
+      "slide": 43,
+      "evidence": "The code contained within the #pragma omp critical directive is treated as a critical section and performed atomically.",
+      "useWhen": [
+        "Enforcing mutual exclusion in shared-memory parallel programs written with OpenMP"
+      ],
+      "confusedWith": [
+        "Transactional Memory"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Functional Programming for Data Races",
+      "kind": "fact",
+      "definition": "A programming paradigm that eliminates data races and synchronization conflicts by treating variables as immutable and maintaining no shared mutable state. Because values cannot change once assigned, concurrent reads never conflict.",
+      "slide": 44,
+      "evidence": "Functional programming languages offer a different paradigm than procedural languages in that they do not maintain state.\nVariables are treated as immutable and cannot change state once they have been assigned a value.\nThere is increasing interest in functional languages such as Erlang and Scala for their approach in handling data races.",
+      "useWhen": [],
+      "confusedWith": [],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    }
+  ]
+}

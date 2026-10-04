@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library Matching Prototype</title>
+<style>
+  :root { --fg:#1d1d1f; --muted:#6e6e73; --line:#e3e3e8; --bg:#fbfbfd; --card:#fff; --accent:#0a66d9; --good:#1a7f37; --bad:#c62828; --warn:#b26a00; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:28px 16px 80px; }
+  h1 { font-size:24px; margin:0 0 6px; } h2 { font-size:18px; margin:32px 0 10px; } h3 { font-size:15px; margin:18px 0 6px; }
+  p.lead { color:var(--muted); margin:0 0 4px; max-width:820px; }
+  .tag { display:inline-block; font-size:12px; padding:1px 8px; border-radius:10px; background:#eef3fb; color:var(--accent); margin-left:6px; }
+  table { border-collapse:collapse; width:100%; background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); vertical-align:top; font-size:14px; }
+  th { background:#f4f4f7; font-weight:600; }
+  tr.current td { background:#eef3fb; }
+  tr.pick { cursor:pointer; }
+  .num { font-variant-numeric:tabular-nums; }
+  .controls { display:flex; flex-wrap:wrap; gap:18px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .controls label { font-size:14px; }
+  button { font:inherit; font-size:14px; padding:5px 12px; border-radius:6px; border:1px solid var(--line); background:#fff; cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  button:disabled { opacity:.45; cursor:default; }
+  .chip { display:inline-block; font-size:13px; padding:1px 8px; border-radius:10px; margin:2px 4px 2px 0; border:1px solid; }
+  .hit { color:var(--good); border-color:#a8d5b4; background:#f1faf3; }
+  .false { color:var(--bad); border-color:#efb1b1; background:#fdf2f2; }
+  .miss { color:var(--warn); border-color:#f0cf98; background:#fff8ec; text-decoration:line-through; }
+  .scope { color:var(--muted); border-color:var(--line); background:#f6f6f8; text-decoration:line-through; }
+  .muted { color:var(--muted); font-size:13px; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .tabs button.on { background:var(--fg); color:#fff; border-color:var(--fg); }
+  .walk { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .steps { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .steps button { text-align:left; }
+  .steps button.done { color:var(--muted); }
+  .enrich { margin-top:6px; padding:8px 10px; background:#f7f9fc; border-left:3px solid var(--accent); font-size:13px; }
+  .changed { outline:2px solid #ffd666; }
+  select { font:inherit; font-size:13px; max-width:280px; }
+  .truth { font-size:13px; }
+  .truth button { font-size:12px; padding:0 6px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Matching candidates against the library <span class="tag">PROTOTYPE — throwaway</span></h1>
+  <p class="lead">When Extract finds a concept you already have, the review screen should say <b>Enrich / Keep as new / Drop</b> instead of creating a duplicate. This page runs six ways of spotting those matches on four real decks against your real library (40 concepts) and counts what each one catches, misses and wrongly flags.</p>
+  <p class="muted">Green = correct flag · red = false flag · orange (struck) = missed · grey (struck) = out of reach because of the course scope. The answer key is Claude's draft; change it per candidate below and every count updates.</p>
+
+  <h2>Guided walkthroughs</h2>
+  <div class="tabs" id="tabs"></div>
+  <div class="walk" id="walk"></div>
+
+  <h2>Scoreboard <span class="muted" id="scopeNote"></span></h2>
+  <table id="board"></table>
+
+  <h2>Free play</h2>
+  <div class="controls" id="controls"></div>
+
+  <div id="decks"></div>
+</main>
+
+<script>
+const DATA = /*DATA*/null;
+
+// ---- Pure module: matching proposals, scoring and enrichment. No DOM. ----
+const Matching = (() => {
+  const METHODS = {
+    sentence:       { label: "On-device: NLEmbedding sentence vectors", threshold: true, cost: "free, ~2 s for all decks" },
+    contextual:     { label: "On-device: NLContextualEmbedding (mean)", threshold: true, cost: "free, ~2 s for all decks" },
+    gemini:         { label: "Cloud embeddings: gemini-embedding-2", threshold: true, cost: "1 embed call per concept, library cached" },
+    extract:        { label: "Inside Extract: 3.8 Flash sees library titles", threshold: false, cost: "no extra call; titles add ~10 tokens per library concept" },
+    judgeFull:      { label: "Flash Lite judge: whole library", threshold: false, cost: "1 Lite call per deck; prompt grows with the library" },
+    judgeShortlist: { label: "Flash Lite judge: embedding shortlist (≥ 0.70, top 5)", threshold: false, cost: "embeddings + 1 Lite call per deck; prompt grows with the deck only" },
+  };
+  const DEFAULT_THRESHOLDS = { sentence: { same: 0.75, confusable: 1 }, contextual: { same: 0.96, confusable: 1 }, gemini: { same: 0.85, confusable: 1 } };
+
+  const courseOf = (data, id) => (data.library.find(c => c.id === id) || {}).course;
+  const inScope = (data, deck, id, scope) => scope === "all" || courseOf(data, id) === data.decks[deck].course;
+
+  function proposals(data, method, deck, opts) {
+    const d = data.decks[deck];
+    return d.candidates.map((_, i) => {
+      let list;
+      if (METHODS[method].threshold) {
+        const t = opts.thresholds[method];
+        list = Object.entries(d.scores[method][i])
+          .filter(([, s]) => s >= Math.min(t.same, t.confusable))
+          .sort((a, b) => b[1] - a[1])
+          .map(([id, s]) => ({ id, relation: s >= t.same ? "same" : "confusable", score: s }));
+      } else {
+        list = d[method][i].map(m => ({ id: m.id, relation: m.relation, adds: m.adds || [] }));
+      }
+      return list.filter(m => inScope(data, deck, m.id, opts.scope));
+    });
+  }
+
+  function truthFor(truth, deck, i) { return (truth[deck] || {})[i] || []; }
+
+  function judge(data, method, deck, opts, truth) {
+    return proposals(data, method, deck, opts).map((props, i) => {
+      const t = truthFor(truth, deck, i);
+      const marks = props.map(p => {
+        const match = t.find(x => x.id === p.id);
+        return { ...p, mark: match ? (match.relation === p.relation ? "hit" : "relabel") : "false" };
+      });
+      t.forEach(x => {
+        if (!props.some(p => p.id === x.id)) marks.push({ ...x, mark: inScope(data, deck, x.id, opts.scope) ? "miss" : "scope" });
+      });
+      return marks;
+    });
+  }
+
+  function score(data, method, opts, truth) {
+    const s = { dupHit: 0, dupTotal: 0, confHit: 0, confTotal: 0, flaggedAny: 0, falseFlags: 0, relabel: 0 };
+    Object.keys(data.decks).forEach(deck => judge(data, method, deck, opts, truth).forEach((marks, i) => {
+      truthFor(truth, deck, i).forEach(x => x.relation === "same" ? s.dupTotal++ : s.confTotal++);
+      marks.forEach(m => {
+        const rel = (truthFor(truth, deck, i).find(x => x.id === m.id) || {}).relation;
+        if (m.mark === "hit" || m.mark === "relabel") { rel === "same" ? s.dupHit++ : s.confHit++; s.flaggedAny++; }
+        if (m.mark === "relabel") s.relabel++;
+        if (m.mark === "false") { s.falseFlags++; s.flaggedAny++; }
+      });
+    }));
+    return s;
+  }
+
+  const KIND = { term: "definition", formula: "definition", fact: "fact", method: "method" };
+
+  function enrichment(data, deck, i, libId) {
+    const c = data.decks[deck].candidates[i];
+    const judged = (data.decks[deck].judgeShortlist[i] || []).find(m => m.id === libId && m.relation === "same");
+    return {
+      kind: KIND[c.kind],
+      cues: c.useWhen.map(u => ({ text: u, cite: `slide ${c.slide}` })),
+      newStatements: judged ? judged.adds.filter(a => !c.useWhen.some(u => a.includes(u))) : [],
+    };
+  }
+
+  return { METHODS, DEFAULT_THRESHOLDS, proposals, judge, score, enrichment, inScope };
+})();
+
+// ---- Page shell ----
+const lib = Object.fromEntries(DATA.library.map(c => [c.id, c]));
+const initial = () => ({
+  method: "judgeShortlist", scope: "all", deck: null,
+  thresholds: JSON.parse(JSON.stringify(Matching.DEFAULT_THRESHOLDS)),
+  truth: Object.fromEntries(Object.keys(DATA.decks).map(d => [d, JSON.parse(JSON.stringify(DATA.truth[d] || {}))])),
+});
+let state = initial();
+let lastChanged = null;
+
+const WALKS = [
+  { name: "1 · A duplicate in another course", text: "“Spaced practice” from the Make It Stick chapter duplicates two library concepts: “Spaced practice” (Make It Stick) and “Spacing effect” (Class Notes). Watch which methods find the second one, and what the course scope does to it.", steps: [
+      ["Show Inside Extract (one match per candidate)", s => ({ ...s, method: "extract", scope: "all", deck: "mis" })],
+      ["Switch to Flash Lite over the whole library", s => ({ ...s, method: "judgeFull" })],
+      ["Switch to Flash Lite over the embedding shortlist", s => ({ ...s, method: "judgeShortlist" })],
+      ["Limit matching to the same course", s => ({ ...s, scope: "course" })],
+      ["Back to all courses", s => ({ ...s, scope: "all" })],
+  ]},
+  { name: "2 · On-device embeddings", text: "The on-device-first default. Slide the duplicate threshold and watch the false flags on the stats deck: probability terms score higher against semaphores than real duplicates do against each other.", steps: [
+      ["Show NLEmbedding at 0.75", s => ({ ...s, method: "sentence", deck: "mat305", thresholds: { ...s.thresholds, sentence: { same: 0.75, confusable: 1 } } })],
+      ["Raise the threshold to 0.80", s => ({ ...s, thresholds: { ...s.thresholds, sentence: { same: 0.80, confusable: 1 } } })],
+      ["Raise it to 0.86 (no false flags left)", s => ({ ...s, thresholds: { ...s.thresholds, sentence: { same: 0.86, confusable: 1 } } })],
+      ["Look at the Make It Stick deck at 0.86", s => ({ ...s, deck: "mis" })],
+      ["Compare cloud embeddings at 0.85", s => ({ ...s, method: "gemini" })],
+  ]},
+  { name: "3 · Borderline pairs in OS", text: "Chapters 7 and 8 build on the Ch. 6 concepts in the library. Nothing there is a plain duplicate, but a few pairs are close calls. Decide each one in the answer key; that's the threshold question in practice.", steps: [
+      ["Show the Deadlocks deck with Flash Lite + shortlist", s => ({ ...s, method: "judgeShortlist", deck: "os8", scope: "course" })],
+      ["Show it with cloud embeddings at 0.85", s => ({ ...s, method: "gemini" })],
+      ["Lower cloud embeddings to 0.78 to see the neighbours", s => ({ ...s, thresholds: { ...s.thresholds, gemini: { same: 0.78, confusable: 1 } } })],
+      ["Show Synchronization Examples with Flash Lite + shortlist", s => ({ ...s, method: "judgeShortlist", deck: "os7", thresholds: { ...s.thresholds, gemini: { same: 0.85, confusable: 1 } } })],
+  ]},
+];
+let walk = 0, walkStep = 0;
+
+function apply(fn, changed) { state = fn(state); lastChanged = changed || "board"; render(); }
+
+function renderWalk() {
+  document.getElementById("tabs").innerHTML = WALKS.map((w, i) => `<button class="${i === walk ? "on" : ""}" data-walk="${i}">${w.name}</button>`).join("");
+  const w = WALKS[walk];
+  document.getElementById("walk").innerHTML = `<p style="margin:0">${w.text}</p><div class="steps">${w.steps.map(([label], i) =>
+    `<button data-step="${i}" class="${i < walkStep ? "done" : i === walkStep ? "primary" : ""}" ${i > walkStep ? "disabled" : ""}>${i + 1}. ${label}</button>`).join("")}</div>`;
+}
+
+function renderBoard() {
+  const opts = { scope: state.scope, thresholds: state.thresholds };
+  document.getElementById("scopeNote").textContent = state.scope === "all" ? "· matching across all courses" : "· matching within the deck's course only";
+  const rows = Object.entries(Matching.METHODS).map(([key, m]) => {
+    const s = Matching.score(DATA, key, opts, state.truth);
+    const t = m.threshold ? ` (≥ ${state.thresholds[key].same.toFixed(2)})` : "";
+    return `<tr class="pick ${key === state.method ? "current" : ""}" data-method="${key}"><td>${m.label}${t}</td>
+      <td class="num">${s.dupHit} / ${s.dupTotal}</td><td class="num">${s.confHit} / ${s.confTotal}</td>
+      <td class="num">${s.falseFlags}</td><td class="num">${s.relabel}</td><td class="muted">${m.cost}</td></tr>`;
+  }).join("");
+  document.getElementById("board").innerHTML = `<tr><th>Method (click to inspect)</th><th>Duplicates caught</th><th>Confusables caught</th><th>False flags</th><th>Caught, wrong label</th><th>Cost</th></tr>${rows}`;
+}
+
+function renderControls() {
+  const m = Matching.METHODS[state.method];
+  const t = state.thresholds[state.method];
+  document.getElementById("controls").innerHTML = `
+    <label>Method <select id="methodSel">${Object.entries(Matching.METHODS).map(([k, v]) => `<option value="${k}" ${k === state.method ? "selected" : ""}>${v.label}</option>`).join("")}</select></label>
+    <label><input type="radio" name="scope" value="all" ${state.scope === "all" ? "checked" : ""}> All courses</label>
+    <label><input type="radio" name="scope" value="course" ${state.scope === "course" ? "checked" : ""}> Same course only</label>
+    ${m.threshold ? `<label>“Likely duplicate” at ≥ <input type="range" id="thr" min="0.5" max="1" step="0.01" value="${t.same}"> <b class="num">${t.same.toFixed(2)}</b></label>` : ""}
+    <label>Deck <select id="deckSel"><option value="">All decks</option>${Object.entries(DATA.decks).map(([k, d]) => `<option value="${k}" ${k === state.deck ? "selected" : ""}>${d.label}</option>`).join("")}</select></label>
+    <button id="reset">Reset everything</button>`;
+}
+
+function chip(m) {
+  const cls = { hit: "hit", relabel: "hit", false: "false", miss: "miss", scope: "scope" }[m.mark];
+  const l = lib[m.id];
+  const label = `${m.relation === "same" ? "duplicate of" : "confusable with"} “${l ? l.title : m.id}”${l ? ` · ${l.course}` : ""}${m.score != null ? ` · ${m.score.toFixed(2)}` : ""}${m.mark === "relabel" ? " · wrong label" : ""}`;
+  return `<span class="chip ${cls}">${label}</span>`;
+}
+
+function renderDecks() {
+  const opts = { scope: state.scope, thresholds: state.thresholds };
+  const keys = state.deck ? [state.deck] : Object.keys(DATA.decks);
+  document.getElementById("decks").innerHTML = keys.map(deck => {
+    const d = DATA.decks[deck];
+    const marks = Matching.judge(DATA, state.method, deck, opts, state.truth);
+    const rows = d.candidates.map((c, i) => {
+      const truth = (state.truth[deck][i] || []);
+      const enrich = marks[i].filter(m => m.relation === "same" && (m.mark === "hit" || m.mark === "relabel")).map(m => {
+        const e = Matching.enrichment(DATA, deck, i, m.id);
+        return `<div class="enrich"><b>Enrich “${lib[m.id].title}”?</b> kind → <b>${e.kind}</b> (it's unclassified today)${e.cues.length ? `; ${e.cues.length} use-when cue${e.cues.length > 1 ? "s" : ""} (${e.cues[0].cite}): ${e.cues.map(x => `“${x.text}”`).join(", ")}` : ""}${e.newStatements.length ? `; new statements: ${e.newStatements.map(x => `“${x}”`).join(", ")}` : ""}</div>`;
+      }).join("");
+      const near = Matching.METHODS[state.method].threshold
+        ? `<div class="muted">nearest: ${Object.entries(d.scores[state.method][i]).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id, s]) => `${lib[id].title} ${s.toFixed(2)}`).join(" · ")}</div>` : "";
+      const debatable = ((DATA.truth.debatable_none || {})[deck] || {})[i];
+      return `<tr><td style="width:30%"><b>${c.title}</b><div class="muted">${c.kind} · slide ${c.slide}</div></td>
+        <td>${marks[i].map(chip).join("") || `<span class="muted">no flag</span>`}${near}${enrich}</td>
+        <td class="truth" style="width:30%">${truth.map((x, j) => `<div>${x.relation === "same" ? "duplicate of" : "confusable with"} “${lib[x.id].title}”${x.debatable ? " <i>(debatable)</i>" : ""} <button data-del="${deck}|${i}|${j}">✕</button></div>`).join("")}
+          ${debatable ? `<div class="muted">close call: “${debatable}” (key says no match)</div>` : ""}
+          <select data-add="${deck}|${i}"><option value="">+ add to answer key…</option>${DATA.library.map(l => `<option value="same|${l.id}">duplicate of ${l.title}</option><option value="confusable|${l.id}">confusable with ${l.title}</option>`).join("")}</select></td></tr>`;
+    }).join("");
+    return `<h3>${d.label} <span class="muted">· course ${d.course} · ${d.candidates.length} candidates · Extract ${DATA.runs[deck].extract}</span></h3>
+      <table class="${lastChanged === "deck" ? "changed" : ""}"><tr><th>Candidate</th><th>${Matching.METHODS[state.method].label}</th><th>Answer key</th></tr>${rows}</table>`;
+  }).join("");
+}
+
+function render() { renderWalk(); renderBoard(); renderControls(); renderDecks(); }
+
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.dataset.walk != null) { walk = +t.dataset.walk; walkStep = 0; state = initial(); render(); }
+  else if (t.dataset.step != null) { WALKS[walk].steps[+t.dataset.step][1] && apply(WALKS[walk].steps[+t.dataset.step][1]); walkStep = +t.dataset.step + 1; renderWalk(); }
+  else if (t.closest("tr.pick")) apply(s => ({ ...s, method: t.closest("tr.pick").dataset.method }));
+  else if (t.dataset.del) { const [d, i, j] = t.dataset.del.split("|"); apply(s => { const truth = JSON.parse(JSON.stringify(s.truth)); truth[d][i].splice(+j, 1); return { ...s, truth }; }, "deck"); }
+  else if (t.id === "reset") { state = initial(); walkStep = 0; render(); }
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "methodSel") apply(s => ({ ...s, method: t.value }));
+  else if (t.name === "scope") apply(s => ({ ...s, scope: t.value }));
+  else if (t.id === "deckSel") apply(s => ({ ...s, deck: t.value || null }));
+  else if (t.dataset.add && t.value) {
+    const [d, i] = t.dataset.add.split("|"), [relation, id] = t.value.split("|");
+    apply(s => { const truth = JSON.parse(JSON.stringify(s.truth)); (truth[d][i] = truth[d][i] || []).push({ id, relation }); return { ...s, truth }; }, "deck");
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "thr") { const v = +e.target.value; apply(s => ({ ...s, thresholds: { ...s.thresholds, [s.method]: { same: v, confusable: 1 } } })); }
+});
+render();
+</script>
+</body>
+</html>

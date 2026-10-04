@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "model": "gemini-3.5-flash-lite",
+    "seconds": 2,
+    "usage": {
+      "promptTokenCount": 5773,
+      "candidatesTokenCount": 509,
+      "totalTokenCount": 6282,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 5773
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "failed_attempts": []
+  },
+  "candidates": [
+    {
+      "candidate": 0,
+      "matches": [
+        {
+          "id": "canvas-16132.ch6-liveness.deadlock",
+          "relation": "same",
+          "reason": "The library concept introduces deadlock briefly, but this candidate explicitly lists and defines the Four Necessary Conditions (Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait).",
+          "adds": [
+            "fact: Four Necessary Conditions for Deadlock: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait",
+            "use when: Analyzing whether a multithreaded or multi-process system is susceptible to deadlock."
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 1,
+      "matches": []
+    },
+    {
+      "candidate": 2,
+      "matches": [
+        {
+          "id": "canvas-16132.ch6-liveness.deadlock",
+          "relation": "confusable",
+          "reason": "Deadlock Prevention is a management strategy to avoid the deadlock states described in the library concept.",
+          "adds": []
+        }
+      ]
+    },
+    {
+      "candidate": 3,
+      "matches": []
+    },
+    {
+      "candidate": 4,
+      "matches": [
+        {
+          "id": "canvas-16132.ch6-liveness.deadlock",
+          "relation": "confusable",
+          "reason": "Deadlock Avoidance is a dynamic handling strategy distinct from static deadlock prevention or detection, dealing with the deadlock states introduced in the library.",
+          "adds": []
+        }
+      ]
+    },
+    {
+      "candidate": 5,
+      "matches": []
+    },
+    {
+      "candidate": 6,
+      "matches": []
+    },
+    {
+      "candidate": 7,
+      "matches": []
+    },
+    {
+      "candidate": 8,
+      "matches": []
+    },
+    {
+      "candidate": 9,
+      "matches": []
+    }
+  ]
+}

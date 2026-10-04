@@ -1,0 +1,19 @@
+{
+  "_note": "Draft answer key (Claude's labels, for the user to confirm on the review page). Keys are candidate indexes per deck; unlisted candidates have no match. 'debatable' marks pairs where the user's call decides.",
+  "mis": {
+    "0": [{"id": "make-it-stick.keystone-strategies.retrieval-practice", "relation": "same"}],
+    "1": [{"id": "make-it-stick.keystone-strategies.spaced-practice", "relation": "same"}, {"id": "notes.week1.spacing", "relation": "same"}],
+    "2": [{"id": "make-it-stick.keystone-strategies.interleaving", "relation": "same"}],
+    "3": [{"id": "make-it-stick.supporting-strategies.elaboration", "relation": "same"}],
+    "4": [{"id": "make-it-stick.supporting-strategies.generation", "relation": "same"}],
+    "5": [{"id": "make-it-stick.supporting-strategies.elaboration", "relation": "confusable", "debatable": true}],
+    "6": [{"id": "make-it-stick.supporting-strategies.calibration", "relation": "same"}]
+  },
+  "mat305": {},
+  "os7": {},
+  "os8": {},
+  "debatable_none": {
+    "os7": {"7": "Condition variables", "8": "Monitors", "9": "Condition variables"},
+    "os8": {"0": "Deadlock"}
+  }
+}

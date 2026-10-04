@@ -1,0 +1,242 @@
+{
+  "meta": {
+    "model": "gemini-3.8-flash",
+    "seconds": 13,
+    "usage": {
+      "promptTokenCount": 5834,
+      "candidatesTokenCount": 2322,
+      "totalTokenCount": 9876,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 1674
+        },
+        {
+          "modality": "IMAGE",
+          "tokenCount": 4160
+        }
+      ],
+      "thoughtsTokenCount": 1720,
+      "serviceTier": "standard"
+    },
+    "failed_attempts": [],
+    "course": "MAT 305"
+  },
+  "concepts": [
+    {
+      "title": "Random variable",
+      "kind": "term",
+      "definition": "A function that associates a real number with each element in a sample space.",
+      "slide": 1,
+      "evidence": "A random variable is a function that associates a real number with each element in the sample space.",
+      "useWhen": [],
+      "confusedWith": [
+        "Discrete random variable",
+        "Continuous random variable"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Discrete sample space",
+      "kind": "term",
+      "definition": "A sample space that contains a finite number of possibilities or an unending sequence with as many elements as there are whole numbers (countably infinite).",
+      "slide": 1,
+      "evidence": "If a sample space contains a finite number of possibilities or an unending sequence with as many elements as there are whole numbers, it is called a discrete sample space.",
+      "useWhen": [],
+      "confusedWith": [
+        "Continuous sample space",
+        "Discrete random variable"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Continuous sample space",
+      "kind": "term",
+      "definition": "A sample space that contains an infinite number of possibilities equal to the number of points on a line segment.",
+      "slide": 1,
+      "evidence": "If a sample space contains an infinite number of possibilities equal to the number of points on a line segment, it is called a continuous sample space.",
+      "useWhen": [],
+      "confusedWith": [
+        "Discrete sample space",
+        "Continuous random variable"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Discrete random variable",
+      "kind": "term",
+      "definition": "A random variable whose set of possible outcomes is countable.",
+      "slide": 2,
+      "evidence": "A random variable is called a discrete random variable if its set of possible outcomes is countable.",
+      "useWhen": [],
+      "confusedWith": [
+        "Continuous random variable",
+        "Discrete sample space"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Continuous random variable",
+      "kind": "term",
+      "definition": "A random variable that can take on values on a continuous scale (such as an interval of real numbers).",
+      "slide": 2,
+      "evidence": "When a random variable can take on values on a continuous scale, it is called a continuous random variable.",
+      "useWhen": [],
+      "confusedWith": [
+        "Discrete random variable",
+        "Continuous sample space"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Probability mass function",
+      "kind": "formula",
+      "definition": "The set of ordered pairs $(x, f(x))$ representing the probability distribution of a discrete random variable $X$, satisfying: 1. $f(x) \\ge 0$, 2. $\\sum_x f(x) = 1$, and 3. $P(X = x) = f(x)$ for each possible outcome $x$.",
+      "slide": 2,
+      "evidence": "The set of ordered pairs (x, f(x)) is a probability function, probability mass function, or probability distribution of the discrete random variable X",
+      "useWhen": [
+        "Finding probabilities for individual values of a discrete random variable",
+        "Verifying whether a given discrete function qualifies as a valid probability distribution"
+      ],
+      "confusedWith": [
+        "Probability density function",
+        "Cumulative distribution function (discrete)"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Cumulative distribution function (discrete)",
+      "kind": "formula",
+      "definition": "For a discrete random variable $X$ with probability distribution $f(x)$, $F(x) = P(X \\le x) = \\sum_{t \\le x} f(t)$ for $-\\infty < x < \\infty$.",
+      "slide": 3,
+      "evidence": "The cumulative distribution function F(x) of a discrete random variable X with probability distribution f(x) is",
+      "useWhen": [
+        "Finding the cumulative probability that a discrete random variable takes a value less than or equal to x",
+        "Constructing a step function from a discrete probability table"
+      ],
+      "confusedWith": [
+        "Probability mass function",
+        "Cumulative distribution function (continuous)"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Point probability of continuous random variables",
+      "kind": "fact",
+      "definition": "A continuous random variable has a probability of 0 of assuming exactly any single point value: $P(X = c) = 0$. Consequently, endpoint inclusion does not change interval probabilities: $P(a < X \\le b) = P(a < X < b) = P(a \\le X \\le b) = P(a \\le X < b)$.",
+      "slide": 5,
+      "evidence": "A continuous random variable has a probability of 0 of assuming exactly any of its values. So, when X is continuous, P(a < X \u2264 b) = P(a < X < b) + P(X = b) = P(a < X < b)",
+      "useWhen": [
+        "Evaluating strict vs. non-strict inequality probabilities for continuous random variables"
+      ],
+      "confusedWith": [
+        "Probability mass function"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Probability density function",
+      "kind": "formula",
+      "definition": "A function $f(x)$ defined over the set of real numbers for a continuous random variable $X$ such that: 1. $f(x) \\ge 0$ for all $x \\in \\mathbb{R}$, 2. $\\int_{-\\infty}^\\infty f(x)\\,dx = 1$, and 3. $P(a < X < b) = \\int_a^b f(x)\\,dx$.",
+      "slide": 6,
+      "evidence": "The function f(x) is a probability density function (pdf) for the continuous random variable X, defined over the set of real numbers, if",
+      "useWhen": [
+        "Computing the probability that a continuous random variable falls in an interval [a, b]",
+        "Verifying whether a continuous function qualifies as a valid density function",
+        "Solving for an unknown constant multiplier k in a density function"
+      ],
+      "confusedWith": [
+        "Probability mass function",
+        "Cumulative distribution function (continuous)"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Cumulative distribution function (continuous)",
+      "kind": "formula",
+      "definition": "For a continuous random variable $X$ with probability density function $f(x)$, $F(x) = P(X \\le x) = \\int_{-\\infty}^x f(t)\\,dt$ for $-\\infty < x < \\infty$.",
+      "slide": 6,
+      "evidence": "The cumulative distribution function F(x) of a continuous random variable X with density function f(x) is",
+      "useWhen": [
+        "Finding the cumulative probability $P(X \\le x)$ from a probability density function",
+        "Evaluating interval probabilities using $F(b) - F(a)$"
+      ],
+      "confusedWith": [
+        "Cumulative distribution function (discrete)",
+        "Probability density function"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Relationship between continuous CDF and PDF",
+      "kind": "formula",
+      "definition": "For a continuous random variable $X$ with cumulative distribution function $F(x)$ and probability density function $f(x)$, $P(a < X < b) = F(b) - F(a)$ and $f(x) = \\frac{dF(x)}{dx}$ wherever the derivative exists.",
+      "slide": 6,
+      "evidence": "P(a < X < b) = F(b) - F(a) and f(x) = dF(x)/dx , if the derivative exists.",
+      "useWhen": [
+        "Deriving the probability density function $f(x)$ from a known cumulative distribution function $F(x)$",
+        "Computing interval probabilities $P(a < X < b)$ when $F(x)$ is already known without integrating $f(x)$ directly"
+      ],
+      "confusedWith": [
+        "Probability density function",
+        "Cumulative distribution function (continuous)"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    }
+  ]
+}

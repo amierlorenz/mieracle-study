@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "model": "gemini-3.5-flash-lite",
+    "seconds": 1,
+    "usage": {
+      "promptTokenCount": 9269,
+      "candidatesTokenCount": 275,
+      "totalTokenCount": 9544,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 9269
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "failed_attempts": []
+  },
+  "candidates": [
+    {
+      "candidate": 0,
+      "matches": []
+    },
+    {
+      "candidate": 1,
+      "matches": []
+    },
+    {
+      "candidate": 2,
+      "matches": []
+    },
+    {
+      "candidate": 3,
+      "matches": []
+    },
+    {
+      "candidate": 4,
+      "matches": []
+    },
+    {
+      "candidate": 5,
+      "matches": []
+    },
+    {
+      "candidate": 6,
+      "matches": []
+    },
+    {
+      "candidate": 7,
+      "matches": []
+    },
+    {
+      "candidate": 8,
+      "matches": []
+    },
+    {
+      "candidate": 9,
+      "matches": []
+    },
+    {
+      "candidate": 10,
+      "matches": []
+    },
+    {
+      "candidate": 11,
+      "matches": []
+    },
+    {
+      "candidate": 12,
+      "matches": []
+    }
+  ]
+}

@@ -1,0 +1,282 @@
+[
+  {
+    "id": "notes.week1.spacing",
+    "course": "Class Notes",
+    "unit": "Week 1",
+    "title": "Spacing effect",
+    "explanation": "Reviewing material with gaps between sessions beats massing it, because effortful recall after some forgetting strengthens memory."
+  },
+  {
+    "id": "interview.two-pointers.sorted-pair-sum",
+    "course": "Coding Interview",
+    "unit": "Two pointers",
+    "title": "Pair sum in a sorted array",
+    "explanation": "With a **sorted** array, put one pointer at each end. If the sum is too small, move the left pointer right; if too big, move the right pointer left. Each step discards one element, so it runs in $O(n)$ time and $O(1)$ space."
+  },
+  {
+    "id": "interview.heaps.k-largest",
+    "course": "Coding Interview",
+    "unit": "Heaps",
+    "title": "k largest with a min-heap",
+    "explanation": "Keep a min-heap of size $k$. Push each number; when the heap grows past $k$, pop the smallest. The heap ends holding the $k$ largest. Time $O(n \\log k)$, space $O(k)$."
+  },
+  {
+    "id": "interview.sliding-window.longest-unique",
+    "course": "Coding Interview",
+    "unit": "Sliding window",
+    "title": "Longest substring without repeats",
+    "explanation": "Grow a window to the right; when a character repeats, move the left edge past its previous position. A map from character to last index makes each step $O(1)$, so the whole scan is $O(n)$."
+  },
+  {
+    "id": "interview.hashing.two-sum",
+    "course": "Coding Interview",
+    "unit": "Hash maps",
+    "title": "Two sum with a hash map",
+    "explanation": "Store each number's index in a dictionary as you scan; for each number, check whether `target - n` was already seen. One pass, $O(n)$ time and $O(n)$ space."
+  },
+  {
+    "id": "make-it-stick.keystone-strategies.interleaving",
+    "course": "Make It Stick",
+    "unit": "Keystone study strategies",
+    "title": "Interleaved practice",
+    "explanation": "Interleaving mixes **different problem types** in one practice session instead of finishing one type before moving to the next (blocked practice). It trains you to recognize which kind of problem you face and choose the right solution, a skill blocked practice never exercises."
+  },
+  {
+    "id": "make-it-stick.keystone-strategies.retrieval-practice",
+    "course": "Make It Stick",
+    "unit": "Keystone study strategies",
+    "title": "Retrieval practice",
+    "explanation": "Retrieval practice means **self-quizzing**: recalling ideas from memory instead of rereading them. Each effortful recall strengthens the memory and interrupts forgetting, and checking your answers shows what you really know. It should replace rereading as your primary study strategy after one or two reviews of a text."
+  },
+  {
+    "id": "make-it-stick.keystone-strategies.spaced-practice",
+    "course": "Make It Stick",
+    "unit": "Keystone study strategies",
+    "title": "Spaced practice",
+    "explanation": "Spaced practice means returning to material several times with **time in between**, so a little forgetting happens first. Reconstructing the idea from long-term memory takes more effort, which makes it more durable and better connected. Intervals grow as mastery grows: within a day, then days or a week, then monthly."
+  },
+  {
+    "id": "make-it-stick.supporting-strategies.calibration",
+    "course": "Make It Stick",
+    "unit": "Supporting strategies",
+    "title": "Calibration",
+    "explanation": "Calibration is aligning your judgment of what you know with what you actually know, using objective feedback such as quizzes. It counters the illusions of knowing that come from fluency and familiarity."
+  },
+  {
+    "id": "make-it-stick.supporting-strategies.elaboration",
+    "course": "Make It Stick",
+    "unit": "Supporting strategies",
+    "title": "Elaboration",
+    "explanation": "Elaboration is finding additional layers of meaning in new material: explaining it in your own words and connecting it to what you already know. The more connections you build, the more ways you have to retrieve it later."
+  },
+  {
+    "id": "make-it-stick.supporting-strategies.generation",
+    "course": "Make It Stick",
+    "unit": "Supporting strategies",
+    "title": "Generation",
+    "explanation": "Generation is attempting to answer a question or solve a problem **before** being shown the answer. Even a wrong attempt makes the correct answer more memorable once you see it."
+  },
+  {
+    "id": "canvas-16132.ch6-critical-section-problem.critical-section-structure",
+    "course": "CSC 301",
+    "unit": "Ch 6: The Critical-Section Problem",
+    "title": "Critical section and process structure",
+    "explanation": "A **critical section** is a segment of code in which a process accesses shared resources (changing common variables, updating a table, writing a file). The **critical-section problem** is to design a protocol so that when one process is in its critical section, no other process is in its own. Each process follows a general structure: an **entry section** (ask permission to enter), the **critical section**, an **exit section** (announce it is leaving), and the **remainder section** (everything else). Every synchronization tool in this chapter is a way to implement the entry and exit sections."
+  },
+  {
+    "id": "canvas-16132.ch6-critical-section-problem.interrupt-disabling",
+    "course": "CSC 301",
+    "unit": "Ch 6: The Critical-Section Problem",
+    "title": "Interrupt-based solution",
+    "explanation": "One naive solution: **disable interrupts** in the entry section and **re-enable** them in the exit section, so the running code cannot be preempted. On a uniprocessor this gives mutual exclusion, but it has serious problems: if the critical section runs for a long time (say an hour), the whole system becomes unresponsive; some processes can **starve**; and on a **multiprocessor**, disabling interrupts on one CPU does not stop processes on other CPUs from entering their critical sections. It is also too inefficient to scale, so OSes relying on it are not broadly scalable."
+  },
+  {
+    "id": "canvas-16132.ch6-critical-section-problem.petersons-solution",
+    "course": "CSC 301",
+    "unit": "Ch 6: The Critical-Section Problem",
+    "title": "Peterson's solution",
+    "explanation": "Peterson's solution is a classic two-process software solution using two shared variables: `int turn` (whose turn it is) and `boolean flag[2]` (`flag[i] = true` means $P_i$ is ready to enter). $P_i$ runs:\n\n```\nflag[i] = true;\nturn = j;\nwhile (flag[j] && turn == j) ;\n/* critical section */\nflag[i] = false;\n```\n\nBy setting `turn = j`, a process politely lets the other go first if both want in. $P_i$ enters only if `flag[j] == false` or `turn == i`, and it is provable that **mutual exclusion, progress, and bounded waiting** all hold (assuming atomic loads/stores and no reordering)."
+  },
+  {
+    "id": "canvas-16132.ch6-critical-section-problem.race-condition",
+    "course": "CSC 301",
+    "unit": "Ch 6: The Critical-Section Problem",
+    "title": "Race condition",
+    "explanation": "A **race condition** happens when several processes or threads access and modify shared data concurrently and the final result depends on the exact order in which their instructions interleave. Because a process can be interrupted at any point, a partially completed update (like `count++`, which is really load, add, store) can be overwritten by another process. Example: if P0 and P1 both call `fork()` at the same time and the kernel variable `next_available_pid` is not protected, both children could get the **same pid**. Race conditions are why we need synchronization tools to enforce orderly execution of cooperating processes."
+  },
+  {
+    "id": "canvas-16132.ch6-critical-section-problem.strict-alternation",
+    "course": "CSC 301",
+    "unit": "Ch 6: The Critical-Section Problem",
+    "title": "Software solution 1: turn variable (strict alternation)",
+    "explanation": "A two-process software solution using one shared variable `int turn` (assuming loads and stores are atomic). Process $P_i$ spins with `while (turn == j);`, runs its critical section, then sets `turn = j`. **Mutual exclusion holds**: $P_i$ enters only when `turn == i`, and `turn` can't be 0 and 1 at once. But **progress fails**: the processes must strictly alternate, so if $P_j$ is in its remainder section and doesn't want to enter, $P_i$ cannot enter again even though the critical section is free. Bounded waiting does hold (a process waits at most one turn)."
+  },
+  {
+    "id": "canvas-16132.ch6-critical-section-problem.cs-requirements",
+    "course": "CSC 301",
+    "unit": "Ch 6: The Critical-Section Problem",
+    "title": "Three requirements for a critical-section solution",
+    "explanation": "A correct solution must satisfy three requirements. **Mutual exclusion**: if $P_i$ is in its critical section, no other process can be in its critical section. **Progress**: if no process is in its critical section and some want to enter, the choice of who enters next cannot be postponed indefinitely (and only processes not in their remainder section take part in that decision). **Bounded waiting**: after a process requests entry, there is a limit on how many times other processes can enter before it gets in. We assume each process runs at nonzero speed but make **no assumption about relative speeds** of the processes."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.atomic-variables",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "Atomic variables",
+    "explanation": "Instructions like CAS are usually used as **building blocks** for higher-level tools. An **atomic variable** provides atomic (uninterruptible) updates on basic data types such as integers and booleans; for example, `increment(&sequence)` increments `sequence` without interruption. It can be built from CAS:\n\n```\nvoid increment(atomic_int *v) {\n  int temp;\n  do { temp = *v; }\n  while (temp != compare_and_swap(v, temp, temp + 1));\n}\n```\n\nThe loop retries if another thread changed `*v` between the read and the CAS. Atomic variables fix race conditions on a **single shared variable** (like a counter), but they don't solve every synchronization problem (e.g., coordinating several variables)."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.bounded-waiting-cas",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "Bounded waiting with compare_and_swap",
+    "explanation": "To add bounded waiting, each process uses a shared array `waiting[n]` plus the `lock`. In the entry section, $P_i$ sets `waiting[i] = true` and spins `while (waiting[i] && key == 1) key = compare_and_swap(&lock, 0, 1);`. It gets in either by grabbing the lock or by being **handed the critical section** (another process sets `waiting[i] = false`). On exit, $P_i$ scans the array in **cyclic order** `(i+1) % n, (i+2) % n, ...` for the next waiting process. If none, it sets `lock = 0`; otherwise it sets `waiting[j] = false` to pass entry directly to $P_j$ (the lock stays held). Since the scan is cyclic, any waiting process enters within at most $n-1$ turns."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.instruction-reordering",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "Instruction reordering breaks Peterson's solution",
+    "explanation": "To improve performance, **processors and compilers may reorder operations that have no data dependencies**. For a single thread this is harmless because the result is the same. For multiple threads it can produce unexpected results. Example: shared `flag = false; x = 0;`, Thread 1 runs `while (!flag); print x`, Thread 2 runs `x = 100; flag = true`. Expected output is 100, but since `x` and `flag` are independent, Thread 2's stores may be reordered, so Thread 1 can print **0**. In Peterson's solution, reordering the `flag` and `turn` writes can let **both processes into the critical section at once**, so it is not guaranteed to work on modern architectures."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.memory-barriers",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "Memory barriers",
+    "explanation": "A **memory barrier** (memory fence) is an instruction that forces any change in memory to be propagated and made visible to all other processors. When a barrier executes, the system ensures **all prior loads and stores complete before any later load or store** is performed, so even if instructions were reordered, stores are visible before future memory operations. Fix for the example: Thread 2 does `x = 100; memory_barrier(); flag = true;` (x is assigned before flag) and Thread 1 does `while (!flag) memory_barrier(); print x;` (flag is loaded before x). Memory barriers are what make Peterson's solution work on modern hardware; they are very low-level and mostly used by kernel developers."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.memory-models",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "Memory models: strongly vs. weakly ordered",
+    "explanation": "A **memory model** is the set of guarantees a computer architecture makes to programs about when memory changes become visible. In a **strongly ordered** model, a memory modification by one processor is **immediately visible** to all other processors. In a **weakly ordered** model, a modification by one processor **may not be immediately visible** to others. Because architectures differ, the kernel developer can't assume visibility and needs explicit tools (memory barriers) to force it."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.compare-and-swap",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "compare_and_swap instruction",
+    "explanation": "`compare_and_swap` (CAS) atomically compares a variable to an expected value and only swaps in a new value if they match. It always returns the original value:\n\n```\nint compare_and_swap(int *value, int expected, int new_value) {\n  int temp = *value;\n  if (*value == expected) *value = new_value;\n  return temp;\n}\n```\n\nLock solution: shared `lock = 0`; entry is `while (compare_and_swap(&lock, 0, 1) != 0) ;`, exit is `lock = 0`. The process that sees 0 sets it to 1 and enters. Like test_and_set, this gives **mutual exclusion but not bounded waiting**. CAS is the main building block for other tools like atomic variables and mutex locks."
+  },
+  {
+    "id": "canvas-16132.ch6-hardware-support.test-and-set",
+    "course": "CSC 301",
+    "unit": "Ch 6: Hardware Support for Synchronization",
+    "title": "test_and_set instruction",
+    "explanation": "`test_and_set` is a hardware instruction that **atomically** returns the original value of a boolean and sets it to `true`:\n\n```\nboolean test_and_set(boolean *target) {\n  boolean rv = *target;\n  *target = true;\n  return rv;\n}\n```\n\nLock solution: shared `lock = false`; entry is `while (test_and_set(&lock)) ;` and exit is `lock = false`. Only the first caller sees `false` and gets in, so it provides **mutual exclusion** and progress, but **not bounded waiting** (a waiting process could lose the race forever). Atomicity is the key: two simultaneous calls are executed one after the other."
+  },
+  {
+    "id": "canvas-16132.ch6-mutex-locks-and-semaphores.counting-vs-binary-semaphores",
+    "course": "CSC 301",
+    "unit": "Ch 6: Mutex Locks and Semaphores",
+    "title": "Counting vs. binary semaphores",
+    "explanation": "A **counting semaphore** has an integer value over an unrestricted domain; it is useful for controlling access to a resource with a finite number of instances (initialize it to that number). A **binary semaphore** can only be 0 or 1 and behaves the **same as a mutex lock**. A counting semaphore can be implemented using binary semaphores. With these, we can solve many synchronization problems."
+  },
+  {
+    "id": "canvas-16132.ch6-mutex-locks-and-semaphores.mutex-locks",
+    "course": "CSC 301",
+    "unit": "Ch 6: Mutex Locks and Semaphores",
+    "title": "Mutex locks and spinlocks",
+    "explanation": "Hardware solutions are complicated and generally inaccessible to application programmers, so OS designers provide software tools. The simplest is the **mutex lock** (mutual exclusion): a boolean indicating whether the lock is available. A process calls `acquire()` before its critical section and `release()` after. The calls to `acquire()` and `release()` must themselves be **atomic**, usually implemented with hardware instructions like CAS. This simple version requires **busy waiting** (looping while the lock is unavailable), so it is called a **spinlock**. Spinning wastes CPU cycles, but it avoids a context switch, which can be worth it when locks are held only briefly on multicore systems."
+  },
+  {
+    "id": "canvas-16132.ch6-mutex-locks-and-semaphores.semaphore-misuse",
+    "course": "CSC 301",
+    "unit": "Ch 6: Mutex Locks and Semaphores",
+    "title": "Problems with semaphores (incorrect use)",
+    "explanation": "Semaphores are powerful but easy to misuse, and errors are hard to detect because they show up only with certain interleavings. Common mistakes: `signal(mutex) ... wait(mutex)` (reversed order, so several processes can be in the critical section at once and **mutual exclusion is violated**); `wait(mutex) ... wait(mutex)` (the second wait blocks forever, causing **deadlock**); and **omitting** `wait(mutex)` and/or `signal(mutex)` (losing mutual exclusion or blocking others forever). These problems motivate higher-level tools like **monitors**."
+  },
+  {
+    "id": "canvas-16132.ch6-mutex-locks-and-semaphores.semaphore-no-busy-waiting",
+    "course": "CSC 301",
+    "unit": "Ch 6: Mutex Locks and Semaphores",
+    "title": "Semaphore implementation without busy waiting",
+    "explanation": "Implementing `wait()`/`signal()` is itself a critical-section problem; busy waiting there is OK only because that code is short, but applications may spend long periods in critical sections, so busy waiting is a bad general solution. Instead, each semaphore gets a **waiting queue**: `typedef struct { int value; struct process *list; } semaphore;`. Two operations: **block** puts the calling process on the queue, and **wakeup** removes a process from the queue and puts it in the **ready queue**.\n\n```\nwait(S):   S->value--; if (S->value < 0) { add to S->list; block(); }\nsignal(S): S->value++; if (S->value <= 0) { remove P from S->list; wakeup(P); }\n```\n\nHere the value can go **negative**; its magnitude is the number of processes waiting."
+  },
+  {
+    "id": "canvas-16132.ch6-mutex-locks-and-semaphores.semaphore-operations",
+    "course": "CSC 301",
+    "unit": "Ch 6: Mutex Locks and Semaphores",
+    "title": "Semaphores: wait() and signal()",
+    "explanation": "A **semaphore** `S` is an integer variable that, apart from initialization, is accessed only through two **atomic** operations: `wait()` (originally `P()`) and `signal()` (originally `V()`). It provides more sophisticated ways to synchronize than mutex locks.\n\n```\nwait(S)   { while (S <= 0) ; /* busy wait */  S--; }\nsignal(S) { S++; }\n```\n\n`wait` blocks while no units are available, then takes one; `signal` returns one. Since all modifications must be indivisible, no two processes may change the same semaphore's value at the same time."
+  },
+  {
+    "id": "canvas-16132.ch6-mutex-locks-and-semaphores.semaphore-usage",
+    "course": "CSC 301",
+    "unit": "Ch 6: Mutex Locks and Semaphores",
+    "title": "Using semaphores: mutual exclusion and ordering",
+    "explanation": "Two classic uses. **Mutual exclusion**: create semaphore `mutex` initialized to **1**, then `wait(mutex); /* CS */ signal(mutex);`. **Ordering**: to force statement S1 in P1 to run before S2 in P2, create semaphore `synch` initialized to **0**; P1 runs `S1; signal(synch);` and P2 runs `wait(synch); S2;`. Because `synch` starts at 0, P2 blocks until P1 signals after finishing S1. The initial value is what determines the behavior."
+  },
+  {
+    "id": "canvas-16132.ch6-monitors.condition-variables",
+    "course": "CSC 301",
+    "unit": "Ch 6: Monitors and Condition Variables",
+    "title": "Condition variables",
+    "explanation": "Monitors alone only give mutual exclusion; to wait for a specific condition we use **condition variables**, declared as `condition x, y;`. Only two operations exist: `x.wait()` **suspends** the calling process until another process calls `x.signal()`, and `x.signal()` **resumes exactly one** suspended process (if any). Important difference from semaphores: if no process is waiting, `x.signal()` has **no effect**, whereas a semaphore's `signal()` always increments the value and is remembered."
+  },
+  {
+    "id": "canvas-16132.ch6-monitors.monitor-implementation-semaphores",
+    "course": "CSC 301",
+    "unit": "Ch 6: Monitors and Condition Variables",
+    "title": "Implementing monitors with semaphores",
+    "explanation": "A monitor can be built from semaphores. Use `semaphore mutex = 1` for mutual exclusion, `semaphore next = 0` on which **signaling processes suspend themselves**, and `int next_count = 0` counting processes suspended on `next`. Each procedure becomes `wait(mutex); body; if (next_count > 0) signal(next); else signal(mutex);`. For each condition `x`: `semaphore x_sem = 0` and `int x_count = 0`.\n\n- `x.wait()`: `x_count++; if (next_count > 0) signal(next); else signal(mutex); wait(x_sem); x_count--;`\n- `x.signal()`: `if (x_count > 0) { next_count++; signal(x_sem); wait(next); next_count--; }`\n\nSo the signaler **waits** while the resumed process runs (signal-and-wait), keeping only one process active in the monitor."
+  },
+  {
+    "id": "canvas-16132.ch6-monitors.monitor-concept",
+    "course": "CSC 301",
+    "unit": "Ch 6: Monitors and Condition Variables",
+    "title": "Monitors",
+    "explanation": "A **monitor** is a high-level abstraction (an abstract data type) that provides a convenient and effective mechanism for process synchronization. It contains shared variable declarations, procedures that operate on them, and initialization code; the internal variables are **accessible only by code within the monitor**. The key property: **only one process may be active within the monitor at a time**, so mutual exclusion is enforced automatically rather than by the programmer placing wait/signal calls. Processes that call a monitor procedure while another is active wait in an **entry queue**."
+  },
+  {
+    "id": "canvas-16132.ch6-monitors.condition-variable-ordering",
+    "course": "CSC 301",
+    "unit": "Ch 6: Monitors and Condition Variables",
+    "title": "Ordering with a monitor and condition variable",
+    "explanation": "To ensure S1 (in P1) runs before S2 (in P2), build a monitor with procedures F1 and F2, a condition `x`, and a boolean `done` (initially false). **F1**: `S1; done = true; x.signal();`. **F2**: `if (done == false) x.wait(); S2;`. The `done` flag is needed because condition-variable signals are not remembered: if P1 runs F1 first and signals while nobody waits, the signal is lost, so F2 checks `done` to avoid waiting forever."
+  },
+  {
+    "id": "canvas-16132.ch6-monitors.resource-allocator-monitor",
+    "course": "CSC 301",
+    "unit": "Ch 6: Monitors and Condition Variables",
+    "title": "ResourceAllocator monitor (single resource)",
+    "explanation": "A monitor that allocates one resource among competing processes, giving it to the process with the **shortest planned usage time** first. Processes call `R.acquire(t)`, use the resource, then `R.release()`, where `t` is the maximum time they plan to use it.\n\n```\nmonitor ResourceAllocator {\n  boolean busy; condition x;\n  void acquire(int time) { if (busy) x.wait(time); busy = true; }\n  void release() { busy = false; x.signal(); }\n  initialization code() { busy = false; }\n}\n```\n\nUsing `time` as the priority number for `x.wait(time)` implements shortest-time-first. The monitor still relies on correct use: `release() ... acquire()`, `acquire() ... acquire()`, or omitting either call cause the same kinds of errors as semaphore misuse."
+  },
+  {
+    "id": "canvas-16132.ch6-monitors.conditional-wait-priority",
+    "course": "CSC 301",
+    "unit": "Ch 6: Monitors and Condition Variables",
+    "title": "Resuming processes: conditional wait x.wait(c)",
+    "explanation": "If several processes are waiting on condition `x` and `x.signal()` runs, which one resumes? Plain **FCFS** is frequently not adequate. The **conditional-wait** construct `x.wait(c)` takes an integer `c` called the **priority number**, stored with the waiting process. On `x.signal()`, the process with the **lowest number (highest priority)** is resumed next."
+  },
+  {
+    "id": "canvas-16132.ch6-liveness.deadlock",
+    "course": "CSC 301",
+    "unit": "Ch 6: Liveness",
+    "title": "Deadlock",
+    "explanation": "**Deadlock**: two or more processes wait indefinitely for an event that can only be caused by one of the waiting processes. Example with semaphores S and Q both initialized to 1: P0 runs `wait(S); wait(Q);` while P1 runs `wait(Q); wait(S);`. If P0 gets S and P1 gets Q, then P0 waits for Q (needs P1's `signal(Q)`) and P1 waits for S (needs P0's `signal(S)`). Neither signal will ever run, so both are stuck forever. The root cause here is acquiring the same locks in **different orders**."
+  },
+  {
+    "id": "canvas-16132.ch6-liveness.liveness",
+    "course": "CSC 301",
+    "unit": "Ch 6: Liveness",
+    "title": "Liveness",
+    "explanation": "Processes may have to wait **indefinitely** when trying to acquire a synchronization tool such as a mutex lock or semaphore. That violates the **progress** and **bounded-waiting** requirements. **Liveness** is the set of properties a system must satisfy to ensure processes **make progress**; indefinite waiting is an example of a **liveness failure**. Deadlock, starvation, and priority inversion are the main liveness failures in this chapter."
+  },
+  {
+    "id": "canvas-16132.ch6-liveness.priority-inversion",
+    "course": "CSC 301",
+    "unit": "Ch 6: Liveness",
+    "title": "Priority inversion and priority inheritance",
+    "explanation": "**Priority inversion** is a scheduling problem in which a **lower-priority process holds a lock** needed by a **higher-priority process**, so the high-priority process is forced to wait. It gets worse when a medium-priority process preempts the low-priority holder, indirectly delaying the high-priority process even longer. It is solved by the **priority-inheritance protocol**: a process holding a resource needed by a higher-priority process temporarily **inherits that higher priority** until it releases the resource, then reverts to its original priority."
+  },
+  {
+    "id": "canvas-16132.ch6-liveness.starvation",
+    "course": "CSC 301",
+    "unit": "Ch 6: Liveness",
+    "title": "Starvation (indefinite blocking)",
+    "explanation": "**Starvation**, or **indefinite blocking**, happens when a process may **never be removed from the semaphore queue** in which it is suspended, for example if the queue is served in LIFO order or other processes keep getting chosen ahead of it. Unlike deadlock, the system as a whole keeps making progress; it's just one process that never gets its turn. It violates bounded waiting."
+  }
+]

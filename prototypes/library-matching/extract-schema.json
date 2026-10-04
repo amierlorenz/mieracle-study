@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["concepts"],
+  "properties": {
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "kind", "definition", "slide", "evidence", "useWhen", "confusedWith", "gapFill", "confidence"],
+        "properties": {
+          "title": {"type": "string", "description": "Short name of the concept, as the course names it"},
+          "kind": {"type": "string", "enum": ["term", "formula", "method", "fact"]},
+          "definition": {"type": "string", "description": "Correct, self-contained definition or statement; LaTeX in $...$ for math"},
+          "slide": {"type": "integer", "description": "1-based page/slide number where it is taught"},
+          "evidence": {"type": "string", "description": "Short verbatim quote copied from that slide's text that supports the concept; empty if the content is only in an image or equation"},
+          "useWhen": {"type": "array", "items": {"type": "string"}, "description": "Cues in a problem that signal this concept or method applies; empty for plain terms"},
+          "confusedWith": {"type": "array", "items": {"type": "string"}, "description": "Titles of look-alike concepts a student might mix up with this one"},
+          "gapFill": {"type": "boolean", "description": "true if any part of the definition comes from outside the material"},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]}
+        }
+      }
+    }
+  }
+}

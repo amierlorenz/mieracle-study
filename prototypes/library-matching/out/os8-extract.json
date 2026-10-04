@@ -1,0 +1,225 @@
+{
+  "meta": {
+    "model": "gemini-3.6-flash",
+    "seconds": 175,
+    "usage": {
+      "promptTokenCount": 5889,
+      "candidatesTokenCount": 2301,
+      "totalTokenCount": 11525,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 5889
+        }
+      ],
+      "thoughtsTokenCount": 3335,
+      "serviceTier": "standard"
+    },
+    "failed_attempts": [
+      "gemini-3.8-flash: HTTP 503",
+      "gemini-3.8-flash: HTTP 503",
+      "gemini-3.8-flash: HTTP 503",
+      "gemini-3.7-flash: HTTP 503",
+      "gemini-3.7-flash: HTTP 503",
+      "gemini-3.7-flash: HTTP 503"
+    ],
+    "course": "CSC 301"
+  },
+  "concepts": [
+    {
+      "title": "Four Necessary Conditions for Deadlock",
+      "kind": "fact",
+      "definition": "Deadlock can arise if four conditions hold simultaneously in a system: Mutual Exclusion (only one thread can use a resource at a time), Hold and Wait (a thread holding resources waits to acquire additional resources held by others), No Preemption (resources are released only voluntarily by the holding thread), and Circular Wait (a set of waiting threads exists such that $T_0$ waits for $T_1$, $T_1$ waits for $T_2$, ..., and $T_n$ waits for $T_0$).",
+      "slide": 6,
+      "evidence": "Deadlock can arise if four conditions hold simultaneously.",
+      "useWhen": [
+        "Analyzing whether a multithreaded or multi-process system is susceptible to deadlock."
+      ],
+      "confusedWith": [
+        "Deadlock Prevention",
+        "Deadlock Avoidance"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "canvas-16132.ch6-liveness.deadlock"
+      }
+    },
+    {
+      "title": "Resource-Allocation Graph",
+      "kind": "term",
+      "definition": "A directed graph $(V, E)$ used to describe system resource usage, where vertices $V$ are partitioned into thread nodes $T$ and resource type nodes $R$. Edges $E$ include request edges ($T_i \\to R_j$) indicating a thread is waiting for a resource, and assignment edges ($R_j \\to T_i$) indicating a resource instance is allocated to a thread.",
+      "slide": 7,
+      "evidence": "request edge \u2013 directed edge T i \uf0ae R j assignment edge \u2013 directed edge R j \uf0ae T i",
+      "useWhen": [
+        "Modeling processes and resource allocations to identify cycles or potential deadlocks."
+      ],
+      "confusedWith": [
+        "Wait-for Graph"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Deadlock Prevention",
+      "kind": "method",
+      "definition": "A deadlock management approach that ensures deadlock never occurs by designing resource request protocols that structurally invalidate at least one of the four necessary conditions for deadlock (Mutual Exclusion, Hold and Wait, No Preemption, or Circular Wait).",
+      "slide": 13,
+      "evidence": "Invalidate one of the four necessary conditions for deadlock:",
+      "useWhen": [
+        "Designing system protocols to statically guarantee that a system can never enter a deadlock state."
+      ],
+      "confusedWith": [
+        "Deadlock Avoidance",
+        "Deadlock Detection"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Resource Ordering for Circular Wait Elimination",
+      "kind": "method",
+      "definition": "A deadlock prevention method where a total ordering of all resource types is defined, and threads are required to request resources in strictly increasing order of enumeration, preventing the formation of circular waiting dependencies.",
+      "slide": 14,
+      "evidence": "Impose a total ordering of all resource types, and require that each thread requests resources in an increasing order of enumeration",
+      "useWhen": [
+        "Preventing deadlock when acquiring multiple locks or resources across threads."
+      ],
+      "confusedWith": [
+        "Banker's Algorithm"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Deadlock Avoidance",
+      "kind": "term",
+      "definition": "A dynamic deadlock handling strategy where the system uses a priori information about each process's maximum declared resource demands to dynamically inspect the resource-allocation state and ensure a circular-wait condition never occurs.",
+      "slide": 16,
+      "evidence": "The deadlock-avoidance algorithm dynamically examines the resource-allocation state to ensure that there can never be a circular-wait condition",
+      "useWhen": [
+        "Allocating resources dynamically when processes can declare their maximum resource requirements in advance."
+      ],
+      "confusedWith": [
+        "Deadlock Prevention",
+        "Deadlock Detection"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Safe State",
+      "kind": "term",
+      "definition": "A resource allocation state in which there exists a sequence $\\langle T_1, T_2, \\dots, T_n \\rangle$ of all threads in the system such that for each $T_i$, the additional resources $T_i$ can still request can be satisfied by the currently available resources plus resources held by all preceding threads $T_j$ ($j < i$).",
+      "slide": 17,
+      "evidence": "System is in safe state if there exists a sequence < T 1 , T 2 , \u2026, T n > of ALL the threads in the systems such that for each T i , the resources that T i can still request can be satisfied by currently available resources + resources held by all the T j , with j < I",
+      "useWhen": [
+        "Checking if granting a resource allocation request leaves the system in a state where all processes can eventually complete without deadlocking."
+      ],
+      "confusedWith": [
+        "Unsafe State"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Banker's Algorithm",
+      "kind": "method",
+      "definition": "A deadlock avoidance algorithm for systems with multiple instances of each resource type. It tracks matrices $Max$, $Allocation$, $Need = Max - Allocation$, and vector $Available$, granting a process's request only if pretending to allocate the resources leaves the system in a safe state.",
+      "slide": 25,
+      "evidence": "When a thread requests a resource, it may have to wait When a thread gets all its resources it must return them in a finite amount of time",
+      "useWhen": [
+        "Evaluating resource requests dynamically in systems with multiple instances per resource type to avoid deadlock."
+      ],
+      "confusedWith": [
+        "Deadlock Detection Algorithm",
+        "Resource-Allocation Graph Algorithm"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Wait-for Graph",
+      "kind": "term",
+      "definition": "A simplified variant of the resource-allocation graph used for single-instance resource systems, where resource nodes are omitted and directed edges $T_i \\to T_j$ indicate that thread $T_i$ is waiting for thread $T_j$ to release a resource. A cycle in the wait-for graph indicates a deadlock.",
+      "slide": 33,
+      "evidence": "Nodes are threads T i \uf0ae T j if T i is waiting for T j Periodically invoke an algorithm that searches for a cycle in the graph.",
+      "useWhen": [
+        "Detecting deadlock in systems where each resource type has exactly one instance."
+      ],
+      "confusedWith": [
+        "Resource-Allocation Graph"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Deadlock Detection Algorithm",
+      "kind": "method",
+      "definition": "An algorithm for systems with multiple resource instances that uses vectors $Work$ and $Finish$ along with $Allocation$ and $Request$ matrices to check if any processes are unable to complete execution, determining whether the system is currently in a deadlock state.",
+      "slide": 36,
+      "evidence": "If Finish[i] == false , for some i, 1 \uf0a3 i \uf0a3 n , then the system is in deadlock state.",
+      "useWhen": [
+        "Checking periodically or on demand whether deadlocks have occurred in a system that permits unsafe states."
+      ],
+      "confusedWith": [
+        "Banker's Algorithm"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Deadlock Recovery",
+      "kind": "method",
+      "definition": "The process of breaking a detected deadlock state, achieved either by process termination (aborting all deadlocked threads or aborting processes one by one until the cycle is broken) or resource preemption (preempting resources from selected victim processes and rolling them back to a safe state).",
+      "slide": 41,
+      "evidence": "Abort all deadlocked threads Abort one process at a time until the deadlock cycle is eliminated",
+      "useWhen": [
+        "Restoring normal execution in a system after a deadlock state has been detected."
+      ],
+      "confusedWith": [
+        "Deadlock Prevention",
+        "Deadlock Avoidance"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    }
+  ]
+}

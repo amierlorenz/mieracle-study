@@ -1,0 +1,208 @@
+{
+  "meta": {
+    "model": "gemini-3.7-flash",
+    "seconds": 147,
+    "usage": {
+      "promptTokenCount": 8588,
+      "candidatesTokenCount": 1654,
+      "totalTokenCount": 11413,
+      "cachedContentTokenCount": 6963,
+      "promptTokensDetails": [
+        {
+          "modality": "IMAGE",
+          "tokenCount": 6916
+        },
+        {
+          "modality": "TEXT",
+          "tokenCount": 1672
+        }
+      ],
+      "cacheTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 1355
+        },
+        {
+          "modality": "IMAGE",
+          "tokenCount": 5608
+        }
+      ],
+      "thoughtsTokenCount": 1171,
+      "serviceTier": "standard"
+    },
+    "failed_attempts": [
+      "gemini-3.8-flash: HTTP 503",
+      "gemini-3.8-flash: HTTP 503",
+      "gemini-3.8-flash: HTTP 503",
+      "gemini-3.7-flash: HTTP 503"
+    ],
+    "course": "Make It Stick"
+  },
+  "concepts": [
+    {
+      "title": "Retrieval practice",
+      "kind": "method",
+      "definition": "A study strategy centered on self-quizzing to recall knowledge and skills from memory rather than passively rereading material.",
+      "slide": 2,
+      "evidence": "\u201cRetrieval practice\u201d means self- quizzing. Retrieving knowledge and skill from memory should become your primary study strategy in place of rereading.",
+      "useWhen": [
+        "Studying new lecture notes or text",
+        "Preparing for exams and reviewing course concepts"
+      ],
+      "confusedWith": [
+        "Rereading",
+        "Elaboration"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "make-it-stick.keystone-strategies.retrieval-practice"
+      }
+    },
+    {
+      "title": "Spaced practice",
+      "kind": "method",
+      "definition": "A study regimen where retrieval sessions are distributed over time with intervals in between, allowing some forgetting to occur so that recalling information requires more effort and strengthens long-term memory.",
+      "slide": 4,
+      "evidence": "Spaced practice means studying information more than once but leaving considerable time between practice sessions.",
+      "useWhen": [
+        "Scheduling study sessions across a semester",
+        "Reviewing flashcards or previous weeks' course topics"
+      ],
+      "confusedWith": [
+        "Massed practice",
+        "Cramming"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "make-it-stick.keystone-strategies.spaced-practice"
+      }
+    },
+    {
+      "title": "Interleaved practice",
+      "kind": "method",
+      "definition": "A study strategy that alternates between different problem types, subjects, or skills in a single session, helping learners discriminate between types and select appropriate solutions.",
+      "slide": 6,
+      "evidence": "If you\u2019re trying to learn mathematical formulas, study more than one type at a time, so that you are alternating between different problems that call for different solutions.",
+      "useWhen": [
+        "Practicing related problem types or categorizing specimens",
+        "Learning multiple mathematical formulas or classification principles"
+      ],
+      "confusedWith": [
+        "Blocked practice"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "make-it-stick.keystone-strategies.interleaving"
+      }
+    },
+    {
+      "title": "Elaboration",
+      "kind": "method",
+      "definition": "The learning process of discovering additional layers of meaning in new material by relating it to prior knowledge, rephrasing it in one's own words, or connecting it with metaphors and visual imagery.",
+      "slide": 8,
+      "evidence": "Elaboration is the pro cess of fi nding additional layers of meaning in new material.",
+      "useWhen": [
+        "Trying to understand complex concepts or mechanisms",
+        "Connecting new course material to previously learned concepts or real-world examples"
+      ],
+      "confusedWith": [
+        "Reflection",
+        "Generation"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "make-it-stick.supporting-strategies.elaboration"
+      }
+    },
+    {
+      "title": "Generation",
+      "kind": "method",
+      "definition": "The process of attempting to solve a problem or answer a question prior to receiving the direct solution or instruction, making the mind more receptive to new learning.",
+      "slide": 9,
+      "evidence": "Generation is an attempt to answer a question or solve a problem before being shown the answer or the solution.",
+      "useWhen": [
+        "Attempting problems before attending a lecture",
+        "Predicting the main points of a reading before reading it"
+      ],
+      "confusedWith": [
+        "Retrieval practice",
+        "Elaboration"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "make-it-stick.supporting-strategies.generation"
+      }
+    },
+    {
+      "title": "Reflection",
+      "kind": "method",
+      "definition": "A study strategy combining retrieval practice and elaboration by taking time after an experience or class to evaluate what occurred, ask questions about performance, and link the material to other knowledge.",
+      "slide": 10,
+      "evidence": "ReP ection is the act of taking a few minutes to review what has been learned in a recent class or experience and asking yourself questions.",
+      "useWhen": [
+        "Reviewing after a lecture, lab, or experiential activity",
+        "Writing summary paragraphs or learning logs"
+      ],
+      "confusedWith": [
+        "Elaboration",
+        "Calibration"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    },
+    {
+      "title": "Calibration",
+      "kind": "method",
+      "definition": "The act of using objective feedback, such as self-quizzing or practice tests, to align subjective feelings of mastery with actual performance and eliminate cognitive illusions of knowing.",
+      "slide": 11,
+      "evidence": "Calibration is simply the act of using an objective instrument to clear away illusions and adjust your judgment to better reP ect reality.",
+      "useWhen": [
+        "Assessing readiness before an exam",
+        "Overcoming illusions of knowing from fluent reading"
+      ],
+      "confusedWith": [
+        "Reflection",
+        "Retrieval practice"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "same",
+        "id": "make-it-stick.supporting-strategies.calibration"
+      }
+    },
+    {
+      "title": "Mnemonic devices",
+      "kind": "method",
+      "definition": "Mental organizational techniques and structures (such as acronyms or memory palaces) used to encode, store, and readily retrieve arbitrary information from memory.",
+      "slide": 12,
+      "evidence": "mnemonic devices are like mental fi le cabinets. They give you handy ways to store information and fi nd it again when you need it.",
+      "useWhen": [
+        "Memorizing arbitrary lists, sequences, or ordered facts"
+      ],
+      "confusedWith": [
+        "Elaboration"
+      ],
+      "gapFill": false,
+      "confidence": "high",
+      "libraryMatch": {
+        "relation": "none",
+        "id": ""
+      }
+    }
+  ]
+}

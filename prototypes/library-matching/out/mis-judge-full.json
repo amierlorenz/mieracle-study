@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "model": "gemini-3.5-flash-lite",
+    "seconds": 2,
+    "usage": {
+      "promptTokenCount": 5345,
+      "candidatesTokenCount": 660,
+      "totalTokenCount": 6005,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 5345
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "failed_attempts": []
+  },
+  "candidates": [
+    {
+      "candidate": 0,
+      "matches": [
+        {
+          "id": "make-it-stick.keystone-strategies.retrieval-practice",
+          "relation": "same",
+          "reason": "Both describe retrieval practice as self-quizzing from memory instead of rereading.",
+          "adds": []
+        }
+      ]
+    },
+    {
+      "candidate": 1,
+      "matches": [
+        {
+          "id": "make-it-stick.keystone-strategies.spaced-practice",
+          "relation": "same",
+          "reason": "Both define spaced practice as distributing retrieval over time to allow minor forgetting and strengthen long-term memory.",
+          "adds": []
+        }
+      ]
+    },
+    {
+      "candidate": 2,
+      "matches": [
+        {
+          "id": "make-it-stick.keystone-strategies.interleaving",
+          "relation": "same",
+          "reason": "Both describe interleaved practice as mixing different problem types or topics in a single session to build discrimination skills.",
+          "adds": []
+        }
+      ]
+    },
+    {
+      "candidate": 3,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.elaboration",
+          "relation": "same",
+          "reason": "Both explain elaboration as finding extra meaning by connecting new material to prior knowledge and using one's own words.",
+          "adds": [
+            "Use when: Trying to understand complex concepts or mechanisms; Connecting new course material to previously learned concepts or real-world examples"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 4,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.generation",
+          "relation": "same",
+          "reason": "Both define generation as attempting an answer or solution prior to receiving the direct instruction.",
+          "adds": [
+            "Use when: Attempting problems before attending a lecture; Predicting the main points of a reading before reading it"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 5,
+      "matches": []
+    },
+    {
+      "candidate": 6,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.calibration",
+          "relation": "same",
+          "reason": "Both define calibration as using objective feedback to align subjective feelings of mastery with actual performance.",
+          "adds": [
+            "Use when: Assessing readiness before an exam; Overcoming illusions of knowing from fluent reading"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 7,
+      "matches": []
+    }
+  ]
+}

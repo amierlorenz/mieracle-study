@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "model": "gemini-3.5-flash-lite",
+    "seconds": 3,
+    "usage": {
+      "promptTokenCount": 2986,
+      "candidatesTokenCount": 938,
+      "totalTokenCount": 3924,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 2986
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "failed_attempts": []
+  },
+  "candidates": [
+    {
+      "candidate": 0,
+      "matches": [
+        {
+          "id": "make-it-stick.keystone-strategies.retrieval-practice",
+          "relation": "same",
+          "reason": "Both describe retrieval practice as self-quizzing to recall knowledge instead of rereading.",
+          "adds": [
+            "Studying new lecture notes or text; Preparing for exams and reviewing course concepts"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 1,
+      "matches": [
+        {
+          "id": "make-it-stick.keystone-strategies.spaced-practice",
+          "relation": "same",
+          "reason": "Both cover spaced practice with time intervals to allow minor forgetting and strengthen long-term memory.",
+          "adds": [
+            "Scheduling study sessions across a semester; Reviewing flashcards or previous weeks' course topics"
+          ]
+        },
+        {
+          "id": "notes.week1.spacing",
+          "relation": "same",
+          "reason": "Both refer to spaced practice and the spacing effect where gaps strengthen memory.",
+          "adds": [
+            "Scheduling study sessions across a semester; Reviewing flashcards or previous weeks' course topics"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 2,
+      "matches": [
+        {
+          "id": "make-it-stick.keystone-strategies.interleaving",
+          "relation": "same",
+          "reason": "Both define interleaved practice as mixing different problem types within a single session.",
+          "adds": [
+            "Practicing related problem types or categorizing specimens; Learning multiple mathematical formulas or classification principles"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 3,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.elaboration",
+          "relation": "same",
+          "reason": "Both define elaboration as finding layers of meaning by connecting material to prior knowledge and rephrasing.",
+          "adds": [
+            "Trying to understand complex concepts or mechanisms; Connecting new course material to previously learned concepts or real-world examples",
+            "connecting with metaphors and visual imagery"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 4,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.generation",
+          "relation": "same",
+          "reason": "Both cover generation as solving a problem or answering a question before seeing the solution.",
+          "adds": [
+            "Attempting problems before attending a lecture; Predicting the main points of a reading before reading it"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 5,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.elaboration",
+          "relation": "confusable",
+          "reason": "Reflection involves elaboration by linking material to other knowledge, which can be confused with general elaboration strategies.",
+          "adds": []
+        },
+        {
+          "id": "make-it-stick.keystone-strategies.retrieval-practice",
+          "relation": "confusable",
+          "reason": "Reflection uses retrieval practice to evaluate what occurred, which makes it confusable with self-quizzing.",
+          "adds": []
+        }
+      ]
+    },
+    {
+      "candidate": 6,
+      "matches": [
+        {
+          "id": "make-it-stick.supporting-strategies.calibration",
+          "relation": "same",
+          "reason": "Both describe calibration as aligning subjective mastery with objective feedback to counter illusions of knowing.",
+          "adds": [
+            "Assessing readiness before an exam; Overcoming illusions of knowing from fluent reading"
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": 7,
+      "matches": []
+    }
+  ]
+}
