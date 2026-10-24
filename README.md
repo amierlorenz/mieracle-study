@@ -26,8 +26,8 @@ The goal is to spend almost no time making study material and almost all of it r
 ## Setup
 
 ```sh
-git clone https://github.com/amierlorenz/MieracleStudy.git
-cd MieracleStudy
+git clone https://github.com/amierlorenz/mieracle-study.git
+cd mieracle-study
 brew install gitleaks
 git config core.hooksPath .githooks
 open MieracleStudy.xcodeproj
