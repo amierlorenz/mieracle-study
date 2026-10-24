@@ -26,7 +26,7 @@ The goal is to spend almost no time making study material and almost all of it r
 ## Setup
 
 ```sh
-git clone https://github.com/AmierD/MieracleStudy.git
+git clone https://github.com/amierlorenz/MieracleStudy.git
 cd MieracleStudy
 brew install gitleaks
 git config core.hooksPath .githooks
